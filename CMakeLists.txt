@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.19)
 
 project(
-  MyMkdir
-  VERSION 0.0.0
-  DESCRIPTION "A starter CMake package for creating directories recursively"
-  HOMEPAGE_URL https://github.com/threeal/cmake-starter
+  Assertion
+  VERSION 0.1.0
+  DESCRIPTION "A collection of assertion functions for testing purposes"
+  HOMEPAGE_URL https://github.com/threeal/assertion-cmake
   LANGUAGES NONE
 )
 
@@ -25,15 +25,15 @@ if(NOT SUBPROJECT)
 
   include(CMakePackageConfigHelpers)
   write_basic_package_version_file(
-    MyMkdirConfigVersion.cmake
+    AssertionConfigVersion.cmake
     COMPATIBILITY SameMajorVersion
   )
 
   install(
     FILES
       cmake/MkdirRecursive.cmake
-      cmake/MyMkdirConfig.cmake
-      ${CMAKE_CURRENT_BINARY_DIR}/MyMkdirConfigVersion.cmake
-    DESTINATION lib/cmake/MyMkdir
+      cmake/AssertionConfig.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/AssertionConfigVersion.cmake
+    DESTINATION lib/cmake/Assertion
   )
 endif()
