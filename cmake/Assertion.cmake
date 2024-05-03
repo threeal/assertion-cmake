@@ -64,3 +64,17 @@ function(assert_not_strequal STR1 STR2)
     message(FATAL_ERROR "expected string '${STR1}' not to be equal to '${STR2}'")
   endif()
 endfunction()
+
+# Mocks the 'message' function.
+#
+# This function mocks the 'message' function by modifying its behavior to store
+# the message into a list variable instead of printing it to the log.
+function(mock_message)
+  macro(message MODE MESSAGE)
+    list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
+    set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+    if("${MODE}" STREQUAL FATAL_ERROR)
+      return()
+    endif()
+  endmacro()
+endfunction()
