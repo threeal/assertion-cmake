@@ -19,6 +19,14 @@ function(test_assert_an_undefined_variable)
   assert_not_defined(SOME_VARIABLE)
 endfunction()
 
+function(test_assert_equal_strings)
+  assert_strequal("some string" "some string")
+endfunction()
+
+function(test_assert_unequal_strings)
+  assert_not_strequal("some string" "some other string")
+endfunction()
+
 if(NOT DEFINED TEST_COMMAND)
   message(FATAL_ERROR "The 'TEST_COMMAND' variable should be defined")
 elseif(NOT COMMAND test_${TEST_COMMAND})
