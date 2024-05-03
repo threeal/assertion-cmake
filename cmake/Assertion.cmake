@@ -42,3 +42,25 @@ function(assert_not_defined VARIABLE)
     message(FATAL_ERROR "expected variable '${VARIABLE}' not to be defined")
   endif()
 endfunction()
+
+# Asserts whether the given strings are equal.
+#
+# Arguments:
+#   - STR1: The first string to assert.
+#   - STR2: The second string to assert.
+function(assert_strequal STR1 STR2)
+  if(NOT "${STR1}" STREQUAL "${STR2}")
+    message(FATAL_ERROR "expected string '${STR1}' to be equal to '${STR2}'")
+  endif()
+endfunction()
+
+# Asserts whether the given strings are not equal.
+#
+# Arguments:
+#   - STR1: The first string to assert.
+#   - STR2: The second string to assert.
+function(assert_not_strequal STR1 STR2)
+  if("${STR1}" STREQUAL "${STR2}")
+    message(FATAL_ERROR "expected string '${STR1}' not to be equal to '${STR2}'")
+  endif()
+endfunction()
