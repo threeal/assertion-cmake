@@ -18,4 +18,6 @@ add_cmake_test(
   "Assert a false condition"
   "Assert a defined variable"
   "Assert an undefined variable"
+  "Assert equal strings"
+  "Assert unequal strings"
 )
