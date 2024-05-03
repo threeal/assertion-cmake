@@ -31,7 +31,7 @@ if(NOT SUBPROJECT)
 
   install(
     FILES
-      cmake/MkdirRecursive.cmake
+      cmake/Assertion.cmake
       cmake/AssertionConfig.cmake
       ${CMAKE_CURRENT_BINARY_DIR}/AssertionConfigVersion.cmake
     DESTINATION lib/cmake/Assertion
