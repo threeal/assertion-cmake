@@ -67,14 +67,31 @@ endfunction()
 
 # Mocks the 'message' function.
 #
-# This function mocks the 'message' function by modifying its behavior to store
-# the message into a list variable instead of printing it to the log.
-function(mock_message)
-  macro(message MODE MESSAGE)
-    list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
-    set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
-    if("${MODE}" STREQUAL FATAL_ERROR)
-      return()
-    endif()
-  endmacro()
+# If enabled, this function will mock the 'message' function by modifying its
+# behavior to store the message into a list variable instead of printing it to
+# the log.
+#
+# Arguments:
+#   - ENABLED: Whether to mock the 'message' function or not.
+function(mock_message ENABLED)
+  if("${ENABLED}")
+    set_property(GLOBAL PROPERTY message_mocked "${ENABLED}")
+
+    macro(message MODE MESSAGE)
+      get_property(ENABLED GLOBAL PROPERTY message_mocked)
+      if("${ENABLED}")
+        list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
+        set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+        if("${MODE}" STREQUAL FATAL_ERROR)
+          return()
+        endif()
+      else()
+        _message("${MODE}" "${MESSAGE}")
+      endif()
+    endmacro()
+
+    function(mock_message ENABLED)
+      set_property(GLOBAL PROPERTY message_mocked "${ENABLED}")
+    endfunction()
+  endif()
 endfunction()
