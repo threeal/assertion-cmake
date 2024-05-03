@@ -16,4 +16,6 @@ add_cmake_test(
   cmake/AssertionTest.cmake
   "Assert a true condition"
   "Assert a false condition"
+  "Assert a defined variable"
+  "Assert an undefined variable"
 )
