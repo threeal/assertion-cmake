@@ -13,6 +13,12 @@ function(add_cmake_test FILE)
 endfunction()
 
 add_cmake_test(
+  cmake/AssertionTest.cmake
+  "Assert a true condition"
+  "Assert a false condition"
+)
+
+add_cmake_test(
   cmake/MkdirRecursiveTest.cmake
   "Create directory recursively"
   # Add more test cases here.
