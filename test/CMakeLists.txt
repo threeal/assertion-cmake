@@ -20,4 +20,5 @@ add_cmake_test(
   "Assert an undefined variable"
   "Assert equal strings"
   "Assert unequal strings"
+  "Mock message"
 )
