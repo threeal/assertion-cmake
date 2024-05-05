@@ -63,6 +63,26 @@ function(assert_not_exists PATH)
   endif()
 endfunction()
 
+# Asserts whether the given path is a directory.
+#
+# Arguments:
+#   - PATH: The path to assert.
+function(assert_directory PATH)
+  if(NOT IS_DIRECTORY "${PATH}")
+    message(FATAL_ERROR "expected path '${PATH}' to be a directory")
+  endif()
+endfunction()
+
+# Asserts whether the given path is not a directory.
+#
+# Arguments:
+#   - PATH: The path to assert.
+function(assert_not_directory PATH)
+  if(IS_DIRECTORY "${PATH}")
+    message(FATAL_ERROR "expected path '${PATH}' not to be a directory")
+  endif()
+endfunction()
+
 # Asserts whether the given strings are equal.
 #
 # Arguments:
