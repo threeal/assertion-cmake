@@ -21,4 +21,5 @@ add_cmake_test(
   "Assert equal strings"
   "Assert unequal strings"
   "Mock message"
+  "Assert messages"
 )
