@@ -43,6 +43,28 @@ function(test_assert_an_undefined_variable)
   assert_message(FATAL_ERROR "expected variable 'SOME_VARIABLE' to be defined")
 endfunction()
 
+function(test_assert_an_existing_path)
+  file(TOUCH some-file)
+  assert_exists(some-file)
+
+  mock_message(ON)
+  assert_not_exists(some-file)
+
+  mock_message(OFF)
+  assert_message(FATAL_ERROR "expected path 'some-file' not to exist")
+endfunction()
+
+function(test_assert_a_non_existing_path)
+  file(REMOVE some-file)
+  assert_not_exists(some-file)
+
+  mock_message(ON)
+  assert_exists(some-file)
+
+  mock_message(OFF)
+  assert_message(FATAL_ERROR "expected path 'some-file' to exist")
+endfunction()
+
 function(test_assert_equal_strings)
   assert_strequal("some string" "some string")
 
