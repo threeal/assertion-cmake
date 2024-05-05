@@ -95,3 +95,28 @@ function(mock_message ENABLED)
     endfunction()
   endif()
 endfunction()
+
+# Asserts whether the 'message' function was called with the expected
+# arguments.
+#
+# This function asserts whether a message with the specified mode was called
+# with the expected message content.
+#
+# This function can only assert calls to the mocked 'message' function, which
+# is enabled by calling the 'mock_message' function.
+#
+# Arguments:
+#   - MODE: The message mode.
+#   - EXPECTED_MESSAGE: The expected message content.
+function(assert_message MODE EXPECTED_MESSAGE)
+  list(POP_FRONT ${MODE}_MESSAGES MESSAGE)
+  if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
+    string(TOLOWER "${MODE}" MODE)
+    string(REPLACE "_" " " MODE "${MODE}")
+    message(FATAL_ERROR "expected ${MODE} message '${MESSAGE}' to be equal to '${EXPECTED_MESSAGE}'")
+  endif()
+
+  if(DEFINED ${MODE}_MESSAGES)
+    set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+  endif()
+endfunction()

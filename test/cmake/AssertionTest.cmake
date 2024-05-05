@@ -27,18 +27,17 @@ function(test_assert_unequal_strings)
   assert_not_strequal("some string" "some other string")
 endfunction()
 
+function(call_sample_messages)
+  message(WARNING "some warning message")
+  message(WARNING "some other warning message")
+  message(ERROR "some error message")
+  message(FATAL_ERROR "some fatal error message")
+  message(ERROR "some other error message")
+endfunction()
+
 function(test_mock_message)
   mock_message(ON)
-
-  function(test)
-    message(WARNING "some warning message")
-    message(WARNING "some other warning message")
-    message(ERROR "some error message")
-    message(FATAL_ERROR "some fatal error message")
-    message(ERROR "some other error message")
-  endfunction()
-  test()
-
+  call_sample_messages()
   mock_message(OFF)
 
   assert_defined(WARNING_MESSAGES)
@@ -49,6 +48,17 @@ function(test_mock_message)
 
   assert_defined(FATAL_ERROR_MESSAGES)
   assert_strequal("${FATAL_ERROR_MESSAGES}" "some fatal error message")
+endfunction()
+
+function(test_assert_messages)
+  mock_message(ON)
+  call_sample_messages()
+  mock_message(OFF)
+
+  assert_message(WARNING "some warning message")
+  assert_message(WARNING "some other warning message")
+  assert_message(ERROR "some error message")
+  assert_message(FATAL_ERROR "some fatal error message")
 endfunction()
 
 if(NOT DEFINED TEST_COMMAND)
