@@ -43,8 +43,9 @@ function(test_assert_an_undefined_variable)
   assert_message(FATAL_ERROR "expected variable 'SOME_VARIABLE' to be defined")
 endfunction()
 
-function(test_assert_an_existing_path)
+function(test_assert_a_file_path)
   file(TOUCH some-file)
+
   assert_exists(some-file)
 
   mock_message(ON)
@@ -52,17 +53,45 @@ function(test_assert_an_existing_path)
 
   mock_message(OFF)
   assert_message(FATAL_ERROR "expected path 'some-file' not to exist")
+
+  mock_message(ON)
+  assert_directory(some-file)
+
+  mock_message(OFF)
+  assert_message(FATAL_ERROR "expected path 'some-file' to be a directory")
+
+  assert_not_directory(some-file)
+endfunction()
+
+function(test_assert_a_directory_path)
+  file(MAKE_DIRECTORY some-directory)
+
+  assert_exists(some-directory)
+
+  mock_message(ON)
+  assert_not_exists(some-directory)
+
+  mock_message(OFF)
+  assert_message(FATAL_ERROR "expected path 'some-directory' not to exist")
+
+  assert_directory(some-directory)
+
+  mock_message(ON)
+  assert_not_directory(some-directory)
+
+  mock_message(OFF)
+  assert_message(FATAL_ERROR "expected path 'some-directory' not to be a directory")
 endfunction()
 
 function(test_assert_a_non_existing_path)
-  file(REMOVE some-file)
-  assert_not_exists(some-file)
+  file(REMOVE some-non-existing-file)
+  assert_not_exists(some-non-existing-file)
 
   mock_message(ON)
-  assert_exists(some-file)
+  assert_exists(some-non-existing-file)
 
   mock_message(OFF)
-  assert_message(FATAL_ERROR "expected path 'some-file' to exist")
+  assert_message(FATAL_ERROR "expected path 'some-non-existing-file' to exist")
 endfunction()
 
 function(test_assert_equal_strings)
