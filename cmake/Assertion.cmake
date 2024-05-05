@@ -105,35 +105,41 @@ function(assert_not_strequal STR1 STR2)
   endif()
 endfunction()
 
-# Mocks the 'message' function.
+# Begins a scope for mocking the 'message' function.
 #
-# If enabled, this function will mock the 'message' function by modifying its
-# behavior to store the message into a list variable instead of printing it to
-# the log.
+# This function begins a scope for mocking the 'message' function by modifying
+# its behavior to store the message into a list variable instead of printing it
+# to the log.
 #
-# Arguments:
-#   - ENABLED: Whether to mock the 'message' function or not.
-function(mock_message ENABLED)
-  if("${ENABLED}")
-    set_property(GLOBAL PROPERTY message_mocked "${ENABLED}")
+# Use the 'end_mock_message' function to end the scope for mocking the
+# 'message' function, reverting it to the original behavior.
+function(mock_message)
+  set_property(GLOBAL PROPERTY message_mocked ON)
 
-    macro(message MODE MESSAGE)
-      get_property(ENABLED GLOBAL PROPERTY message_mocked)
-      if("${ENABLED}")
-        list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
-        set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
-        if("${MODE}" STREQUAL FATAL_ERROR)
-          return()
-        endif()
-      else()
-        _message("${MODE}" "${MESSAGE}")
+  macro(message MODE MESSAGE)
+    get_property(ENABLED GLOBAL PROPERTY message_mocked)
+    if("${ENABLED}")
+      list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
+      set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+      if("${MODE}" STREQUAL FATAL_ERROR)
+        return()
       endif()
-    endmacro()
+    else()
+      _message("${MODE}" "${MESSAGE}")
+    endif()
+  endmacro()
 
-    function(mock_message ENABLED)
-      set_property(GLOBAL PROPERTY message_mocked "${ENABLED}")
-    endfunction()
-  endif()
+  function(mock_message)
+    set_property(GLOBAL PROPERTY message_mocked ON)
+  endfunction()
+endfunction()
+
+# Ends a scope for mocking the 'message' function.
+#
+# This function ends the scope for mocking the 'message' function, reverting it
+# to the original behavior.
+function(end_mock_message)
+  set_property(GLOBAL PROPERTY message_mocked OFF)
 endfunction()
 
 # Asserts whether the 'message' function was called with the expected
