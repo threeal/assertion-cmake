@@ -43,6 +43,26 @@ function(assert_not_defined VARIABLE)
   endif()
 endfunction()
 
+# Asserts whether the given path exists.
+#
+# Arguments:
+#   - PATH: The path to assert.
+function(assert_exists PATH)
+  if(NOT EXISTS "${PATH}")
+    message(FATAL_ERROR "expected path '${PATH}' to exist")
+  endif()
+endfunction()
+
+# Asserts whether the given path does not exist.
+#
+# Arguments:
+#   - PATH: The path to assert.
+function(assert_not_exists PATH)
+  if(EXISTS "${PATH}")
+    message(FATAL_ERROR "expected path '${PATH}' not to exist")
+  endif()
+endfunction()
+
 # Asserts whether the given strings are equal.
 #
 # Arguments:
