@@ -1,7 +1,7 @@
 function(add_cmake_test FILE)
   foreach(NAME ${ARGN})
     string(TOLOWER "${NAME}" TEST_COMMAND)
-    string(REPLACE " " "_" TEST_COMMAND "${TEST_COMMAND}")
+    string(REGEX REPLACE "( |-)" "_" TEST_COMMAND "${TEST_COMMAND}")
     add_test(
       NAME "${NAME}"
       COMMAND "${CMAKE_COMMAND}"
@@ -18,6 +18,8 @@ add_cmake_test(
   "Assert a false condition"
   "Assert a defined variable"
   "Assert an undefined variable"
+  "Assert an existing path"
+  "Assert a non-existing path"
   "Assert equal strings"
   "Assert unequal strings"
   "Mock message"
