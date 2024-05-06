@@ -1,6 +1,6 @@
 # Assertion.cmake
 
-A [CMake](https://cmake.org/) module that contains a collection of assertion functions for testing purposes.
+A [CMake](https://cmake.org/) module containing a collection of assertion functions for testing purposes.
 
 ## License
 
