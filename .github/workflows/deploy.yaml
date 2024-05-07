@@ -26,7 +26,8 @@ jobs:
       - name: Copy Modules
         run: |
           mkdir -p build/page
-          cp cmake/Assertion.cmake build/page/$(git branch --show-current)
+          git checkout main
+          cp cmake/Assertion.cmake build/page/main
           for tag in $(git tag); do
             git checkout $tag
             cp cmake/Assertion.cmake build/page/$tag
