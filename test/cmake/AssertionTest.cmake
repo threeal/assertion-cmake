@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 include(Assertion)
 
-function(test_assert_a_true_condition)
+function("Assert a true condition")
   assert_true(TRUE)
 
   mock_message()
@@ -11,7 +11,7 @@ function(test_assert_a_true_condition)
   assert_message(FATAL_ERROR "expected the condition to be false")
 endfunction()
 
-function(test_assert_a_false_condition)
+function("Assert a false condition")
   assert_false(FALSE)
 
   mock_message()
@@ -20,7 +20,7 @@ function(test_assert_a_false_condition)
   assert_message(FATAL_ERROR "expected the condition to be true")
 endfunction()
 
-function(test_assert_a_defined_variable)
+function("Assert a defined variable")
   set(SOME_VARIABLE "some value")
   assert_defined(SOME_VARIABLE)
 
@@ -30,7 +30,7 @@ function(test_assert_a_defined_variable)
   assert_message(FATAL_ERROR "expected variable 'SOME_VARIABLE' not to be defined")
 endfunction()
 
-function(test_assert_an_undefined_variable)
+function("Assert an undefined variable")
   assert_not_defined(SOME_VARIABLE)
 
   mock_message()
@@ -39,7 +39,7 @@ function(test_assert_an_undefined_variable)
   assert_message(FATAL_ERROR "expected variable 'SOME_VARIABLE' to be defined")
 endfunction()
 
-function(test_assert_a_file_path)
+function("Assert a file path")
   file(TOUCH some-file)
 
   assert_exists(some-file)
@@ -57,7 +57,7 @@ function(test_assert_a_file_path)
   assert_not_directory(some-file)
 endfunction()
 
-function(test_assert_a_directory_path)
+function("Assert a directory path")
   file(MAKE_DIRECTORY some-directory)
 
   assert_exists(some-directory)
@@ -75,7 +75,7 @@ function(test_assert_a_directory_path)
   assert_message(FATAL_ERROR "expected path 'some-directory' not to be a directory")
 endfunction()
 
-function(test_assert_a_non_existing_path)
+function("Assert a non-existing path")
   file(REMOVE some-non-existing-file)
   assert_not_exists(some-non-existing-file)
 
@@ -85,7 +85,7 @@ function(test_assert_a_non_existing_path)
   assert_message(FATAL_ERROR "expected path 'some-non-existing-file' to exist")
 endfunction()
 
-function(test_assert_equal_strings)
+function("Assert equal strings")
   assert_strequal("some string" "some string")
 
   mock_message()
@@ -94,7 +94,7 @@ function(test_assert_equal_strings)
   assert_message(FATAL_ERROR "expected string 'some string' not to be equal to 'some string'")
 endfunction()
 
-function(test_assert_unequal_strings)
+function("Assert unequal strings")
   assert_not_strequal("some string" "some other string")
 
   mock_message()
@@ -111,7 +111,7 @@ function(call_sample_messages)
   message(ERROR "some other error message")
 endfunction()
 
-function(test_mock_message)
+function("Mock message")
   mock_message()
     call_sample_messages()
   end_mock_message()
@@ -126,7 +126,7 @@ function(test_mock_message)
   assert_strequal("${FATAL_ERROR_MESSAGES}" "some fatal error message")
 endfunction()
 
-function(test_assert_messages)
+function("Assert messages")
   mock_message()
     call_sample_messages()
   end_mock_message()
@@ -142,10 +142,4 @@ function(test_assert_messages)
   assert_message(FATAL_ERROR "expected error message '' to be equal to 'some other error message'")
 endfunction()
 
-if(NOT DEFINED TEST_COMMAND)
-  message(FATAL_ERROR "The 'TEST_COMMAND' variable should be defined")
-elseif(NOT COMMAND test_${TEST_COMMAND})
-  message(FATAL_ERROR "Unable to find a command named 'test_${TEST_COMMAND}'")
-endif()
-
-cmake_language(CALL test_${TEST_COMMAND})
+cmake_language(CALL "${TEST_COMMAND}")
