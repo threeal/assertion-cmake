@@ -40,7 +40,7 @@ assert_false(FALSE)
 set(SOME_VARIABLE "some value")
 
 assert_defined(SOME_VARIABLE)
-assert_strequal("${SOME_VALUE}" "some value")
+assert_strequal("${SOME_VARIABLE}" "some value")
 
 file(TOUCH some-file)
 
