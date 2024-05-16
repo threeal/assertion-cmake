@@ -85,6 +85,24 @@ function("Assert a non-existing path")
   assert_message(FATAL_ERROR "expected path 'some-non-existing-file' to exist")
 endfunction()
 
+function("Assert a matching regular expression")
+  assert_matches("some string" "so.*ing")
+
+  mock_message()
+    assert_not_matches("some string" "so.*ing")
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected string 'some string' not to match 'so.*ing'")
+endfunction()
+
+function("Assert an unmatching regular expression")
+  mock_message()
+    assert_matches("some string" "so.*other.*ing")
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected string 'some string' to match 'so.*other.*ing'")
+
+  assert_not_matches("some string" "so.*other.*ing")
+endfunction()
+
 function("Assert equal strings")
   assert_strequal("some string" "some string")
 

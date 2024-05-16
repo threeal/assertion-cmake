@@ -19,6 +19,8 @@ add_cmake_test(
   "Assert a file path"
   "Assert a directory path"
   "Assert a non-existing path"
+  "Assert a matching regular expression"
+  "Assert an unmatching regular expression"
   "Assert equal strings"
   "Assert unequal strings"
   "Mock message"
