@@ -193,11 +193,18 @@ endfunction()
 #
 # Arguments:
 #   - ARGN: The command to execute.
+#
+# Optional arguments:
+#   - EXPECTED_OUTPUT: If set, asserts whether the output of the executed
+#     process matches the given regular expression.
 function(assert_execute_process)
-  execute_process(COMMAND ${ARGN} RESULT_VARIABLE RES)
+  cmake_parse_arguments(ARG "" "EXPECTED_OUTPUT" "" ${ARGN})
+  execute_process(COMMAND ${ARG_UNPARSED_ARGUMENTS} RESULT_VARIABLE RES OUTPUT_VARIABLE OUT)
+  string(REPLACE ";" " " ARGUMENTS "${ARG_UNPARSED_ARGUMENTS}")
   if(NOT RES EQUAL 0)
-    string(REPLACE ";" " " ARGUMENTS "${ARGN}")
     message(FATAL_ERROR "expected command '${ARGUMENTS}' not to fail (exit code: ${RES})")
+  elseif(DEFINED ARG_EXPECTED_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_EXPECTED_OUTPUT}")
+    message(FATAL_ERROR "expected the output of command '${ARGUMENTS}' to match '${ARG_EXPECTED_OUTPUT}'")
   endif()
 endfunction()
 
@@ -205,10 +212,17 @@ endfunction()
 #
 # Arguments:
 #   - ARGN: The command to execute.
+#
+# Optional arguments:
+#   - EXPECTED_OUTPUT: If set, asserts whether the output of the executed
+#     process matches the given regular expression.
 function(assert_not_execute_process)
-  execute_process(COMMAND ${ARGN} RESULT_VARIABLE RES)
+  cmake_parse_arguments(ARG "" "EXPECTED_OUTPUT" "" ${ARGN})
+  execute_process(COMMAND ${ARG_UNPARSED_ARGUMENTS} RESULT_VARIABLE RES ERROR_VARIABLE ERR)
+  string(REPLACE ";" " " ARGUMENTS "${ARG_UNPARSED_ARGUMENTS}")
   if(RES EQUAL 0)
-    string(REPLACE ";" " " ARGUMENTS "${ARGN}")
     message(FATAL_ERROR "expected command '${ARGUMENTS}' to fail (exit code: ${RES})")
+  elseif(DEFINED ARG_EXPECTED_OUTPUT AND NOT "${ERR}" MATCHES "${ARG_EXPECTED_OUTPUT}")
+    message(FATAL_ERROR "expected the output of command '${ARGUMENTS}' to match '${ARG_EXPECTED_OUTPUT}'")
   endif()
 endfunction()
