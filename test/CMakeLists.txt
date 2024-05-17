@@ -25,4 +25,6 @@ add_cmake_test(
   "Assert unequal strings"
   "Mock message"
   "Assert messages"
+  "Assert successful process execution"
+  "Assert failed process execution"
 )
