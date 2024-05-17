@@ -83,6 +83,28 @@ function(assert_not_directory PATH)
   endif()
 endfunction()
 
+# Asserts whether the given string matches the given regular expression.
+#
+# Arguments:
+#   - STRING: The string to assert.
+#   - REGEX: The regular expression to match against the string.
+function(assert_matches STRING REGEX)
+  if(NOT "${STRING}" MATCHES "${REGEX}")
+    message(FATAL_ERROR "expected string '${STRING}' to match '${REGEX}'")
+  endif()
+endfunction()
+
+# Asserts whether the given string does not match the given regular expression.
+#
+# Arguments:
+#   - STRING: The string to assert.
+#   - REGEX: The regular expression to match against the string.
+function(assert_not_matches STRING REGEX)
+  if("${STRING}" MATCHES "${REGEX}")
+    message(FATAL_ERROR "expected string '${STRING}' not to match '${REGEX}'")
+  endif()
+endfunction()
+
 # Asserts whether the given strings are equal.
 #
 # Arguments:
