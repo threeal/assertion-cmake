@@ -27,4 +27,6 @@ add_cmake_test(
   "Assert messages"
   "Assert successful process execution"
   "Assert failed process execution"
+  "Assert matching process execution output"
+  "Assert non-matching process execution output"
 )
