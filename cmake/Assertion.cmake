@@ -188,3 +188,27 @@ function(assert_message MODE EXPECTED_MESSAGE)
     set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
   endif()
 endfunction()
+
+# Asserts whether the given command successfully executes a process.
+#
+# Arguments:
+#   - ARGN: The command to execute.
+function(assert_execute_process)
+  execute_process(COMMAND ${ARGN} RESULT_VARIABLE RES)
+  if(NOT RES EQUAL 0)
+    string(REPLACE ";" " " ARGUMENTS "${ARGN}")
+    message(FATAL_ERROR "expected command '${ARGUMENTS}' not to fail (exit code: ${RES})")
+  endif()
+endfunction()
+
+# Asserts whether the given command fails to execute a process.
+#
+# Arguments:
+#   - ARGN: The command to execute.
+function(assert_not_execute_process)
+  execute_process(COMMAND ${ARGN} RESULT_VARIABLE RES)
+  if(RES EQUAL 0)
+    string(REPLACE ";" " " ARGUMENTS "${ARGN}")
+    message(FATAL_ERROR "expected command '${ARGUMENTS}' to fail (exit code: ${RES})")
+  endif()
+endfunction()

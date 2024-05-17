@@ -160,4 +160,22 @@ function("Assert messages")
   assert_message(FATAL_ERROR "expected error message '' to be equal to 'some other error message'")
 endfunction()
 
+function("Assert successful process execution")
+  assert_execute_process("${CMAKE_COMMAND}" -E true)
+
+  mock_message()
+    assert_not_execute_process("${CMAKE_COMMAND}" -E true)
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected command '${CMAKE_COMMAND} -E true' to fail (exit code: 0)")
+endfunction()
+
+function("Assert failed process execution")
+  mock_message()
+    assert_execute_process("${CMAKE_COMMAND}" -E false)
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected command '${CMAKE_COMMAND} -E false' not to fail (exit code: 1)")
+
+  assert_not_execute_process("${CMAKE_COMMAND}" -E false)
+endfunction()
+
 cmake_language(CALL "${TEST_COMMAND}")
