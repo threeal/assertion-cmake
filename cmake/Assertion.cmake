@@ -14,34 +14,29 @@ function(assert)
     if(ARGUMENTS_0 STREQUAL NOT)
       list(REMOVE_AT ARGUMENTS 0)
       set(BOOLEAN_WORD " false")
+      set(NOT_WORD " not")
     else()
       set(ARGUMENT_NOT NOT)
       set(BOOLEAN_WORD " true")
     endif()
 
-    if(${ARGUMENT_NOT} ${ARGUMENTS})
-      message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
+    list(LENGTH ARGUMENTS ARGUMENTS_LENGTH)
+    if(ARGUMENTS_LENGTH EQUAL 2)
+      list(GET ARGUMENTS 0 OPERATOR)
+      list(GET ARGUMENTS 1 VALUE)
+
+      if(OPERATOR STREQUAL DEFINED)
+        set(MESSAGE "expected variable '${VALUE}'${NOT_WORD} to be defined")
+      endif()
     endif()
-  endif()
-endfunction()
 
-# Asserts whether the given variable is defined.
-#
-# Arguments:
-#   - VARIABLE: The variable to assert.
-function(assert_defined VARIABLE)
-  if(NOT DEFINED "${VARIABLE}")
-    message(FATAL_ERROR "expected variable '${VARIABLE}' to be defined")
-  endif()
-endfunction()
-
-# Asserts whether the given variable is not defined.
-#
-# Arguments:
-#   - VARIABLE: The variable to assert.
-function(assert_not_defined VARIABLE)
-  if(DEFINED "${VARIABLE}")
-    message(FATAL_ERROR "expected variable '${VARIABLE}' not to be defined")
+    if(${ARGUMENT_NOT} ${ARGUMENTS})
+      if(DEFINED MESSAGE)
+        message(FATAL_ERROR "${MESSAGE}")
+      else()
+        message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
+      endif()
+    endif()
   endif()
 endfunction()
 

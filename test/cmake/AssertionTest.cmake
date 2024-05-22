@@ -17,23 +17,22 @@ function("Boolean assertions")
   assert_message(FATAL_ERROR "expected 'TRUE' to resolve to false")
 endfunction()
 
-function("Assert a defined variable")
-  set(SOME_VARIABLE "some value")
-  assert_defined(SOME_VARIABLE)
+function("Variable existence assertions")
+  set(EXISTING_VARIABLE TRUE)
+  unset(NON_EXSITING_VARIABLE)
+
+  assert(DEFINED EXISTING_VARIABLE)
+  assert(NOT DEFINED NON_EXSITING_VARIABLE)
 
   mock_message()
-    assert_not_defined(SOME_VARIABLE)
+    assert(DEFINED NON_EXISTING_VARIABLE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected variable 'SOME_VARIABLE' not to be defined")
-endfunction()
-
-function("Assert an undefined variable")
-  assert_not_defined(SOME_VARIABLE)
+  assert_message(FATAL_ERROR "expected variable 'NON_EXISTING_VARIABLE' to be defined")
 
   mock_message()
-    assert_defined(SOME_VARIABLE)
+    assert(NOT DEFINED EXISTING_VARIABLE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected variable 'SOME_VARIABLE' to be defined")
+  assert_message(FATAL_ERROR "expected variable 'EXISTING_VARIABLE' not to be defined")
 endfunction()
 
 function("Assert a file path")
@@ -131,13 +130,13 @@ function("Mock message")
     call_sample_messages()
   end_mock_message()
 
-  assert_defined(WARNING_MESSAGES)
+  assert(DEFINED WARNING_MESSAGES)
   assert_strequal("${WARNING_MESSAGES}" "some warning message;some other warning message")
 
-  assert_defined(ERROR_MESSAGES)
+  assert(DEFINED ERROR_MESSAGES)
   assert_strequal("${ERROR_MESSAGES}" "some error message")
 
-  assert_defined(FATAL_ERROR_MESSAGES)
+  assert(DEFINED FATAL_ERROR_MESSAGES)
   assert_strequal("${FATAL_ERROR_MESSAGES}" "some fatal error message")
 endfunction()
 
