@@ -2,123 +2,103 @@ cmake_minimum_required(VERSION 3.5)
 
 include(Assertion)
 
-function("Assert a true condition")
-  assert_true(TRUE)
+function("Boolean assertions")
+  assert(TRUE)
+  assert(NOT FALSE)
 
   mock_message()
-    assert_false(TRUE)
+    assert(FALSE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected the condition to be false")
+  assert_message(FATAL_ERROR "expected 'FALSE' to resolve to true")
+
+  mock_message()
+    assert(NOT TRUE)
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected 'TRUE' to resolve to false")
 endfunction()
 
-function("Assert a false condition")
-  assert_false(FALSE)
+function("Variable existence assertions")
+  set(EXISTING_VARIABLE TRUE)
+  unset(NON_EXSITING_VARIABLE)
+
+  assert(DEFINED EXISTING_VARIABLE)
+  assert(NOT DEFINED NON_EXSITING_VARIABLE)
 
   mock_message()
-    assert_true(FALSE)
+    assert(DEFINED NON_EXISTING_VARIABLE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected the condition to be true")
+  assert_message(FATAL_ERROR "expected variable 'NON_EXISTING_VARIABLE' to be defined")
+
+  mock_message()
+    assert(NOT DEFINED EXISTING_VARIABLE)
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected variable 'EXISTING_VARIABLE' not to be defined")
 endfunction()
 
-function("Assert a defined variable")
-  set(SOME_VARIABLE "some value")
-  assert_defined(SOME_VARIABLE)
+function("Path existence assertions")
+  file(TOUCH some_file)
+  file(REMOVE_RECURSE non_existing_file)
+
+  assert(EXISTS some_file)
+  assert(NOT EXISTS non_existing_file)
 
   mock_message()
-    assert_not_defined(SOME_VARIABLE)
+    assert(EXISTS non_existing_file)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected variable 'SOME_VARIABLE' not to be defined")
+  assert_message(FATAL_ERROR "expected path 'non_existing_file' to exist")
+
+  mock_message()
+    assert(NOT EXISTS some_file)
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected path 'some_file' not to exist")
 endfunction()
 
-function("Assert an undefined variable")
-  assert_not_defined(SOME_VARIABLE)
+function("Directory path assertions")
+  file(MAKE_DIRECTORY some_directory)
+  file(TOUCH some_file)
+
+  assert(IS_DIRECTORY some_directory)
+  assert(NOT IS_DIRECTORY some_file)
 
   mock_message()
-    assert_defined(SOME_VARIABLE)
+    assert(IS_DIRECTORY some_file)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected variable 'SOME_VARIABLE' to be defined")
+  assert_message(FATAL_ERROR "expected path 'some_file' to be a directory")
+
+  mock_message()
+    assert(NOT IS_DIRECTORY some_directory)
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected path 'some_directory' not to be a directory")
 endfunction()
 
-function("Assert a file path")
-  file(TOUCH some-file)
-
-  assert_exists(some-file)
+function("Regular expression match assertions")
+  assert("some string" MATCHES "so.*ing")
+  assert(NOT "some string" MATCHES "so.*other.*ing")
 
   mock_message()
-    assert_not_exists(some-file)
+    assert("some string" MATCHES "so.*other.*ing")
   end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-file' not to exist")
+  assert_message(FATAL_ERROR "expected string 'some string' to match 'so.*other.*ing'")
 
   mock_message()
-    assert_directory(some-file)
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-file' to be a directory")
-
-  assert_not_directory(some-file)
-endfunction()
-
-function("Assert a directory path")
-  file(MAKE_DIRECTORY some-directory)
-
-  assert_exists(some-directory)
-
-  mock_message()
-    assert_not_exists(some-directory)
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-directory' not to exist")
-
-  assert_directory(some-directory)
-
-  mock_message()
-    assert_not_directory(some-directory)
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-directory' not to be a directory")
-endfunction()
-
-function("Assert a non-existing path")
-  file(REMOVE some-non-existing-file)
-  assert_not_exists(some-non-existing-file)
-
-  mock_message()
-    assert_exists(some-non-existing-file)
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-non-existing-file' to exist")
-endfunction()
-
-function("Assert a matching regular expression")
-  assert_matches("some string" "so.*ing")
-
-  mock_message()
-    assert_not_matches("some string" "so.*ing")
+    assert(NOT "some string" MATCHES "so.*ing")
   end_mock_message()
   assert_message(FATAL_ERROR "expected string 'some string' not to match 'so.*ing'")
 endfunction()
 
-function("Assert an unmatching regular expression")
-  mock_message()
-    assert_matches("some string" "so.*other.*ing")
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected string 'some string' to match 'so.*other.*ing'")
-
-  assert_not_matches("some string" "so.*other.*ing")
-endfunction()
-
-function("Assert equal strings")
-  assert_strequal("some string" "some string")
+function("String equality assertions")
+  assert("some string" STREQUAL "some string")
+  assert(NOT "some string" STREQUAL "some other string")
 
   mock_message()
-    assert_not_strequal("some string" "some string")
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected string 'some string' not to be equal to 'some string'")
-endfunction()
-
-function("Assert unequal strings")
-  assert_not_strequal("some string" "some other string")
-
-  mock_message()
-    assert_strequal("some string" "some other string")
+    assert("some string" STREQUAL "some other string")
   end_mock_message()
   assert_message(FATAL_ERROR "expected string 'some string' to be equal to 'some other string'")
+
+  mock_message()
+    assert(NOT "some string" STREQUAL "some string")
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected string 'some string' not to be equal to 'some string'")
 endfunction()
 
 function(call_sample_messages)
@@ -134,14 +114,16 @@ function("Mock message")
     call_sample_messages()
   end_mock_message()
 
-  assert_defined(WARNING_MESSAGES)
-  assert_strequal("${WARNING_MESSAGES}" "some warning message;some other warning message")
+  assert(DEFINED WARNING_MESSAGES)
 
-  assert_defined(ERROR_MESSAGES)
-  assert_strequal("${ERROR_MESSAGES}" "some error message")
+  set(EXPECTED_WARNING_MESSAGES "some warning message;some other warning message")
+  assert(WARNING_MESSAGES STREQUAL EXPECTED_WARNING_MESSAGES)
 
-  assert_defined(FATAL_ERROR_MESSAGES)
-  assert_strequal("${FATAL_ERROR_MESSAGES}" "some fatal error message")
+  assert(DEFINED ERROR_MESSAGES)
+  assert("${ERROR_MESSAGES}" STREQUAL "some error message")
+
+  assert(DEFINED FATAL_ERROR_MESSAGES)
+  assert("${FATAL_ERROR_MESSAGES}" STREQUAL "some fatal error message")
 endfunction()
 
 function("Assert messages")

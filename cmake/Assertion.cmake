@@ -5,125 +5,60 @@ include_guard(GLOBAL)
 
 # Asserts whether the given condition is true.
 #
-# Arguments:
-#   - CONDITION: The condition to assert.
-function(assert_true CONDITION)
-  if(NOT "${CONDITION}")
-    message(FATAL_ERROR "expected the condition to be true")
-  endif()
-endfunction()
-
-# Asserts whether the given condition is false.
+# This function performs an assertion on the given condition. It will output a
+# fatal error message if the assertion fails.
 #
-# Arguments:
-#   - CONDITION: The condition to assert.
-function(assert_false CONDITION)
-  if("${CONDITION}")
-    message(FATAL_ERROR "expected the condition to be false")
-  endif()
-endfunction()
+# Refer to the documentation of the 'if' function for supported conditions to
+# perform the assertion.
+function(assert)
+  list(LENGTH ARGN ARGUMENTS_LENGTH)
+  if(ARGUMENTS_LENGTH GREATER 0)
+    set(ARGUMENTS ${ARGN})
 
-# Asserts whether the given variable is defined.
-#
-# Arguments:
-#   - VARIABLE: The variable to assert.
-function(assert_defined VARIABLE)
-  if(NOT DEFINED "${VARIABLE}")
-    message(FATAL_ERROR "expected variable '${VARIABLE}' to be defined")
-  endif()
-endfunction()
+    # Determines whether the given arguments start with 'NOT'.
+    list(GET ARGUMENTS 0 ARGUMENTS_0)
+    if(ARGUMENTS_0 STREQUAL NOT)
+      list(REMOVE_AT ARGUMENTS 0)
+      set(BOOLEAN_WORD " false")
+      set(NOT_WORD " not")
+    else()
+      set(ARGUMENT_NOT NOT)
+      set(BOOLEAN_WORD " true")
+    endif()
 
-# Asserts whether the given variable is not defined.
-#
-# Arguments:
-#   - VARIABLE: The variable to assert.
-function(assert_not_defined VARIABLE)
-  if(DEFINED "${VARIABLE}")
-    message(FATAL_ERROR "expected variable '${VARIABLE}' not to be defined")
-  endif()
-endfunction()
+    list(LENGTH ARGUMENTS ARGUMENTS_LENGTH)
+    if(ARGUMENTS_LENGTH EQUAL 2)
+      list(GET ARGUMENTS 0 OPERATOR)
+      list(GET ARGUMENTS 1 VALUE)
 
-# Asserts whether the given path exists.
-#
-# Arguments:
-#   - PATH: The path to assert.
-function(assert_exists PATH)
-  if(NOT EXISTS "${PATH}")
-    message(FATAL_ERROR "expected path '${PATH}' to exist")
-  endif()
-endfunction()
+      if(OPERATOR STREQUAL DEFINED)
+        set(MESSAGE "expected variable '${VALUE}'${NOT_WORD} to be defined")
+      elseif(OPERATOR STREQUAL EXISTS)
+        set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to exist")
+      elseif(OPERATOR STREQUAL IS_DIRECTORY)
+        set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to be a directory")
+      endif()
+    elseif(ARGUMENTS_LENGTH EQUAL 3)
+      list(GET ARGUMENTS 0 LEFT_VALUE)
+      list(GET ARGUMENTS 1 OPERATOR)
+      list(GET ARGUMENTS 2 RIGHT_VALUE)
 
-# Asserts whether the given path does not exist.
-#
-# Arguments:
-#   - PATH: The path to assert.
-function(assert_not_exists PATH)
-  if(EXISTS "${PATH}")
-    message(FATAL_ERROR "expected path '${PATH}' not to exist")
-  endif()
-endfunction()
+      if(OPERATOR STREQUAL MATCHES)
+        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to match '${RIGHT_VALUE}'")
+      elseif(OPERATOR STREQUAL STREQUAL)
+        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to be equal to '${RIGHT_VALUE}'")
+      endif()
+    endif()
 
-# Asserts whether the given path is a directory.
-#
-# Arguments:
-#   - PATH: The path to assert.
-function(assert_directory PATH)
-  if(NOT IS_DIRECTORY "${PATH}")
-    message(FATAL_ERROR "expected path '${PATH}' to be a directory")
-  endif()
-endfunction()
-
-# Asserts whether the given path is not a directory.
-#
-# Arguments:
-#   - PATH: The path to assert.
-function(assert_not_directory PATH)
-  if(IS_DIRECTORY "${PATH}")
-    message(FATAL_ERROR "expected path '${PATH}' not to be a directory")
-  endif()
-endfunction()
-
-# Asserts whether the given string matches the given regular expression.
-#
-# Arguments:
-#   - STRING: The string to assert.
-#   - REGEX: The regular expression to match against the string.
-function(assert_matches STRING REGEX)
-  if(NOT "${STRING}" MATCHES "${REGEX}")
-    message(FATAL_ERROR "expected string '${STRING}' to match '${REGEX}'")
-  endif()
-endfunction()
-
-# Asserts whether the given string does not match the given regular expression.
-#
-# Arguments:
-#   - STRING: The string to assert.
-#   - REGEX: The regular expression to match against the string.
-function(assert_not_matches STRING REGEX)
-  if("${STRING}" MATCHES "${REGEX}")
-    message(FATAL_ERROR "expected string '${STRING}' not to match '${REGEX}'")
-  endif()
-endfunction()
-
-# Asserts whether the given strings are equal.
-#
-# Arguments:
-#   - STR1: The first string to assert.
-#   - STR2: The second string to assert.
-function(assert_strequal STR1 STR2)
-  if(NOT "${STR1}" STREQUAL "${STR2}")
-    message(FATAL_ERROR "expected string '${STR1}' to be equal to '${STR2}'")
-  endif()
-endfunction()
-
-# Asserts whether the given strings are not equal.
-#
-# Arguments:
-#   - STR1: The first string to assert.
-#   - STR2: The second string to assert.
-function(assert_not_strequal STR1 STR2)
-  if("${STR1}" STREQUAL "${STR2}")
-    message(FATAL_ERROR "expected string '${STR1}' not to be equal to '${STR2}'")
+    message(WARNING "ARGN: ${ARGN}")
+    message(WARNING "ARGUMENTS: ${ARGUMENTS}")
+    if(${ARGUMENT_NOT} ${ARGUMENTS})
+      if(DEFINED MESSAGE)
+        message(FATAL_ERROR "${MESSAGE}")
+      else()
+        message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
+      endif()
+    endif()
   endif()
 endfunction()
 
