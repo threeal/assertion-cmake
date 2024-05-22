@@ -32,6 +32,14 @@ function(assert)
       elseif(OPERATOR STREQUAL IS_DIRECTORY)
         set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to be a directory")
       endif()
+    elseif(ARGUMENTS_LENGTH EQUAL 3)
+      list(GET ARGUMENTS 0 LEFT_VALUE)
+      list(GET ARGUMENTS 1 OPERATOR)
+      list(GET ARGUMENTS 2 RIGHT_VALUE)
+
+      if(OPERATOR STREQUAL MATCHES)
+        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to match '${RIGHT_VALUE}'")
+      endif()
     endif()
 
     if(${ARGUMENT_NOT} ${ARGUMENTS})
@@ -41,28 +49,6 @@ function(assert)
         message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
       endif()
     endif()
-  endif()
-endfunction()
-
-# Asserts whether the given string matches the given regular expression.
-#
-# Arguments:
-#   - STRING: The string to assert.
-#   - REGEX: The regular expression to match against the string.
-function(assert_matches STRING REGEX)
-  if(NOT "${STRING}" MATCHES "${REGEX}")
-    message(FATAL_ERROR "expected string '${STRING}' to match '${REGEX}'")
-  endif()
-endfunction()
-
-# Asserts whether the given string does not match the given regular expression.
-#
-# Arguments:
-#   - STRING: The string to assert.
-#   - REGEX: The regular expression to match against the string.
-function(assert_not_matches STRING REGEX)
-  if("${STRING}" MATCHES "${REGEX}")
-    message(FATAL_ERROR "expected string '${STRING}' not to match '${REGEX}'")
   endif()
 endfunction()
 
