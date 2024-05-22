@@ -50,8 +50,6 @@ function(assert)
       endif()
     endif()
 
-    message(WARNING "ARGN: ${ARGN}")
-    message(WARNING "ARGUMENTS: ${ARGUMENTS}")
     if(${ARGUMENT_NOT} ${ARGUMENTS})
       if(DEFINED MESSAGE)
         message(FATAL_ERROR "${MESSAGE}")
