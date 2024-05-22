@@ -27,6 +27,8 @@ function(assert)
 
       if(OPERATOR STREQUAL DEFINED)
         set(MESSAGE "expected variable '${VALUE}'${NOT_WORD} to be defined")
+      elseif(OPERATOR STREQUAL EXISTS)
+        set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to exist")
       endif()
     endif()
 
@@ -37,26 +39,6 @@ function(assert)
         message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
       endif()
     endif()
-  endif()
-endfunction()
-
-# Asserts whether the given path exists.
-#
-# Arguments:
-#   - PATH: The path to assert.
-function(assert_exists PATH)
-  if(NOT EXISTS "${PATH}")
-    message(FATAL_ERROR "expected path '${PATH}' to exist")
-  endif()
-endfunction()
-
-# Asserts whether the given path does not exist.
-#
-# Arguments:
-#   - PATH: The path to assert.
-function(assert_not_exists PATH)
-  if(EXISTS "${PATH}")
-    message(FATAL_ERROR "expected path '${PATH}' not to exist")
   endif()
 endfunction()
 

@@ -14,9 +14,9 @@ add_cmake_test(
   cmake/AssertionTest.cmake
   "Boolean assertions"
   "Variable existence assertions"
+  "Path existence assertions"
   "Assert a file path"
   "Assert a directory path"
-  "Assert a non-existing path"
   "Assert a matching regular expression"
   "Assert an unmatching regular expression"
   "Assert equal strings"

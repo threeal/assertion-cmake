@@ -35,15 +35,26 @@ function("Variable existence assertions")
   assert_message(FATAL_ERROR "expected variable 'EXISTING_VARIABLE' not to be defined")
 endfunction()
 
-function("Assert a file path")
-  file(TOUCH some-file)
+function("Path existence assertions")
+  file(TOUCH some_file)
+  file(REMOVE_RECURSE non_existing_file)
 
-  assert_exists(some-file)
+  assert(EXISTS some_file)
+  assert(NOT EXISTS non_existing_file)
 
   mock_message()
-    assert_not_exists(some-file)
+    assert(EXISTS non_existing_file)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-file' not to exist")
+  assert_message(FATAL_ERROR "expected path 'non_existing_file' to exist")
+
+  mock_message()
+    assert(NOT EXISTS some_file)
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected path 'some_file' not to exist")
+endfunction()
+
+function("Assert a file path")
+  file(TOUCH some-file)
 
   mock_message()
     assert_directory(some-file)
@@ -56,29 +67,12 @@ endfunction()
 function("Assert a directory path")
   file(MAKE_DIRECTORY some-directory)
 
-  assert_exists(some-directory)
-
-  mock_message()
-    assert_not_exists(some-directory)
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-directory' not to exist")
-
   assert_directory(some-directory)
 
   mock_message()
     assert_not_directory(some-directory)
   end_mock_message()
   assert_message(FATAL_ERROR "expected path 'some-directory' not to be a directory")
-endfunction()
-
-function("Assert a non-existing path")
-  file(REMOVE some-non-existing-file)
-  assert_not_exists(some-non-existing-file)
-
-  mock_message()
-    assert_exists(some-non-existing-file)
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-non-existing-file' to exist")
 endfunction()
 
 function("Assert a matching regular expression")
