@@ -4,22 +4,24 @@
 include_guard(GLOBAL)
 
 # Asserts whether the given condition is true.
-#
-# Arguments:
-#   - CONDITION: The condition to assert.
-function(assert_true CONDITION)
-  if(NOT "${CONDITION}")
-    message(FATAL_ERROR "expected the condition to be true")
-  endif()
-endfunction()
+function(assert)
+  list(LENGTH ARGN ARGUMENTS_LENGTH)
+  if(ARGUMENTS_LENGTH GREATER 0)
+    set(ARGUMENTS ${ARGN})
 
-# Asserts whether the given condition is false.
-#
-# Arguments:
-#   - CONDITION: The condition to assert.
-function(assert_false CONDITION)
-  if("${CONDITION}")
-    message(FATAL_ERROR "expected the condition to be false")
+    # Determines whether the given arguments start with 'NOT'.
+    list(GET ARGUMENTS 0 ARGUMENTS_0)
+    if(ARGUMENTS_0 STREQUAL NOT)
+      list(REMOVE_AT ARGUMENTS 0)
+      set(BOOLEAN_WORD " false")
+    else()
+      set(ARGUMENT_NOT NOT)
+      set(BOOLEAN_WORD " true")
+    endif()
+
+    if(${ARGUMENT_NOT} ${ARGUMENTS})
+      message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
+    endif()
   endif()
 endfunction()
 

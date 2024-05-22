@@ -12,8 +12,7 @@ endfunction()
 
 add_cmake_test(
   cmake/AssertionTest.cmake
-  "Assert a true condition"
-  "Assert a false condition"
+  "Boolean assertions"
   "Assert a defined variable"
   "Assert an undefined variable"
   "Assert a file path"

@@ -2,22 +2,19 @@ cmake_minimum_required(VERSION 3.5)
 
 include(Assertion)
 
-function("Assert a true condition")
-  assert_true(TRUE)
+function("Boolean assertions")
+  assert(TRUE)
+  assert(NOT FALSE)
 
   mock_message()
-    assert_false(TRUE)
+    assert(FALSE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected the condition to be false")
-endfunction()
-
-function("Assert a false condition")
-  assert_false(FALSE)
+  assert_message(FATAL_ERROR "expected 'FALSE' to resolve to true")
 
   mock_message()
-    assert_true(FALSE)
+    assert(NOT TRUE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected the condition to be true")
+  assert_message(FATAL_ERROR "expected 'TRUE' to resolve to false")
 endfunction()
 
 function("Assert a defined variable")
