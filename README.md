@@ -31,21 +31,23 @@ This module can be integrated into a CMake project in the following ways:
 
 ## Example Usages
 
-This example demonstrates how to use functions from this module to perform assertions:
+This example demonstrates how to use the `assert` function from this module to perform assertions:
 
 ```cmake
-assert_true(TRUE)
-assert_false(FALSE)
+assert(TRUE)
+assert(NOT FALSE)
 
 set(SOME_VARIABLE "some value")
 
-assert_defined(SOME_VARIABLE)
-assert_strequal("${SOME_VARIABLE}" "some value")
+assert(DEFINED SOME_VARIABLE)
+assert("${SOME_VARIABLE}" STREQUAL "some value")
 
-file(TOUCH some-file)
+assert("some other string" MATCHES "some.*string")
 
-assert_exists(some-file)
-assert_not_directory(some-file)
+file(TOUCH some_file)
+
+assert(EXISTS some_file)
+assert(NOT DIRECTORY some_file)
 ```
 
 ### Mock and Assert Messages
