@@ -4,6 +4,12 @@
 include_guard(GLOBAL)
 
 # Asserts whether the given condition is true.
+#
+# This function performs an assertion on the given condition. It will output a
+# fatal error message if the assertion fails.
+#
+# Refer to the documentation of the 'if' function for supported conditions to
+# perform the assertion.
 function(assert)
   list(LENGTH ARGN ARGUMENTS_LENGTH)
   if(ARGUMENTS_LENGTH GREATER 0)
