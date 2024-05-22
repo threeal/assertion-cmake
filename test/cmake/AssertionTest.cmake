@@ -86,22 +86,19 @@ function("Regular expression match assertions")
   assert_message(FATAL_ERROR "expected string 'some string' not to match 'so.*ing'")
 endfunction()
 
-function("Assert equal strings")
-  assert_strequal("some string" "some string")
+function("String equality assertions")
+  assert("some string" STREQUAL "some string")
+  assert(NOT "some string" STREQUAL "some other string")
 
   mock_message()
-    assert_not_strequal("some string" "some string")
-  end_mock_message()
-  assert_message(FATAL_ERROR "expected string 'some string' not to be equal to 'some string'")
-endfunction()
-
-function("Assert unequal strings")
-  assert_not_strequal("some string" "some other string")
-
-  mock_message()
-    assert_strequal("some string" "some other string")
+    assert("some string" STREQUAL "some other string")
   end_mock_message()
   assert_message(FATAL_ERROR "expected string 'some string' to be equal to 'some other string'")
+
+  mock_message()
+    assert(NOT "some string" STREQUAL "some string")
+  end_mock_message()
+  assert_message(FATAL_ERROR "expected string 'some string' not to be equal to 'some string'")
 endfunction()
 
 function(call_sample_messages)
@@ -118,13 +115,15 @@ function("Mock message")
   end_mock_message()
 
   assert(DEFINED WARNING_MESSAGES)
-  assert_strequal("${WARNING_MESSAGES}" "some warning message;some other warning message")
+
+  set(EXPECTED_WARNING_MESSAGES "some warning message;some other warning message")
+  assert(WARNING_MESSAGES STREQUAL EXPECTED_WARNING_MESSAGES)
 
   assert(DEFINED ERROR_MESSAGES)
-  assert_strequal("${ERROR_MESSAGES}" "some error message")
+  assert("${ERROR_MESSAGES}" STREQUAL "some error message")
 
   assert(DEFINED FATAL_ERROR_MESSAGES)
-  assert_strequal("${FATAL_ERROR_MESSAGES}" "some fatal error message")
+  assert("${FATAL_ERROR_MESSAGES}" STREQUAL "some fatal error message")
 endfunction()
 
 function("Assert messages")

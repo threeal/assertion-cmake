@@ -39,9 +39,13 @@ function(assert)
 
       if(OPERATOR STREQUAL MATCHES)
         set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to match '${RIGHT_VALUE}'")
+      elseif(OPERATOR STREQUAL STREQUAL)
+        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to be equal to '${RIGHT_VALUE}'")
       endif()
     endif()
 
+    message(WARNING "ARGN: ${ARGN}")
+    message(WARNING "ARGUMENTS: ${ARGUMENTS}")
     if(${ARGUMENT_NOT} ${ARGUMENTS})
       if(DEFINED MESSAGE)
         message(FATAL_ERROR "${MESSAGE}")
@@ -49,28 +53,6 @@ function(assert)
         message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
       endif()
     endif()
-  endif()
-endfunction()
-
-# Asserts whether the given strings are equal.
-#
-# Arguments:
-#   - STR1: The first string to assert.
-#   - STR2: The second string to assert.
-function(assert_strequal STR1 STR2)
-  if(NOT "${STR1}" STREQUAL "${STR2}")
-    message(FATAL_ERROR "expected string '${STR1}' to be equal to '${STR2}'")
-  endif()
-endfunction()
-
-# Asserts whether the given strings are not equal.
-#
-# Arguments:
-#   - STR1: The first string to assert.
-#   - STR2: The second string to assert.
-function(assert_not_strequal STR1 STR2)
-  if("${STR1}" STREQUAL "${STR2}")
-    message(FATAL_ERROR "expected string '${STR1}' not to be equal to '${STR2}'")
   endif()
 endfunction()
 
