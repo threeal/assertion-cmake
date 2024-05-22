@@ -53,26 +53,22 @@ function("Path existence assertions")
   assert_message(FATAL_ERROR "expected path 'some_file' not to exist")
 endfunction()
 
-function("Assert a file path")
-  file(TOUCH some-file)
+function("Directory path assertions")
+  file(MAKE_DIRECTORY some_directory)
+  file(TOUCH some_file)
+
+  assert(IS_DIRECTORY some_directory)
+  assert(NOT IS_DIRECTORY some_file)
 
   mock_message()
-    assert_directory(some-file)
+    assert(IS_DIRECTORY some_file)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-file' to be a directory")
-
-  assert_not_directory(some-file)
-endfunction()
-
-function("Assert a directory path")
-  file(MAKE_DIRECTORY some-directory)
-
-  assert_directory(some-directory)
+  assert_message(FATAL_ERROR "expected path 'some_file' to be a directory")
 
   mock_message()
-    assert_not_directory(some-directory)
+    assert(NOT IS_DIRECTORY some_directory)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some-directory' not to be a directory")
+  assert_message(FATAL_ERROR "expected path 'some_directory' not to be a directory")
 endfunction()
 
 function("Assert a matching regular expression")

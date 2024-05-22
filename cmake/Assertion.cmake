@@ -29,6 +29,8 @@ function(assert)
         set(MESSAGE "expected variable '${VALUE}'${NOT_WORD} to be defined")
       elseif(OPERATOR STREQUAL EXISTS)
         set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to exist")
+      elseif(OPERATOR STREQUAL IS_DIRECTORY)
+        set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to be a directory")
       endif()
     endif()
 
@@ -39,26 +41,6 @@ function(assert)
         message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
       endif()
     endif()
-  endif()
-endfunction()
-
-# Asserts whether the given path is a directory.
-#
-# Arguments:
-#   - PATH: The path to assert.
-function(assert_directory PATH)
-  if(NOT IS_DIRECTORY "${PATH}")
-    message(FATAL_ERROR "expected path '${PATH}' to be a directory")
-  endif()
-endfunction()
-
-# Asserts whether the given path is not a directory.
-#
-# Arguments:
-#   - PATH: The path to assert.
-function(assert_not_directory PATH)
-  if(IS_DIRECTORY "${PATH}")
-    message(FATAL_ERROR "expected path '${PATH}' not to be a directory")
   endif()
 endfunction()
 
