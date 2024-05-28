@@ -130,18 +130,20 @@ function(assert_message MODE EXPECTED_MESSAGE)
   endif()
 endfunction()
 
-# Asserts whether the given command successfully executes a process.
+# Asserts whether the given command executes a process.
+#
+# This function asserts whether the given command successfully executes a
+# process. If the `ERROR` argument is specified, this function asserts
+# whether the given command fails to execute the process.
 #
 # Optional arguments:
 #   - COMMAND: The command to execute.
-#   - RESULT: If set, asserts whether the executed process exits with the given
-#     status.
 #   - OUTPUT: If set, asserts whether the output of the executed process matches
 #     the given regular expression.
 #   - ERROR: If set, asserts whether the error of the executed process matches
 #     the given regular expression.
 function(assert_execute_process)
-  cmake_parse_arguments(ARG "" "RESULT;OUTPUT;ERROR" "COMMAND" ${ARGN})
+  cmake_parse_arguments(ARG "" "OUTPUT;ERROR" "COMMAND" ${ARGN})
 
   execute_process(
     COMMAND ${ARG_COMMAND}
@@ -150,11 +152,17 @@ function(assert_execute_process)
     ERROR_VARIABLE ERR
   )
 
-  if(DEFINED ARG_RESULT AND NOT RES EQUAL "${ARG_RESULT}")
+  if(DEFINED ARG_ERROR AND RES EQUAL 0)
     string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
     message(
       FATAL_ERROR
-      "expected command '${ARG_COMMAND}' to exit with status ${ARG_RESULT}"
+      "expected command '${ARG_COMMAND}' to fail"
+    )
+  elseif(NOT DEFINED ARG_ERROR AND NOT RES EQUAL 0)
+    string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
+    message(
+      FATAL_ERROR
+      "expected command '${ARG_COMMAND}' not to fail"
     )
   elseif(DEFINED ARG_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_OUTPUT}")
     string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
