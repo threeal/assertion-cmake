@@ -6,6 +6,7 @@ A [CMake](https://cmake.org/) module containing a collection of assertion functi
 
 - Contains a collection of assertion functions for testing purposes.
 - Supports mocking and asserting the `message` function.
+- Supports asserting process execution.
 
 ## Integration
 
@@ -18,14 +19,14 @@ This module can be integrated into a CMake project in the following ways:
 - Use [`file(DOWNLOAD)`](https://cmake.org/cmake/help/latest/command/file.html#download) to automatically download the `Assertion.cmake` file:
   ```cmake
   file(
-    DOWNLOAD https://threeal.github.io/assertion-cmake/v0.1.0
+    DOWNLOAD https://threeal.github.io/assertion-cmake/v0.2.0
     ${CMAKE_BINARY_DIR}/Assertion.cmake
   )
   include(${CMAKE_BINARY_DIR}/Assertion.cmake)
   ```
 - Use [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to add this package to the CMake project:
   ```cmake
-  cpmaddpackage(gh:threeal/assertion-cmake@0.1.0)
+  cpmaddpackage(gh:threeal/assertion-cmake@0.2.0)
   include(${Assertion_SOURCE_DIR}/cmake/Assertion.cmake)
   ```
 
@@ -62,6 +63,28 @@ end_mock_message()
 
 assert_message(STATUS "some status message")
 assert_message(ERROR "some error message")
+```
+
+### Assert Process Execution
+
+Use the `assert_execute_process` function to assert whether the given command successfully executed a process:
+
+```cmake
+assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true)
+```
+
+This function can also assert the standard output and error of the executed process:
+
+```cmake
+assert_execute_process(
+  COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
+  OUTPUT "Hello world!"
+)
+
+assert_execute_process(
+  COMMAND "${CMAKE_COMMAND}" invalid-dir
+  ERROR "CMake Error: The source directory .* does not exist."
+)
 ```
 
 ## License
