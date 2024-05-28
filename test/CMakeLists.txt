@@ -12,6 +12,7 @@ endfunction()
 
 add_cmake_test(
   cmake/AssertionTest.cmake
+  "Empty assertions"
   "Boolean assertions"
   "Variable existence assertions"
   "Path existence assertions"

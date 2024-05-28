@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 include(Assertion)
 
+function("Empty assertions")
+  assert()
+  assert(NOT)
+endfunction()
+
 function("Boolean assertions")
   assert(TRUE)
   assert(NOT FALSE)
