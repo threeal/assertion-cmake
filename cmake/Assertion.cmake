@@ -10,125 +10,60 @@ include_guard(GLOBAL)
 #
 # Refer to the documentation of the 'if' function for supported conditions to
 # perform the assertion.
-#
-# Aside from the assertions specified in the documentation of the 'if' function,
-# this function also supports mocked message and execute process assertions.
-#
-# The mocked message assertion can be done by calling 'assert(MESSAGE <MODE>
-# <EXPECTED_MESSAGE>)', where 'MODE' is the message mode and 'EXPECTED_MESSAGE'
-# is the expected message.
-#
-# The execute process assertion can be done by calling 'assert(EXECUTE_PROCESS
-# [COMMAND COMMAND ARG...] [RESULT EXPECTED_RESULT] [OUTPUT EXPECTED_OUTPUT]
-# [ERROR EXPECTED_ERROR])', where 'COMMAND ARG...' is the command to be
-# executed, 'EXPECTED_RESULT' is the expected process exit code,
-# 'EXPECTED_OUTPUT' is the expected process output, and 'EXPECTED_ERROR' is the
-# expected process error.
 function(assert)
   list(LENGTH ARGN ARGUMENTS_LENGTH)
   if(ARGUMENTS_LENGTH GREATER 0)
     set(ARGUMENTS ${ARGN})
 
-    list(GET ARGUMENTS 0 ASSERTION)
-    if(ASSERTION STREQUAL MESSAGE)
-      list(LENGTH ARGUMENTS ARGUMENTS_LENGTH)
-      if(ARGUMENTS_LENGTH LESS 3)
-        message(FATAL_ERROR "usage: assert(MESSAGE <MODE> <EXPECTED_MESSAGE>)")
-      endif()
-      list(GET ARGUMENTS 1 MODE)
-      list(GET ARGUMENTS 2 EXPECTED_MESSAGE)
-
-      list(POP_FRONT ${MODE}_MESSAGES MESSAGE)
-      if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
-        string(TOLOWER "${MODE}" MODE)
-        string(REPLACE "_" " " MODE "${MODE}")
-        message(FATAL_ERROR "expected ${MODE} message '${MESSAGE}' to be equal to '${EXPECTED_MESSAGE}'")
-      endif()
-
-      if(DEFINED ${MODE}_MESSAGES)
-        set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
-      endif()
-    elseif(ASSERTION STREQUAL EXECUTE_PROCESS)
+    # Determines whether the given arguments start with 'NOT'.
+    list(GET ARGUMENTS 0 ARGUMENTS_0)
+    if(ARGUMENTS_0 STREQUAL NOT)
       list(REMOVE_AT ARGUMENTS 0)
-      cmake_parse_arguments(ARG "" "RESULT;OUTPUT;ERROR" "COMMAND" ${ARGUMENTS})
-
-      execute_process(
-        COMMAND ${ARG_COMMAND}
-        RESULT_VARIABLE RES
-        OUTPUT_VARIABLE OUT
-        ERROR_VARIABLE ERR
-      )
-
-      if(DEFINED ARG_RESULT AND NOT RES EQUAL "${ARG_RESULT}")
-        string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
-        message(
-          FATAL_ERROR
-          "expected command '${ARG_COMMAND}' to exit with status ${ARG_RESULT}"
-        )
-      elseif(DEFINED ARG_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_OUTPUT}")
-        string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
-        message(
-          FATAL_ERROR
-          "expected the output of command '${ARG_COMMAND}' to match '${ARG_OUTPUT}'"
-        )
-      elseif(DEFINED ARG_ERROR AND NOT "${ERR}" MATCHES "${ARG_ERROR}")
-        string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
-        message(
-          FATAL_ERROR
-          "expected the error of command '${ARG_COMMAND}' to match '${ARG_ERROR}'"
-        )
-      endif()
+      set(BOOLEAN_WORD " false")
+      set(NOT_WORD " not")
     else()
-      # Determines whether the given arguments start with 'NOT'.
-      list(GET ARGUMENTS 0 ARGUMENTS_0)
-      if(ARGUMENTS_0 STREQUAL NOT)
-        list(REMOVE_AT ARGUMENTS 0)
-        set(BOOLEAN_WORD " false")
-        set(NOT_WORD " not")
+      set(ARGUMENT_NOT NOT)
+      set(BOOLEAN_WORD " true")
+    endif()
+
+    list(LENGTH ARGUMENTS ARGUMENTS_LENGTH)
+    if(ARGUMENTS_LENGTH EQUAL 2)
+      list(GET ARGUMENTS 0 OPERATOR)
+      list(GET ARGUMENTS 1 VALUE)
+
+      if(OPERATOR STREQUAL DEFINED)
+        set(MESSAGE "expected variable '${VALUE}'${NOT_WORD} to be defined")
+      elseif(OPERATOR STREQUAL EXISTS)
+        set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to exist")
+      elseif(OPERATOR STREQUAL IS_DIRECTORY)
+        set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to be a directory")
+      endif()
+    elseif(ARGUMENTS_LENGTH EQUAL 3)
+      list(GET ARGUMENTS 0 LEFT_VALUE)
+      list(GET ARGUMENTS 1 OPERATOR)
+      list(GET ARGUMENTS 2 RIGHT_VALUE)
+
+      if(OPERATOR STREQUAL MATCHES)
+        if(DEFINED "${LEFT_VALUE}")
+          set(LEFT_VALUE "${${LEFT_VALUE}}")
+        endif()
+        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to match '${RIGHT_VALUE}'")
+      elseif(OPERATOR STREQUAL STREQUAL)
+        if(DEFINED "${LEFT_VALUE}")
+          set(LEFT_VALUE "${${LEFT_VALUE}}")
+        endif()
+        if(DEFINED "${RIGHT_VALUE}")
+          set(RIGHT_VALUE "${${RIGHT_VALUE}}")
+        endif()
+        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to be equal to '${RIGHT_VALUE}'")
+      endif()
+    endif()
+
+    if(${ARGUMENT_NOT} ${ARGUMENTS})
+      if(DEFINED MESSAGE)
+        message(FATAL_ERROR "${MESSAGE}")
       else()
-        set(ARGUMENT_NOT NOT)
-        set(BOOLEAN_WORD " true")
-      endif()
-
-      list(LENGTH ARGUMENTS ARGUMENTS_LENGTH)
-      if(ARGUMENTS_LENGTH EQUAL 2)
-        list(GET ARGUMENTS 0 OPERATOR)
-        list(GET ARGUMENTS 1 VALUE)
-
-        if(OPERATOR STREQUAL DEFINED)
-          set(MESSAGE "expected variable '${VALUE}'${NOT_WORD} to be defined")
-        elseif(OPERATOR STREQUAL EXISTS)
-          set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to exist")
-        elseif(OPERATOR STREQUAL IS_DIRECTORY)
-          set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to be a directory")
-        endif()
-      elseif(ARGUMENTS_LENGTH EQUAL 3)
-        list(GET ARGUMENTS 0 LEFT_VALUE)
-        list(GET ARGUMENTS 1 OPERATOR)
-        list(GET ARGUMENTS 2 RIGHT_VALUE)
-
-        if(OPERATOR STREQUAL MATCHES)
-          if(DEFINED "${LEFT_VALUE}")
-            set(LEFT_VALUE "${${LEFT_VALUE}}")
-          endif()
-          set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to match '${RIGHT_VALUE}'")
-        elseif(OPERATOR STREQUAL STREQUAL)
-          if(DEFINED "${LEFT_VALUE}")
-            set(LEFT_VALUE "${${LEFT_VALUE}}")
-          endif()
-          if(DEFINED "${RIGHT_VALUE}")
-            set(RIGHT_VALUE "${${RIGHT_VALUE}}")
-          endif()
-          set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to be equal to '${RIGHT_VALUE}'")
-        endif()
-      endif()
-
-      if(${ARGUMENT_NOT} ${ARGUMENTS})
-        if(DEFINED MESSAGE)
-          message(FATAL_ERROR "${MESSAGE}")
-        else()
-          message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
-        endif()
+        message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
       endif()
     endif()
   endif()
@@ -169,4 +104,69 @@ endfunction()
 # to the original behavior.
 function(end_mock_message)
   set_property(GLOBAL PROPERTY message_mocked OFF)
+endfunction()
+
+# Asserts whether the 'message' function was called with the expected arguments.
+#
+# This function asserts whether a message with the specified mode was called
+# with the expected message content.
+#
+# This function can only assert calls to the mocked 'message' function, which is
+# enabled by calling the 'mock_message' function.
+#
+# Arguments:
+#   - MODE: The message mode.
+#   - EXPECTED_MESSAGE: The expected message content.
+function(assert_message MODE EXPECTED_MESSAGE)
+  list(POP_FRONT ${MODE}_MESSAGES MESSAGE)
+  if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
+    string(TOLOWER "${MODE}" MODE)
+    string(REPLACE "_" " " MODE "${MODE}")
+    message(FATAL_ERROR "expected ${MODE} message '${MESSAGE}' to be equal to '${EXPECTED_MESSAGE}'")
+  endif()
+
+  if(DEFINED ${MODE}_MESSAGES)
+    set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+  endif()
+endfunction()
+
+# Asserts whether the given command successfully executes a process.
+#
+# Optional arguments:
+#   - COMMAND: The command to execute.
+#   - RESULT: If set, asserts whether the executed process exits with the given
+#     status.
+#   - OUTPUT: If set, asserts whether the output of the executed process matches
+#     the given regular expression.
+#   - ERROR: If set, asserts whether the error of the executed process matches
+#     the given regular expression.
+function(assert_execute_process)
+  cmake_parse_arguments(ARG "" "RESULT;OUTPUT;ERROR" "COMMAND" ${ARGN})
+
+  execute_process(
+    COMMAND ${ARG_COMMAND}
+    RESULT_VARIABLE RES
+    OUTPUT_VARIABLE OUT
+    ERROR_VARIABLE ERR
+  )
+
+  if(DEFINED ARG_RESULT AND NOT RES EQUAL "${ARG_RESULT}")
+    string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
+    message(
+      FATAL_ERROR
+      "expected command '${ARG_COMMAND}' to exit with status ${ARG_RESULT}"
+    )
+  elseif(DEFINED ARG_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_OUTPUT}")
+    string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
+    message(
+      FATAL_ERROR
+      "expected the output of command '${ARG_COMMAND}' to match '${ARG_OUTPUT}'"
+    )
+  elseif(DEFINED ARG_ERROR AND NOT "${ERR}" MATCHES "${ARG_ERROR}")
+    string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
+    message(
+      FATAL_ERROR
+      "expected the error of command '${ARG_COMMAND}' to match '${ARG_ERROR}'"
+    )
+  endif()
 endfunction()

@@ -60,8 +60,8 @@ mock_message()
   message(ERROR "some error message")
 end_mock_message()
 
-assert(MESSAGE STATUS "some status message")
-assert(MESSAGE ERROR "some error message")
+assert_message(STATUS "some status message")
+assert_message(ERROR "some error message")
 ```
 
 ## License

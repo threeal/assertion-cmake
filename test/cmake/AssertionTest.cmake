@@ -9,12 +9,12 @@ function("Boolean assertions")
   mock_message()
     assert(FALSE)
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected 'FALSE' to resolve to true")
+  assert_message(FATAL_ERROR "expected 'FALSE' to resolve to true")
 
   mock_message()
     assert(NOT TRUE)
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected 'TRUE' to resolve to false")
+  assert_message(FATAL_ERROR "expected 'TRUE' to resolve to false")
 endfunction()
 
 function("Variable existence assertions")
@@ -27,12 +27,18 @@ function("Variable existence assertions")
   mock_message()
     assert(DEFINED NON_EXISTING_VARIABLE)
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected variable 'NON_EXISTING_VARIABLE' to be defined")
+  assert_message(
+    FATAL_ERROR
+    "expected variable 'NON_EXISTING_VARIABLE' to be defined"
+  )
 
   mock_message()
     assert(NOT DEFINED EXISTING_VARIABLE)
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected variable 'EXISTING_VARIABLE' not to be defined")
+  assert_message(
+    FATAL_ERROR
+    "expected variable 'EXISTING_VARIABLE' not to be defined"
+  )
 endfunction()
 
 function("Path existence assertions")
@@ -45,12 +51,12 @@ function("Path existence assertions")
   mock_message()
     assert(EXISTS non_existing_file)
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected path 'non_existing_file' to exist")
+  assert_message(FATAL_ERROR "expected path 'non_existing_file' to exist")
 
   mock_message()
     assert(NOT EXISTS some_file)
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected path 'some_file' not to exist")
+  assert_message(FATAL_ERROR "expected path 'some_file' not to exist")
 endfunction()
 
 function("Directory path assertions")
@@ -63,12 +69,15 @@ function("Directory path assertions")
   mock_message()
     assert(IS_DIRECTORY some_file)
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected path 'some_file' to be a directory")
+  assert_message(FATAL_ERROR "expected path 'some_file' to be a directory")
 
   mock_message()
     assert(NOT IS_DIRECTORY some_directory)
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected path 'some_directory' not to be a directory")
+  assert_message(
+    FATAL_ERROR
+    "expected path 'some_directory' not to be a directory"
+  )
 endfunction()
 
 function("Regular expression match assertions")
@@ -81,12 +90,18 @@ function("Regular expression match assertions")
     mock_message()
       assert(NOT "${VALUE}" MATCHES "so.*ing")
     end_mock_message()
-    assert(MESSAGE FATAL_ERROR "expected string 'some string' not to match 'so.*ing'")
+    assert_message(
+      FATAL_ERROR
+      "expected string 'some string' not to match 'so.*ing'"
+    )
 
     mock_message()
       assert("${VALUE}" MATCHES "so.*other.*ing")
     end_mock_message()
-    assert(MESSAGE FATAL_ERROR "expected string 'some string' to match 'so.*other.*ing'")
+    assert_message(
+      FATAL_ERROR
+      "expected string 'some string' to match 'so.*other.*ing'"
+    )
   endforeach()
 endfunction()
 
@@ -107,14 +122,20 @@ function("String equality assertions")
       mock_message()
         assert("${LEFT_VALUE}" STREQUAL "${RIGHT_VALUE}")
       end_mock_message()
-      assert(MESSAGE FATAL_ERROR "expected string 'some string' to be equal to 'some other string'")
+      assert_message(
+        FATAL_ERROR
+        "expected string 'some string' to be equal to 'some other string'"
+      )
     endforeach()
 
     foreach(RIGHT_VALUE STRING_VAR "${STRING_VAR}")
       mock_message()
         assert(NOT "${LEFT_VALUE}" STREQUAL "${RIGHT_VALUE}")
       end_mock_message()
-      assert(MESSAGE FATAL_ERROR "expected string 'some string' not to be equal to 'some string'")
+      assert_message(
+        FATAL_ERROR
+        "expected string 'some string' not to be equal to 'some string'"
+      )
     endforeach()
   endforeach()
 endfunction()
@@ -132,76 +153,74 @@ function("Message assertions")
     call_sample_messages()
   end_mock_message()
 
-  assert(MESSAGE WARNING "some warning message")
-  assert(MESSAGE WARNING "some other warning message")
-  assert(MESSAGE ERROR "some error message")
-  assert(MESSAGE FATAL_ERROR "some fatal error message")
+  assert_message(WARNING "some warning message")
+  assert_message(WARNING "some other warning message")
+  assert_message(ERROR "some error message")
+  assert_message(FATAL_ERROR "some fatal error message")
 
   mock_message()
-    assert(MESSAGE ERROR "some other error message")
+    assert_message(ERROR "some other error message")
   end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected error message '' to be equal to 'some other error message'")
-
-  mock_message()
-    assert(MESSAGE SOME_MODE)
-  end_mock_message()
-  assert(MESSAGE FATAL_ERROR "usage: assert(MESSAGE <MODE> <EXPECTED_MESSAGE>)")
+  assert_message(
+    FATAL_ERROR
+    "expected error message '' to be equal to 'some other error message'"
+  )
 endfunction()
 
 function("Process execution assertions")
-  assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E true)
-  assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E false)
+  assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true)
+  assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E false)
 
-  assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E true RESULT 0)
-  assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E false RESULT 1)
+  assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true RESULT 0)
+  assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E false RESULT 1)
 
   mock_message()
-    assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E true RESULT 1)
+    assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true RESULT 1)
   end_mock_message()
-  assert(
-    MESSAGE FATAL_ERROR
+  assert_message(
+    FATAL_ERROR
     "expected command '${CMAKE_COMMAND} -E true' to exit with status 1"
   )
 
   mock_message()
-    assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E false RESULT 0)
+    assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E false RESULT 0)
   end_mock_message()
-  assert(
-    MESSAGE FATAL_ERROR
+  assert_message(
+    FATAL_ERROR
     "expected command '${CMAKE_COMMAND} -E false' to exit with status 0"
   )
 
-  assert(
-    EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
+  assert_execute_process(
+    COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
     OUTPUT "Hello.*!"
   )
 
   mock_message()
-    assert(
-      EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
+    assert_execute_process(
+      COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
       OUTPUT "Hi.*!"
     )
   end_mock_message()
-  assert(
-    MESSAGE FATAL_ERROR
+  assert_message(
+    FATAL_ERROR
     "expected the output of command '${CMAKE_COMMAND} -E echo Hello world!' to match 'Hi.*!'"
   )
 
-  assert(
-    EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E invalid
+  assert_execute_process(
+    COMMAND "${CMAKE_COMMAND}" -E invalid
     RESULT 1
     ERROR "CMake Error:.*Available commands:"
   )
 
   mock_message()
-    assert(
-      EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E invalid
+    assert_execute_process(
+      COMMAND "${CMAKE_COMMAND}" -E invalid
       RESULT 1
       ERROR "CMake Error:.*Unavailable commands:"
     )
   end_mock_message()
-  assert(
-    MESSAGE FATAL_ERROR
+  assert_message(
+    FATAL_ERROR
     "expected the error of command '${CMAKE_COMMAND} -E invalid' to match 'CMake Error:.*Unavailable commands:'"
   )
 endfunction()
