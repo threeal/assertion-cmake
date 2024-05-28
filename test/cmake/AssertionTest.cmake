@@ -148,6 +148,64 @@ function("Message assertions")
   assert(MESSAGE FATAL_ERROR "usage: assert(MESSAGE <MODE> <EXPECTED_MESSAGE>)")
 endfunction()
 
+function("Process execution assertions")
+  assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E true)
+  assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E false)
+
+  assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E true RESULT 0)
+  assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E false RESULT 1)
+
+  mock_message()
+    assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E true RESULT 1)
+  end_mock_message()
+  assert(
+    MESSAGE FATAL_ERROR
+    "expected command '${CMAKE_COMMAND} -E true' to exit with status 1"
+  )
+
+  mock_message()
+    assert(EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E false RESULT 0)
+  end_mock_message()
+  assert(
+    MESSAGE FATAL_ERROR
+    "expected command '${CMAKE_COMMAND} -E false' to exit with status 0"
+  )
+
+  assert(
+    EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
+    OUTPUT "Hello.*!"
+  )
+
+  mock_message()
+    assert(
+      EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
+      OUTPUT "Hi.*!"
+    )
+  end_mock_message()
+  assert(
+    MESSAGE FATAL_ERROR
+    "expected the output of command '${CMAKE_COMMAND} -E echo Hello world!' to match 'Hi.*!'"
+  )
+
+  assert(
+    EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E invalid
+    RESULT 1
+    ERROR "CMake Error:.*Available commands:"
+  )
+
+  mock_message()
+    assert(
+      EXECUTE_PROCESS COMMAND "${CMAKE_COMMAND}" -E invalid
+      RESULT 1
+      ERROR "CMake Error:.*Unavailable commands:"
+    )
+  end_mock_message()
+  assert(
+    MESSAGE FATAL_ERROR
+    "expected the error of command '${CMAKE_COMMAND} -E invalid' to match 'CMake Error:.*Unavailable commands:'"
+  )
+endfunction()
+
 function("Mock message")
   mock_message()
     call_sample_messages()
@@ -163,54 +221,6 @@ function("Mock message")
 
   assert(DEFINED FATAL_ERROR_MESSAGES)
   assert("${FATAL_ERROR_MESSAGES}" STREQUAL "some fatal error message")
-endfunction()
-
-function("Assert successful process execution")
-  assert_execute_process("${CMAKE_COMMAND}" -E true)
-
-  mock_message()
-    assert_not_execute_process("${CMAKE_COMMAND}" -E true)
-  end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected command '${CMAKE_COMMAND} -E true' to fail (exit code: 0)")
-endfunction()
-
-function("Assert failed process execution")
-  mock_message()
-    assert_execute_process("${CMAKE_COMMAND}" -E false)
-  end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected command '${CMAKE_COMMAND} -E false' not to fail (exit code: 1)")
-
-  assert_not_execute_process("${CMAKE_COMMAND}" -E false)
-endfunction()
-
-function("Assert matching process execution output")
-  assert_execute_process(
-    "${CMAKE_COMMAND}" -E echo "Hello world!"
-    EXPECTED_OUTPUT "Hello.*!"
-  )
-
-  assert_not_execute_process(
-    "${CMAKE_COMMAND}" -E invalid
-    EXPECTED_OUTPUT "CMake Error:.*Available commands:"
-  )
-endfunction()
-
-function("Assert non-matching process execution output")
-  mock_message()
-    assert_execute_process(
-      "${CMAKE_COMMAND}" -E echo "Hello world!"
-      EXPECTED_OUTPUT "Hi.*!"
-    )
-  end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected the output of command '${CMAKE_COMMAND} -E echo Hello world!' to match 'Hi.*!'")
-
-  mock_message()
-    assert_not_execute_process(
-      "${CMAKE_COMMAND}" -E invalid
-      EXPECTED_OUTPUT "CMake Error:.*Unavailable commands:"
-    )
-  end_mock_message()
-  assert(MESSAGE FATAL_ERROR "expected the output of command '${CMAKE_COMMAND} -E invalid' to match 'CMake Error:.*Unavailable commands:'")
 endfunction()
 
 cmake_language(CALL "${TEST_COMMAND}")

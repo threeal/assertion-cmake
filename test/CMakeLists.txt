@@ -19,9 +19,6 @@ add_cmake_test(
   "Regular expression match assertions"
   "String equality assertions"
   "Message assertions"
+  "Process execution assertions"
   "Mock message"
-  "Assert successful process execution"
-  "Assert failed process execution"
-  "Assert matching process execution output"
-  "Assert non-matching process execution output"
 )
