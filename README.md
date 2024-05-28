@@ -65,6 +65,28 @@ assert_message(STATUS "some status message")
 assert_message(ERROR "some error message")
 ```
 
+### Assert Process Execution
+
+Use the `assert_execute_process` function to assert whether the given command successfully executed a process:
+
+```cmake
+assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true)
+```
+
+This function can also assert the standard output and error of the executed process:
+
+```cmake
+assert_execute_process(
+  COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
+  OUTPUT "Hello world!"
+)
+
+assert_execute_process(
+  COMMAND "${CMAKE_COMMAND}" invalid-dir
+  ERROR "CMake Error: The source directory .* does not exist."
+)
+```
+
 ## License
 
 This project is licensed under the terms of the [MIT License](./LICENSE).
