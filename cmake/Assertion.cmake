@@ -12,43 +12,19 @@ include_guard(GLOBAL)
 # perform the assertion.
 #
 # Aside from the assertions specified in the documentation of the 'if' function,
-# this function also supports mocked message and execute process assertions.
-#
-# The mocked message assertion can be done by calling 'assert(MESSAGE <MODE>
-# <EXPECTED_MESSAGE>)', where 'MODE' is the message mode and 'EXPECTED_MESSAGE'
-# is the expected message.
-#
-# The execute process assertion can be done by calling 'assert(EXECUTE_PROCESS
-# [COMMAND COMMAND ARG...] [RESULT EXPECTED_RESULT] [OUTPUT EXPECTED_OUTPUT]
-# [ERROR EXPECTED_ERROR])', where 'COMMAND ARG...' is the command to be
-# executed, 'EXPECTED_RESULT' is the expected process exit code,
-# 'EXPECTED_OUTPUT' is the expected process output, and 'EXPECTED_ERROR' is the
-# expected process error.
+# this function also supports execute process assertions by calling
+# 'assert(EXECUTE_PROCESS [COMMAND COMMAND ARG...] [RESULT EXPECTED_RESULT]
+# [OUTPUT EXPECTED_OUTPUT] [ERROR EXPECTED_ERROR])', where 'COMMAND ARG...' is
+# the command to be executed, 'EXPECTED_RESULT' is the expected process exit
+# code, 'EXPECTED_OUTPUT' is the expected process output, and 'EXPECTED_ERROR'
+# is the expected process error.
 function(assert)
   list(LENGTH ARGN ARGUMENTS_LENGTH)
   if(ARGUMENTS_LENGTH GREATER 0)
     set(ARGUMENTS ${ARGN})
 
     list(GET ARGUMENTS 0 ASSERTION)
-    if(ASSERTION STREQUAL MESSAGE)
-      list(LENGTH ARGUMENTS ARGUMENTS_LENGTH)
-      if(ARGUMENTS_LENGTH LESS 3)
-        message(FATAL_ERROR "usage: assert(MESSAGE <MODE> <EXPECTED_MESSAGE>)")
-      endif()
-      list(GET ARGUMENTS 1 MODE)
-      list(GET ARGUMENTS 2 EXPECTED_MESSAGE)
-
-      list(POP_FRONT ${MODE}_MESSAGES MESSAGE)
-      if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
-        string(TOLOWER "${MODE}" MODE)
-        string(REPLACE "_" " " MODE "${MODE}")
-        message(FATAL_ERROR "expected ${MODE} message '${MESSAGE}' to be equal to '${EXPECTED_MESSAGE}'")
-      endif()
-
-      if(DEFINED ${MODE}_MESSAGES)
-        set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
-      endif()
-    elseif(ASSERTION STREQUAL EXECUTE_PROCESS)
+    if(ASSERTION STREQUAL EXECUTE_PROCESS)
       list(REMOVE_AT ARGUMENTS 0)
       cmake_parse_arguments(ARG "" "RESULT;OUTPUT;ERROR" "COMMAND" ${ARGUMENTS})
 
@@ -169,4 +145,28 @@ endfunction()
 # to the original behavior.
 function(end_mock_message)
   set_property(GLOBAL PROPERTY message_mocked OFF)
+endfunction()
+
+# Asserts whether the 'message' function was called with the expected arguments.
+#
+# This function asserts whether a message with the specified mode was called
+# with the expected message content.
+#
+# This function can only assert calls to the mocked 'message' function, which is
+# enabled by calling the 'mock_message' function.
+#
+# Arguments:
+#   - MODE: The message mode.
+#   - EXPECTED_MESSAGE: The expected message content.
+function(assert_message MODE EXPECTED_MESSAGE)
+  list(POP_FRONT ${MODE}_MESSAGES MESSAGE)
+  if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
+    string(TOLOWER "${MODE}" MODE)
+    string(REPLACE "_" " " MODE "${MODE}")
+    message(FATAL_ERROR "expected ${MODE} message '${MESSAGE}' to be equal to '${EXPECTED_MESSAGE}'")
+  endif()
+
+  if(DEFINED ${MODE}_MESSAGES)
+    set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+  endif()
 endfunction()
