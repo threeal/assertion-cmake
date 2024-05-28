@@ -12,9 +12,18 @@ include_guard(GLOBAL)
 # perform the assertion.
 #
 # Aside from the assertions specified in the documentation of the 'if' function,
-# this function also supports mocked message assertion by calling
-# 'assert(MESSAGE <MODE> <EXPECTED_MESSAGE>)', where 'MODE' is the message mode
-# and 'EXPECTED_MESSAGE' is the expected message.
+# this function also supports mocked message and execute process assertions.
+#
+# The mocked message assertion can be done by calling 'assert(MESSAGE <MODE>
+# <EXPECTED_MESSAGE>)', where 'MODE' is the message mode and 'EXPECTED_MESSAGE'
+# is the expected message.
+#
+# The execute process assertion can be done by calling 'assert(EXECUTE_PROCESS
+# [COMMAND COMMAND ARG...] [RESULT EXPECTED_RESULT] [OUTPUT EXPECTED_OUTPUT]
+# [ERROR EXPECTED_ERROR])', where 'COMMAND ARG...' is the command to be
+# executed, 'EXPECTED_RESULT' is the expected process exit code,
+# 'EXPECTED_OUTPUT' is the expected process output, and 'EXPECTED_ERROR' is the
+# expected process error.
 function(assert)
   list(LENGTH ARGN ARGUMENTS_LENGTH)
   if(ARGUMENTS_LENGTH GREATER 0)
@@ -38,6 +47,36 @@ function(assert)
 
       if(DEFINED ${MODE}_MESSAGES)
         set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+      endif()
+    elseif(ASSERTION STREQUAL EXECUTE_PROCESS)
+      list(REMOVE_AT ARGUMENTS 0)
+      cmake_parse_arguments(ARG "" "RESULT;OUTPUT;ERROR" "COMMAND" ${ARGUMENTS})
+
+      execute_process(
+        COMMAND ${ARG_COMMAND}
+        RESULT_VARIABLE RES
+        OUTPUT_VARIABLE OUT
+        ERROR_VARIABLE ERR
+      )
+
+      if(DEFINED ARG_RESULT AND NOT RES EQUAL "${ARG_RESULT}")
+        string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
+        message(
+          FATAL_ERROR
+          "expected command '${ARG_COMMAND}' to exit with status ${ARG_RESULT}"
+        )
+      elseif(DEFINED ARG_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_OUTPUT}")
+        string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
+        message(
+          FATAL_ERROR
+          "expected the output of command '${ARG_COMMAND}' to match '${ARG_OUTPUT}'"
+        )
+      elseif(DEFINED ARG_ERROR AND NOT "${ERR}" MATCHES "${ARG_ERROR}")
+        string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
+        message(
+          FATAL_ERROR
+          "expected the error of command '${ARG_COMMAND}' to match '${ARG_ERROR}'"
+        )
       endif()
     else()
       # Determines whether the given arguments start with 'NOT'.
@@ -130,42 +169,4 @@ endfunction()
 # to the original behavior.
 function(end_mock_message)
   set_property(GLOBAL PROPERTY message_mocked OFF)
-endfunction()
-
-# Asserts whether the given command successfully executes a process.
-#
-# Arguments:
-#   - ARGN: The command to execute.
-#
-# Optional arguments:
-#   - EXPECTED_OUTPUT: If set, asserts whether the output of the executed
-#     process matches the given regular expression.
-function(assert_execute_process)
-  cmake_parse_arguments(ARG "" "EXPECTED_OUTPUT" "" ${ARGN})
-  execute_process(COMMAND ${ARG_UNPARSED_ARGUMENTS} RESULT_VARIABLE RES OUTPUT_VARIABLE OUT)
-  string(REPLACE ";" " " ARGUMENTS "${ARG_UNPARSED_ARGUMENTS}")
-  if(NOT RES EQUAL 0)
-    message(FATAL_ERROR "expected command '${ARGUMENTS}' not to fail (exit code: ${RES})")
-  elseif(DEFINED ARG_EXPECTED_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_EXPECTED_OUTPUT}")
-    message(FATAL_ERROR "expected the output of command '${ARGUMENTS}' to match '${ARG_EXPECTED_OUTPUT}'")
-  endif()
-endfunction()
-
-# Asserts whether the given command fails to execute a process.
-#
-# Arguments:
-#   - ARGN: The command to execute.
-#
-# Optional arguments:
-#   - EXPECTED_OUTPUT: If set, asserts whether the output of the executed
-#     process matches the given regular expression.
-function(assert_not_execute_process)
-  cmake_parse_arguments(ARG "" "EXPECTED_OUTPUT" "" ${ARGN})
-  execute_process(COMMAND ${ARG_UNPARSED_ARGUMENTS} RESULT_VARIABLE RES ERROR_VARIABLE ERR)
-  string(REPLACE ";" " " ARGUMENTS "${ARG_UNPARSED_ARGUMENTS}")
-  if(RES EQUAL 0)
-    message(FATAL_ERROR "expected command '${ARGUMENTS}' to fail (exit code: ${RES})")
-  elseif(DEFINED ARG_EXPECTED_OUTPUT AND NOT "${ERR}" MATCHES "${ARG_EXPECTED_OUTPUT}")
-    message(FATAL_ERROR "expected the output of command '${ARGUMENTS}' to match '${ARG_EXPECTED_OUTPUT}'")
-  endif()
 endfunction()
