@@ -3,6 +3,23 @@
 
 include_guard(GLOBAL)
 
+# Retrieves the content of the given variable.
+#
+# If the given variable is defined, it sets the output variable to the content
+# of the variable. Otherwise, it sets the output variable to the name of the
+# variable.
+#
+# Arguments:
+#   - VARIABLE: The variable to get the content from.
+#   - OUTPUT_VARIABLE: The output variable that holds the content of the variable.
+function(_assert_internal_get_content VARIABLE OUTPUT_VARIABLE)
+  if(DEFINED "${VARIABLE}")
+    set("${OUTPUT_VARIABLE}" "${${VARIABLE}}" PARENT_SCOPE)
+  else()
+    set("${OUTPUT_VARIABLE}" "${VARIABLE}" PARENT_SCOPE)
+  endif()
+endfunction()
+
 # Asserts whether the given condition is true.
 #
 # This function performs an assertion on the given condition. It will output a
@@ -47,18 +64,12 @@ function(assert)
       list(GET ARGUMENTS 2 RIGHT_VALUE)
 
       if(OPERATOR STREQUAL MATCHES)
-        if(DEFINED "${LEFT_VALUE}")
-          set(LEFT_VALUE "${${LEFT_VALUE}}")
-        endif()
-        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to match '${RIGHT_VALUE}'")
+        _assert_internal_get_content("${LEFT_VALUE}" LEFT_VALUE_CONTENT)
+        set(MESSAGE "expected string '${LEFT_VALUE_CONTENT}'${NOT_WORD} to match '${RIGHT_VALUE}'")
       elseif(OPERATOR STREQUAL STREQUAL)
-        if(DEFINED "${LEFT_VALUE}")
-          set(LEFT_VALUE "${${LEFT_VALUE}}")
-        endif()
-        if(DEFINED "${RIGHT_VALUE}")
-          set(RIGHT_VALUE "${${RIGHT_VALUE}}")
-        endif()
-        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to be equal to '${RIGHT_VALUE}'")
+        _assert_internal_get_content("${LEFT_VALUE}" LEFT_VALUE_CONTENT)
+        _assert_internal_get_content("${RIGHT_VALUE}" RIGHT_VALUE_CONTENT)
+        set(MESSAGE "expected string '${LEFT_VALUE_CONTENT}'${NOT_WORD} to be equal to '${RIGHT_VALUE_CONTENT}'")
       else()
         string(REPLACE ";" " " ARGUMENTS "${ARGUMENTS}")
         message(FATAL_ERROR "unsupported condition: ${ARGUMENTS}")
