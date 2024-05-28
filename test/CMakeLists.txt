@@ -12,12 +12,14 @@ endfunction()
 
 add_cmake_test(
   cmake/AssertionTest.cmake
+  "Empty assertions"
   "Boolean assertions"
   "Variable existence assertions"
   "Path existence assertions"
   "Directory path assertions"
   "Regular expression match assertions"
   "String equality assertions"
+  "Unsupported assertions"
   "Message assertions"
   "Process execution assertions"
   "Mock message"

@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 include(Assertion)
 
+function("Empty assertions")
+  assert()
+  assert(NOT)
+endfunction()
+
 function("Boolean assertions")
   assert(TRUE)
   assert(NOT FALSE)
@@ -137,6 +142,25 @@ function("String equality assertions")
         "expected string 'some string' not to be equal to 'some string'"
       )
     endforeach()
+  endforeach()
+endfunction()
+
+function("Unsupported assertions")
+  foreach(WITH_NOT IN ITEMS "" NOT)
+    mock_message()
+      assert(${WITH_NOT} first second)
+    end_mock_message()
+    assert_message(FATAL_ERROR "unsupported condition: first second")
+
+    mock_message()
+      assert(${WITH_NOT} first second third)
+    end_mock_message()
+    assert_message(FATAL_ERROR "unsupported condition: first second third")
+
+    mock_message()
+      assert(${WITH_NOT} first second fourth)
+    end_mock_message()
+    assert_message(FATAL_ERROR "unsupported condition: first second fourth")
   endforeach()
 endfunction()
 
