@@ -3,7 +3,259 @@
 
 include_guard(GLOBAL)
 
+# Retrieves the content of the given variable.
+#
+# If the given variable is defined, it sets the output variable to the content
+# of the variable. Otherwise, it sets the output variable to the name of the
+# variable.
+#
+# Arguments:
+#   - VARIABLE: The variable to get the content from.
+#   - OUTPUT_VARIABLE: The output variable that holds the content of the variable.
+function(_assert_internal_get_content VARIABLE OUTPUT_VARIABLE)
+  if(DEFINED "${VARIABLE}")
+    set("${OUTPUT_VARIABLE}" "${${VARIABLE}}" PARENT_SCOPE)
+  else()
+    set("${OUTPUT_VARIABLE}" "${VARIABLE}" PARENT_SCOPE)
+  endif()
+endfunction()
+
+# Asserts whether the given variable is defined.
+#
+# Arguments:
+#   - VARIABLE: The variable to check.
+macro(_assert_internal_assert_2_defined VARIABLE)
+  if(NOT DEFINED "${VARIABLE}")
+    message(FATAL_ERROR "expected variable '${VARIABLE}' to be defined")
+  endif()
+endmacro()
+
+# Asserts whether the given variable is not defined.
+#
+# Arguments:
+#   - VARIABLE: The variable to check.
+macro(_assert_internal_assert_2_not_defined VARIABLE)
+  if(DEFINED "${VARIABLE}")
+    message(FATAL_ERROR "expected variable '${VARIABLE}' not to be defined")
+  endif()
+endmacro()
+
+# Asserts whether the given path exists.
+#
+# Arguments:
+#   - PATH: The path to check.
+macro(_assert_internal_assert_2_exists PATH)
+  if(NOT EXISTS "${PATH}")
+    message(FATAL_ERROR "expected path '${PATH}' to exist")
+  endif()
+endmacro()
+
+# Asserts whether the given path does not exist.
+#
+# Arguments:
+#   - PATH: The path to check.
+macro(_assert_internal_assert_2_not_exists PATH)
+  if(EXISTS "${PATH}")
+    message(FATAL_ERROR "expected path '${PATH}' not to exist")
+  endif()
+endmacro()
+
+# Asserts whether the given path is a directory.
+#
+# Arguments:
+#   - PATH: The path to check.
+macro(_assert_internal_assert_2_is_directory PATH)
+  if(NOT IS_DIRECTORY "${PATH}")
+    message(FATAL_ERROR "expected path '${PATH}' to be a directory")
+  endif()
+endmacro()
+
+# Asserts whether the given path is not a directory.
+#
+# Arguments:
+#   - PATH: The path to check.
+macro(_assert_internal_assert_2_not_is_directory PATH)
+  if(IS_DIRECTORY "${PATH}")
+    message(FATAL_ERROR "expected path '${PATH}' not to be a directory")
+  endif()
+endmacro()
+
+# Asserts whether the given string matches the given regular expression.
+#
+# Arguments:
+#   - STRING: The string to check.
+#   - REGEX: The regular expression pattern.
+macro(_assert_internal_assert_3_matches STRING REGEX)
+  _assert_internal_get_content("${STRING}" STRING_CONTENT)
+  if(NOT "${STRING_CONTENT}" MATCHES "${REGEX}")
+    message(
+      FATAL_ERROR
+      "expected string '${STRING_CONTENT}' to match '${REGEX}'"
+    )
+  endif()
+endmacro()
+
+# Asserts whether the given string does not match the given regular expression.
+#
+# Arguments:
+#   - STRING: The string to check.
+#   - REGEX: The regular expression pattern.
+macro(_assert_internal_assert_3_not_matches STRING REGEX)
+  _assert_internal_get_content("${STRING}" STRING_CONTENT)
+  if("${STRING_CONTENT}" MATCHES "${REGEX}")
+    message(
+      FATAL_ERROR
+      "expected string '${STRING_CONTENT}' not to match '${REGEX}'"
+    )
+  endif()
+endmacro()
+
+# Asserts whether the given strings are equal.
+#
+# Arguments:
+#   - STRING1: The first string to check.
+#   - STRING2: The second string to check.
+macro(_assert_internal_assert_3_strequal STRING1 STRING2)
+  _assert_internal_get_content("${STRING1}" STRING1_CONTENT)
+  _assert_internal_get_content("${STRING2}" STRING2_CONTENT)
+  if(NOT "${STRING1_CONTENT}" STREQUAL "${STRING2_CONTENT}")
+    message(
+      FATAL_ERROR
+      "expected string '${STRING1_CONTENT}' to be equal to '${STRING2_CONTENT}'"
+    )
+  endif()
+endmacro()
+
+# Asserts whether the given strings are not equal.
+#
+# Arguments:
+#   - STRING1: The first string to check.
+#   - STRING2: The second string to check.
+macro(_assert_internal_assert_3_not_strequal STRING1 STRING2)
+  _assert_internal_get_content("${STRING1}" STRING1_CONTENT)
+  _assert_internal_get_content("${STRING2}" STRING2_CONTENT)
+  if("${STRING1_CONTENT}" STREQUAL "${STRING2_CONTENT}")
+    message(
+      FATAL_ERROR
+      "expected string '${STRING1_CONTENT}' not to be equal to '${STRING2_CONTENT}'"
+    )
+  endif()
+endmacro()
+
 # Asserts whether the given condition is true.
+#
+# Arguments:
+#   - ARG0: The first argument.
+macro(_assert_internal_assert_1 ARG0)
+  if("${ARG0}" STREQUAL NOT)
+    # Do nothing on an empty condition.
+  else()
+    if(NOT "${ARG0}")
+      message(FATAL_ERROR "expected '${ARG0}' to resolve to true")
+    endif()
+  endif()
+endmacro()
+
+# Asserts whether the given condition is false.
+#
+# Arguments:
+#   - ARG0: The first argument.
+macro(_assert_internal_assert_1_not ARG0)
+  if("${ARG0}")
+    message(FATAL_ERROR "expected '${ARG0}' to resolve to false")
+  endif()
+endmacro()
+
+# Asserts whether the given unary condition is true.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+macro(_assert_internal_assert_2 ARG0 ARG1)
+  if("${ARG0}" STREQUAL NOT)
+    _assert_internal_assert_1_not("${ARG1}")
+  else()
+    string(TOLOWER "${ARG0}" OPERATOR)
+    if(COMMAND "_assert_internal_assert_2_${OPERATOR}")
+      cmake_language(
+        CALL "_assert_internal_assert_2_${OPERATOR}" "${ARG1}"
+      )
+    else()
+      message(FATAL_ERROR "unsupported condition: ${ARG0} ${ARG1}")
+    endif()
+  endif()
+endmacro()
+
+# Asserts whether the given unary condition is false.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+macro(_assert_internal_assert_2_not ARG0 ARG1)
+  string(TOLOWER "${ARG0}" OPERATOR)
+  if(COMMAND "_assert_internal_assert_2_not_${OPERATOR}")
+    cmake_language(
+      CALL "_assert_internal_assert_2_not_${OPERATOR}" "${ARG1}"
+    )
+  else()
+    message(FATAL_ERROR "unsupported condition: NOT ${ARG0} ${ARG1}")
+  endif()
+endmacro()
+
+# Asserts whether the given binary condition is true.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+#   - ARG2: The third argument.
+macro(_assert_internal_assert_3 ARG0 ARG1 ARG2)
+  if("${ARG0}" STREQUAL NOT)
+    _assert_internal_assert_2_not("${ARG1}" "${ARG2}")
+  else()
+    string(TOLOWER "${ARG1}" OPERATOR)
+    if(COMMAND "_assert_internal_assert_3_${OPERATOR}")
+      cmake_language(
+        CALL "_assert_internal_assert_3_${OPERATOR}" "${ARG0}" "${ARG2}"
+      )
+    else()
+      message(FATAL_ERROR "unsupported condition: ${ARG0} ${ARG1} ${ARG2}")
+    endif()
+  endif()
+endmacro()
+
+# Asserts whether the given binary condition is false.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+#   - ARG2: The third argument.
+macro(_assert_internal_assert_3_not ARG0 ARG1 ARG2)
+  string(TOLOWER "${ARG1}" OPERATOR)
+  if(COMMAND "_assert_internal_assert_3_not_${OPERATOR}")
+    cmake_language(
+      CALL "_assert_internal_assert_3_not_${OPERATOR}" "${ARG0}" "${ARG2}"
+    )
+  else()
+    message(FATAL_ERROR "unsupported condition: NOT ${ARG0} ${ARG1} ${ARG2}")
+  endif()
+endmacro()
+
+# Asserts whether the given condition is true.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+#   - ARG2: The third argument.
+#   - ARG3: The fourth argument.
+macro(_assert_internal_assert_4 ARG0 ARG1 ARG2 ARG3)
+  if("${ARG0}" STREQUAL NOT)
+    _assert_internal_assert_3_not("${ARG1}" "${ARG2}" "${ARG3}")
+  else()
+    message(FATAL_ERROR "unsupported condition: ${ARG0} ${ARG1} ${ARG2} ${ARG3}")
+  endif()
+endmacro()
+
+# Asserts the given condition.
 #
 # This function performs an assertion on the given condition. It will output a
 # fatal error message if the assertion fails.
@@ -11,69 +263,15 @@ include_guard(GLOBAL)
 # Refer to the documentation of the 'if' function for supported conditions to
 # perform the assertion.
 function(assert)
-  list(LENGTH ARGN ARGUMENTS_LENGTH)
-  if(ARGUMENTS_LENGTH GREATER 0)
-    set(ARGUMENTS ${ARGN})
-
-    # Determines whether the given arguments start with 'NOT'.
-    list(GET ARGUMENTS 0 ARGUMENTS_0)
-    if(ARGUMENTS_0 STREQUAL NOT)
-      list(REMOVE_AT ARGUMENTS 0)
-      set(BOOLEAN_WORD " false")
-      set(NOT_WORD " not")
+  list(LENGTH ARGN ARGN_LENGTH)
+  if(ARGN_LENGTH GREATER 0)
+    if(COMMAND "_assert_internal_assert_${ARGN_LENGTH}")
+      cmake_language(
+        CALL "_assert_internal_assert_${ARGN_LENGTH}" ${ARGN}
+      )
     else()
-      set(ARGUMENT_NOT NOT)
-      set(BOOLEAN_WORD " true")
-    endif()
-
-    list(LENGTH ARGUMENTS ARGUMENTS_LENGTH)
-    if(ARGUMENTS_LENGTH EQUAL 2)
-      list(GET ARGUMENTS 0 OPERATOR)
-      list(GET ARGUMENTS 1 VALUE)
-
-      if(OPERATOR STREQUAL DEFINED)
-        set(MESSAGE "expected variable '${VALUE}'${NOT_WORD} to be defined")
-      elseif(OPERATOR STREQUAL EXISTS)
-        set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to exist")
-      elseif(OPERATOR STREQUAL IS_DIRECTORY)
-        set(MESSAGE "expected path '${VALUE}'${NOT_WORD} to be a directory")
-      else()
-        string(REPLACE ";" " " ARGUMENTS "${ARGUMENTS}")
-        message(FATAL_ERROR "unsupported condition: ${ARGUMENTS}")
-      endif()
-    elseif(ARGUMENTS_LENGTH EQUAL 3)
-      list(GET ARGUMENTS 0 LEFT_VALUE)
-      list(GET ARGUMENTS 1 OPERATOR)
-      list(GET ARGUMENTS 2 RIGHT_VALUE)
-
-      if(OPERATOR STREQUAL MATCHES)
-        if(DEFINED "${LEFT_VALUE}")
-          set(LEFT_VALUE "${${LEFT_VALUE}}")
-        endif()
-        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to match '${RIGHT_VALUE}'")
-      elseif(OPERATOR STREQUAL STREQUAL)
-        if(DEFINED "${LEFT_VALUE}")
-          set(LEFT_VALUE "${${LEFT_VALUE}}")
-        endif()
-        if(DEFINED "${RIGHT_VALUE}")
-          set(RIGHT_VALUE "${${RIGHT_VALUE}}")
-        endif()
-        set(MESSAGE "expected string '${LEFT_VALUE}'${NOT_WORD} to be equal to '${RIGHT_VALUE}'")
-      else()
-        string(REPLACE ";" " " ARGUMENTS "${ARGUMENTS}")
-        message(FATAL_ERROR "unsupported condition: ${ARGUMENTS}")
-      endif()
-    elseif(ARGUMENTS_LENGTH GREATER 1)
-      string(REPLACE ";" " " ARGUMENTS "${ARGUMENTS}")
-      message(FATAL_ERROR "unsupported condition: ${ARGUMENTS}")
-    endif()
-
-    if(${ARGUMENT_NOT} ${ARGUMENTS})
-      if(DEFINED MESSAGE)
-        message(FATAL_ERROR "${MESSAGE}")
-      else()
-        message(FATAL_ERROR "expected '${ARGUMENTS}' to resolve to${BOOLEAN_WORD}")
-      endif()
+      string(REPLACE ";" " " ARGS "${ARGN}")
+      message(FATAL_ERROR "unsupported condition: ${ARGS}")
     endif()
   endif()
 endfunction()

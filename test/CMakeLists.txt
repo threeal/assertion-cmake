@@ -11,6 +11,11 @@ function(add_cmake_test FILE)
 endfunction()
 
 add_cmake_test(
+  cmake/InternalTest.cmake
+  "Variable content retrieval"
+)
+
+add_cmake_test(
   cmake/AssertionTest.cmake
   "Empty assertions"
   "Boolean assertions"
