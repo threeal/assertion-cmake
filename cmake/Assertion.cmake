@@ -144,61 +144,134 @@ endmacro()
 
 # Asserts whether the given condition is true.
 #
+# Arguments:
+#   - ARG0: The first argument.
+macro(_assert_internal_assert_1 ARG0)
+  if("${ARG0}" STREQUAL NOT)
+    # Do nothing on an empty condition.
+  else()
+    if(NOT "${ARG0}")
+      message(FATAL_ERROR "expected '${ARG0}' to resolve to true")
+    endif()
+  endif()
+endmacro()
+
+# Asserts whether the given condition is false.
+#
+# Arguments:
+#   - ARG0: The first argument.
+macro(_assert_internal_assert_1_not ARG0)
+  if("${ARG0}")
+    message(FATAL_ERROR "expected '${ARG0}' to resolve to false")
+  endif()
+endmacro()
+
+# Asserts whether the given unary condition is true.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+macro(_assert_internal_assert_2 ARG0 ARG1)
+  if("${ARG0}" STREQUAL NOT)
+    _assert_internal_assert_1_not("${ARG1}")
+  else()
+    string(TOLOWER "${ARG0}" OPERATOR)
+    if(COMMAND "_assert_internal_assert_2_${OPERATOR}")
+      cmake_language(
+        CALL "_assert_internal_assert_2_${OPERATOR}" "${ARG1}"
+      )
+    else()
+      message(FATAL_ERROR "unsupported condition: ${ARG0} ${ARG1}")
+    endif()
+  endif()
+endmacro()
+
+# Asserts whether the given unary condition is false.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+macro(_assert_internal_assert_2_not ARG0 ARG1)
+  string(TOLOWER "${ARG0}" OPERATOR)
+  if(COMMAND "_assert_internal_assert_2_not_${OPERATOR}")
+    cmake_language(
+      CALL "_assert_internal_assert_2_not_${OPERATOR}" "${ARG1}"
+    )
+  else()
+    message(FATAL_ERROR "unsupported condition: NOT ${ARG0} ${ARG1}")
+  endif()
+endmacro()
+
+# Asserts whether the given binary condition is true.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+#   - ARG2: The third argument.
+macro(_assert_internal_assert_3 ARG0 ARG1 ARG2)
+  if("${ARG0}" STREQUAL NOT)
+    _assert_internal_assert_2_not("${ARG1}" "${ARG2}")
+  else()
+    string(TOLOWER "${ARG1}" OPERATOR)
+    if(COMMAND "_assert_internal_assert_3_${OPERATOR}")
+      cmake_language(
+        CALL "_assert_internal_assert_3_${OPERATOR}" "${ARG0}" "${ARG2}"
+      )
+    else()
+      message(FATAL_ERROR "unsupported condition: ${ARG0} ${ARG1} ${ARG2}")
+    endif()
+  endif()
+endmacro()
+
+# Asserts whether the given binary condition is false.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+#   - ARG2: The third argument.
+macro(_assert_internal_assert_3_not ARG0 ARG1 ARG2)
+  string(TOLOWER "${ARG1}" OPERATOR)
+  if(COMMAND "_assert_internal_assert_3_not_${OPERATOR}")
+    cmake_language(
+      CALL "_assert_internal_assert_3_not_${OPERATOR}" "${ARG0}" "${ARG2}"
+    )
+  else()
+    message(FATAL_ERROR "unsupported condition: NOT ${ARG0} ${ARG1} ${ARG2}")
+  endif()
+endmacro()
+
+# Asserts whether the given condition is true.
+#
+# Arguments:
+#   - ARG0: The first argument.
+#   - ARG1: The second argument.
+#   - ARG2: The third argument.
+#   - ARG3: The fourth argument.
+macro(_assert_internal_assert_4 ARG0 ARG1 ARG2 ARG3)
+  if("${ARG0}" STREQUAL NOT)
+    _assert_internal_assert_3_not("${ARG1}" "${ARG2}" "${ARG3}")
+  else()
+    message(FATAL_ERROR "unsupported condition: ${ARG0} ${ARG1} ${ARG2} ${ARG3}")
+  endif()
+endmacro()
+
+# Asserts the given condition.
+#
 # This function performs an assertion on the given condition. It will output a
 # fatal error message if the assertion fails.
 #
 # Refer to the documentation of the 'if' function for supported conditions to
 # perform the assertion.
 function(assert)
-  list(LENGTH ARGN ARGUMENTS_LENGTH)
-  if(ARGUMENTS_LENGTH GREATER 0)
-    set(ARGUMENTS ${ARGN})
-
-    # Determines whether the given arguments start with 'NOT'.
-    list(GET ARGUMENTS 0 ARGUMENTS_0)
-    if(ARGUMENTS_0 STREQUAL NOT)
-      list(REMOVE_AT ARGUMENTS 0)
-      set(HAS_NOT TRUE)
-      set(WITH_NOT _not)
+  list(LENGTH ARGN ARGN_LENGTH)
+  if(ARGN_LENGTH GREATER 0)
+    if(COMMAND "_assert_internal_assert_${ARGN_LENGTH}")
+      cmake_language(
+        CALL "_assert_internal_assert_${ARGN_LENGTH}" ${ARGN}
+      )
     else()
-      set(HAS_NOT FALSE)
-      set(WITH_NOT "")
-    endif()
-
-    list(LENGTH ARGUMENTS ARGUMENTS_LENGTH)
-    if(ARGUMENTS_LENGTH EQUAL 0)
-      # Do nothing on an empty condition.
-    elseif(ARGUMENTS_LENGTH EQUAL 1)
-      list(GET ARGUMENTS 0 VALUE)
-      if(HAS_NOT AND "${VALUE}")
-        message(FATAL_ERROR "expected '${VALUE}' to resolve to false")
-      elseif(NOT HAS_NOT AND NOT "${VALUE}")
-        message(FATAL_ERROR "expected '${VALUE}' to resolve to true")
-      endif()
-    elseif(ARGUMENTS_LENGTH EQUAL 2)
-      list(GET ARGUMENTS 0 OPERATOR)
-      string(TOLOWER "${OPERATOR}" OPERATOR)
-      if(COMMAND "_assert_internal_assert_2${WITH_NOT}_${OPERATOR}")
-        list(GET ARGUMENTS 1 VALUE)
-        cmake_language(CALL "_assert_internal_assert_2${WITH_NOT}_${OPERATOR}" "${VALUE}")
-      else()
-        string(REPLACE ";" " " ARGUMENTS "${ARGUMENTS}")
-        message(FATAL_ERROR "unsupported condition: ${ARGUMENTS}")
-      endif()
-    elseif(ARGUMENTS_LENGTH EQUAL 3)
-      list(GET ARGUMENTS 1 OPERATOR)
-      string(TOLOWER "${OPERATOR}" OPERATOR)
-      if(COMMAND "_assert_internal_assert_3${WITH_NOT}_${OPERATOR}")
-        list(GET ARGUMENTS 0 LEFT_VALUE)
-        list(GET ARGUMENTS 2 RIGHT_VALUE)
-        cmake_language(CALL "_assert_internal_assert_3${WITH_NOT}_${OPERATOR}" "${LEFT_VALUE}" "${RIGHT_VALUE}")
-      else()
-        string(REPLACE ";" " " ARGUMENTS "${ARGUMENTS}")
-        message(FATAL_ERROR "unsupported condition: ${ARGUMENTS}")
-      endif()
-    elseif(ARGUMENTS_LENGTH GREATER 1)
-      string(REPLACE ";" " " ARGUMENTS "${ARGUMENTS}")
-      message(FATAL_ERROR "unsupported condition: ${ARGUMENTS}")
+      string(REPLACE ";" " " ARGS "${ARGN}")
+      message(FATAL_ERROR "unsupported condition: ${ARGS}")
     endif()
   endif()
 endfunction()
