@@ -263,16 +263,23 @@ endmacro()
 # Refer to the documentation of the 'if' function for supported conditions to
 # perform the assertion.
 function(assert)
-  list(LENGTH ARGN ARGN_LENGTH)
-  if(ARGN_LENGTH GREATER 0)
-    if(COMMAND "_assert_internal_assert_${ARGN_LENGTH}")
-      cmake_language(
-        CALL "_assert_internal_assert_${ARGN_LENGTH}" ${ARGN}
-      )
-    else()
-      string(REPLACE ";" " " ARGS "${ARGN}")
-      message(FATAL_ERROR "unsupported condition: ${ARGS}")
-    endif()
+  if(ARGC EQUAL 0)
+    # Do nothing on an empty condition.
+  elseif(ARGC EQUAL 1)
+    _assert_internal_assert_1("${ARGV0}")
+  elseif(ARGC EQUAL 2)
+    _assert_internal_assert_2("${ARGV0}" "${ARGV1}")
+  elseif(ARGC EQUAL 3)
+    _assert_internal_assert_3("${ARGV0}" "${ARGV1}" "${ARGV2}")
+  elseif(ARGC EQUAL 4)
+    _assert_internal_assert_4("${ARGV0}" "${ARGV1}" "${ARGV2}" "${ARGV3}")
+  else()
+    set(ARGS "${ARGV0} ${ARGV1} ${ARGV2} ${ARGV3}")
+    math(EXPR STOP "${ARGC} - 1")
+    foreach(I RANGE 4 "${STOP}")
+      set(ARGS "${ARGS} ${ARGV${I}}")
+    endforeach()
+    message(FATAL_ERROR "unsupported condition: ${ARGS}")
   endif()
 endfunction()
 

@@ -263,9 +263,7 @@ function("Mock message")
   end_mock_message()
 
   assert(DEFINED WARNING_MESSAGES)
-
-  set(EXPECTED_WARNING_MESSAGES "some warning message;some other warning message")
-  assert(WARNING_MESSAGES STREQUAL EXPECTED_WARNING_MESSAGES)
+  assert(WARNING_MESSAGES STREQUAL "some warning message;some other warning message")
 
   assert(DEFINED ERROR_MESSAGES)
   assert("${ERROR_MESSAGES}" STREQUAL "some error message")
