@@ -357,7 +357,7 @@ endfunction()
 #   - ERROR: If set, asserts whether the error of the executed process matches
 #     the given regular expression.
 function(assert_execute_process)
-  cmake_parse_arguments(ARG "" "OUTPUT;ERROR" "COMMAND" ${ARGN})
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "OUTPUT;ERROR" "COMMAND")
 
   execute_process(
     COMMAND ${ARG_COMMAND}
