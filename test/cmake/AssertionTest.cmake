@@ -200,7 +200,7 @@ function("Message assertions")
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected error message '' to be equal to 'some other error message'"
+    "expected error message:\n  \nto be equal to:\n  some other error message"
   )
 endfunction()
 

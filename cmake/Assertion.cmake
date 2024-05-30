@@ -385,7 +385,10 @@ function(assert_message MODE EXPECTED_MESSAGE)
   if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
     string(TOLOWER "${MODE}" MODE)
     string(REPLACE "_" " " MODE "${MODE}")
-    message(FATAL_ERROR "expected ${MODE} message '${MESSAGE}' to be equal to '${EXPECTED_MESSAGE}'")
+    _assert_internal_format_message(
+      ASSERT_MESSAGE "expected ${MODE} message:" "${MESSAGE}"
+      "to be equal to:" "${EXPECTED_MESSAGE}")
+    message(FATAL_ERROR "${ASSERT_MESSAGE}")
   endif()
 
   if(DEFINED ${MODE}_MESSAGES)
