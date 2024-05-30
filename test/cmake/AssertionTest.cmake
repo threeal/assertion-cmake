@@ -213,48 +213,52 @@ function("Process execution assertions")
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected command '${CMAKE_COMMAND} -E true' to fail"
-  )
+    "expected command:\n  ${CMAKE_COMMAND} -E true\nto fail")
 
   mock_message()
     assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E false)
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected command '${CMAKE_COMMAND} -E false' not to fail"
-  )
+    "expected command:\n  ${CMAKE_COMMAND} -E false\nnot to fail")
 
   assert_execute_process(
     COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-    OUTPUT "Hello.*!"
-  )
+    OUTPUT "Hello.*!")
 
   mock_message()
     assert_execute_process(
       COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-      OUTPUT "Hi.*!"
-    )
+      OUTPUT "Hi.*!")
   end_mock_message()
-  assert_message(
-    FATAL_ERROR
-    "expected the output of command '${CMAKE_COMMAND} -E echo Hello world!' to match 'Hi.*!'"
-  )
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected the output:"
+    "  Hello world!"
+    "of command:"
+    "  ${CMAKE_COMMAND} -E echo Hello world!"
+    "to match:"
+    "  Hi.*!")
+  assert_message(FATAL_ERROR "${EXPECTED_MESSAGE}")
 
   assert_execute_process(
-    COMMAND "${CMAKE_COMMAND}" -E invalid
-    ERROR "CMake Error:.*Available commands:"
-  )
+    COMMAND "${CMAKE_COMMAND}" -E touch /
+    ERROR "cmake -E touch: failed to update")
 
   mock_message()
     assert_execute_process(
-      COMMAND "${CMAKE_COMMAND}" -E invalid
-      ERROR "CMake Error:.*Unavailable commands:"
-    )
+      COMMAND "${CMAKE_COMMAND}" -E touch /
+      ERROR "cmake -E touch: not failed to update")
   end_mock_message()
-  assert_message(
-    FATAL_ERROR
-    "expected the error of command '${CMAKE_COMMAND} -E invalid' to match 'CMake Error:.*Unavailable commands:'"
-  )
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected the error:"
+    "  cmake -E touch: failed to update \"/\"."
+    "of command:"
+    "  ${CMAKE_COMMAND} -E touch /"
+    "to match:"
+    "  cmake -E touch: not failed to update")
+  assert_message(FATAL_ERROR "${EXPECTED_MESSAGE}")
 endfunction()
 
 function("Mock message")

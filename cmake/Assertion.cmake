@@ -419,28 +419,28 @@ function(assert_execute_process)
   )
 
   if(DEFINED ARG_ERROR AND RES EQUAL 0)
-    string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
-    message(
-      FATAL_ERROR
-      "expected command '${ARG_COMMAND}' to fail"
-    )
+    string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
+    _assert_internal_format_message(
+      MESSAGE "expected command:" "${COMMAND}" "to fail")
+    message(FATAL_ERROR "${MESSAGE}")
   elseif(NOT DEFINED ARG_ERROR AND NOT RES EQUAL 0)
-    string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
-    message(
-      FATAL_ERROR
-      "expected command '${ARG_COMMAND}' not to fail"
-    )
+    string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
+    _assert_internal_format_message(
+      MESSAGE "expected command:" "${COMMAND}" "not to fail")
+    message(FATAL_ERROR "${MESSAGE}")
   elseif(DEFINED ARG_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_OUTPUT}")
-    string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
-    message(
-      FATAL_ERROR
-      "expected the output of command '${ARG_COMMAND}' to match '${ARG_OUTPUT}'"
-    )
+    string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
+    _assert_internal_format_message(
+      MESSAGE "expected the output:" "${OUT}"
+      "of command:" "${COMMAND}"
+      "to match:" "${ARG_OUTPUT}")
+    message(FATAL_ERROR "${MESSAGE}")
   elseif(DEFINED ARG_ERROR AND NOT "${ERR}" MATCHES "${ARG_ERROR}")
-    string(REPLACE ";" " " ARG_COMMAND "${ARG_COMMAND}")
-    message(
-      FATAL_ERROR
-      "expected the error of command '${ARG_COMMAND}' to match '${ARG_ERROR}'"
-    )
+    string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
+    _assert_internal_format_message(
+      MESSAGE "expected the error:" "${ERR}"
+      "of command:" "${COMMAND}"
+      "to match:" "${ARG_ERROR}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endfunction()
