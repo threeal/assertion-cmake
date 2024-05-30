@@ -14,12 +14,12 @@ function("Boolean assertions")
   mock_message()
     assert(FALSE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected 'FALSE' to resolve to true")
+  assert_message(FATAL_ERROR "expected:\n  FALSE\nto resolve to true")
 
   mock_message()
     assert(NOT TRUE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected 'TRUE' to resolve to false")
+  assert_message(FATAL_ERROR "expected:\n  TRUE\nto resolve to false")
 endfunction()
 
 function("Variable existence assertions")
@@ -34,7 +34,7 @@ function("Variable existence assertions")
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected variable 'NON_EXISTING_VARIABLE' to be defined"
+    "expected variable:\n  NON_EXISTING_VARIABLE\nto be defined"
   )
 
   mock_message()
@@ -42,7 +42,7 @@ function("Variable existence assertions")
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected variable 'EXISTING_VARIABLE' not to be defined"
+    "expected variable:\n  EXISTING_VARIABLE\nnot to be defined"
   )
 endfunction()
 
@@ -56,12 +56,12 @@ function("Path existence assertions")
   mock_message()
     assert(EXISTS non_existing_file)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'non_existing_file' to exist")
+  assert_message(FATAL_ERROR "expected path:\n  non_existing_file\nto exist")
 
   mock_message()
     assert(NOT EXISTS some_file)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some_file' not to exist")
+  assert_message(FATAL_ERROR "expected path:\n  some_file\nnot to exist")
 endfunction()
 
 function("Directory path assertions")
@@ -74,14 +74,14 @@ function("Directory path assertions")
   mock_message()
     assert(IS_DIRECTORY some_file)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected path 'some_file' to be a directory")
+  assert_message(FATAL_ERROR "expected path:\n  some_file\nto be a directory")
 
   mock_message()
     assert(NOT IS_DIRECTORY some_directory)
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected path 'some_directory' not to be a directory"
+    "expected path:\n  some_directory\nnot to be a directory"
   )
 endfunction()
 
@@ -97,7 +97,7 @@ function("Regular expression match assertions")
     end_mock_message()
     assert_message(
       FATAL_ERROR
-      "expected string 'some string' not to match 'so.*ing'"
+      "expected string:\n  some string\nnot to match:\n  so.*ing"
     )
 
     mock_message()
@@ -105,7 +105,7 @@ function("Regular expression match assertions")
     end_mock_message()
     assert_message(
       FATAL_ERROR
-      "expected string 'some string' to match 'so.*other.*ing'"
+      "expected string:\n  some string\nto match:\n  so.*other.*ing"
     )
   endforeach()
 endfunction()
@@ -129,7 +129,7 @@ function("String equality assertions")
       end_mock_message()
       assert_message(
         FATAL_ERROR
-        "expected string 'some string' to be equal to 'some other string'"
+        "expected string:\n  some string\nto be equal to:\n  some other string"
       )
     endforeach()
 
@@ -139,7 +139,7 @@ function("String equality assertions")
       end_mock_message()
       assert_message(
         FATAL_ERROR
-        "expected string 'some string' not to be equal to 'some string'"
+        "expected string:\n  some string\nnot to be equal to:\n  some string"
       )
     endforeach()
   endforeach()
@@ -149,32 +149,32 @@ function("Unsupported assertions")
   mock_message()
     assert(first second)
   end_mock_message()
-  assert_message(FATAL_ERROR "unsupported condition: first second")
+  assert_message(FATAL_ERROR "unsupported condition:\n  first second")
 
   mock_message()
     assert(first second third)
   end_mock_message()
-  assert_message(FATAL_ERROR "unsupported condition: first second third")
+  assert_message(FATAL_ERROR "unsupported condition:\n  first second third")
 
   mock_message()
     assert(first second third fourth)
   end_mock_message()
-  assert_message(FATAL_ERROR "unsupported condition: first second third fourth")
+  assert_message(FATAL_ERROR "unsupported condition:\n  first second third fourth")
 
   mock_message()
     assert(NOT first second)
   end_mock_message()
-  assert_message(FATAL_ERROR "unsupported condition: NOT first second")
+  assert_message(FATAL_ERROR "unsupported condition:\n  NOT first second")
 
   mock_message()
     assert(NOT first second third)
   end_mock_message()
-  assert_message(FATAL_ERROR "unsupported condition: NOT first second third")
+  assert_message(FATAL_ERROR "unsupported condition:\n  NOT first second third")
 
   mock_message()
     assert(NOT first second third fourth)
   end_mock_message()
-  assert_message(FATAL_ERROR "unsupported condition: NOT first second third fourth")
+  assert_message(FATAL_ERROR "unsupported condition:\n  NOT first second third fourth")
 endfunction()
 
 function(call_sample_messages)
@@ -200,7 +200,7 @@ function("Message assertions")
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected error message '' to be equal to 'some other error message'"
+    "expected error message:\n  \nto be equal to:\n  some other error message"
   )
 endfunction()
 
@@ -213,48 +213,52 @@ function("Process execution assertions")
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected command '${CMAKE_COMMAND} -E true' to fail"
-  )
+    "expected command:\n  ${CMAKE_COMMAND} -E true\nto fail")
 
   mock_message()
     assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E false)
   end_mock_message()
   assert_message(
     FATAL_ERROR
-    "expected command '${CMAKE_COMMAND} -E false' not to fail"
-  )
+    "expected command:\n  ${CMAKE_COMMAND} -E false\nnot to fail")
 
   assert_execute_process(
     COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-    OUTPUT "Hello.*!"
-  )
+    OUTPUT "Hello.*!")
 
   mock_message()
     assert_execute_process(
       COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-      OUTPUT "Hi.*!"
-    )
+      OUTPUT "Hi.*!")
   end_mock_message()
-  assert_message(
-    FATAL_ERROR
-    "expected the output of command '${CMAKE_COMMAND} -E echo Hello world!' to match 'Hi.*!'"
-  )
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected the output:"
+    "  Hello world!"
+    "of command:"
+    "  ${CMAKE_COMMAND} -E echo Hello world!"
+    "to match:"
+    "  Hi.*!")
+  assert_message(FATAL_ERROR "${EXPECTED_MESSAGE}")
 
   assert_execute_process(
-    COMMAND "${CMAKE_COMMAND}" -E invalid
-    ERROR "CMake Error:.*Available commands:"
-  )
+    COMMAND "${CMAKE_COMMAND}" -E touch /
+    ERROR "cmake -E touch: failed to update")
 
   mock_message()
     assert_execute_process(
-      COMMAND "${CMAKE_COMMAND}" -E invalid
-      ERROR "CMake Error:.*Unavailable commands:"
-    )
+      COMMAND "${CMAKE_COMMAND}" -E touch /
+      ERROR "cmake -E touch: not failed to update")
   end_mock_message()
-  assert_message(
-    FATAL_ERROR
-    "expected the error of command '${CMAKE_COMMAND} -E invalid' to match 'CMake Error:.*Unavailable commands:'"
-  )
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected the error:"
+    "  cmake -E touch: failed to update \"/\"."
+    "of command:"
+    "  ${CMAKE_COMMAND} -E touch /"
+    "to match:"
+    "  cmake -E touch: not failed to update")
+  assert_message(FATAL_ERROR "${EXPECTED_MESSAGE}")
 endfunction()
 
 function("Mock message")
