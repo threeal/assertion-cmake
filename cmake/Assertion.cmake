@@ -20,13 +20,39 @@ function(_assert_internal_get_content VARIABLE OUTPUT_VARIABLE)
   endif()
 endfunction()
 
+# Formats an assertion message with indentation on even lines.
+#
+# Arguments:
+#   - OUT_VAR: The output variable that holds the formatted message.
+#   - FIRST_LINE: The first line of the message.
+#   - ARGN: The rest of the lines of the message.
+function(_assert_internal_format_message OUT_VAR FIRST_LINE)
+  set(MESSAGE "${FIRST_LINE}")
+  if(ARGC GREATER 2)
+    math(EXPR STOP "${ARGC} - 1")
+    foreach(I RANGE 2 "${STOP}")
+      string(STRIP "${ARGV${I}}" LINE)
+      math(EXPR MOD "${I} % 2")
+      if(MOD EQUAL 0)
+        string(REPLACE "\n" "\n  " LINE "${LINE}")
+        set(MESSAGE "${MESSAGE}\n  ${LINE}")
+      else()
+        set(MESSAGE "${MESSAGE}\n${LINE}")
+      endif()
+    endforeach()
+  endif()
+  set("${OUT_VAR}" "${MESSAGE}" PARENT_SCOPE)
+endfunction()
+
 # Asserts whether the given variable is defined.
 #
 # Arguments:
 #   - VARIABLE: The variable to check.
 macro(_assert_internal_assert_2_defined VARIABLE)
   if(NOT DEFINED "${VARIABLE}")
-    message(FATAL_ERROR "expected variable:\n  ${VARIABLE}\nto be defined")
+    _assert_internal_format_message(
+      MESSAGE "expected variable:" "${VARIABLE}" "to be defined")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -36,7 +62,9 @@ endmacro()
 #   - VARIABLE: The variable to check.
 macro(_assert_internal_assert_2_not_defined VARIABLE)
   if(DEFINED "${VARIABLE}")
-    message(FATAL_ERROR "expected variable:\n  ${VARIABLE}\nnot to be defined")
+    _assert_internal_format_message(
+      MESSAGE "expected variable:" "${VARIABLE}" "not to be defined")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -46,7 +74,9 @@ endmacro()
 #   - PATH: The path to check.
 macro(_assert_internal_assert_2_exists PATH)
   if(NOT EXISTS "${PATH}")
-    message(FATAL_ERROR "expected path:\n  ${PATH}\nto exist")
+    _assert_internal_format_message(
+      MESSAGE "expected path:" "${PATH}" "to exist")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -56,7 +86,9 @@ endmacro()
 #   - PATH: The path to check.
 macro(_assert_internal_assert_2_not_exists PATH)
   if(EXISTS "${PATH}")
-    message(FATAL_ERROR "expected path:\n  ${PATH}\nnot to exist")
+    _assert_internal_format_message(
+      MESSAGE "expected path:" "${PATH}" "not to exist")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -66,7 +98,9 @@ endmacro()
 #   - PATH: The path to check.
 macro(_assert_internal_assert_2_is_directory PATH)
   if(NOT IS_DIRECTORY "${PATH}")
-    message(FATAL_ERROR "expected path:\n  ${PATH}\nto be a directory")
+    _assert_internal_format_message(
+      MESSAGE "expected path:" "${PATH}" "to be a directory")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -76,7 +110,9 @@ endmacro()
 #   - PATH: The path to check.
 macro(_assert_internal_assert_2_not_is_directory PATH)
   if(IS_DIRECTORY "${PATH}")
-    message(FATAL_ERROR "expected path:\n  ${PATH}\nnot to be a directory")
+    _assert_internal_format_message(
+      MESSAGE "expected path:" "${PATH}" "not to be a directory")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -88,10 +124,9 @@ endmacro()
 macro(_assert_internal_assert_3_matches STRING REGEX)
   _assert_internal_get_content("${STRING}" STRING_CONTENT)
   if(NOT "${STRING_CONTENT}" MATCHES "${REGEX}")
-    message(
-      FATAL_ERROR
-      "expected string:\n  ${STRING_CONTENT}\nto match:\n  ${REGEX}"
-    )
+    _assert_internal_format_message(
+      MESSAGE "expected string:" "${STRING_CONTENT}" "to match:" "${REGEX}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -103,10 +138,9 @@ endmacro()
 macro(_assert_internal_assert_3_not_matches STRING REGEX)
   _assert_internal_get_content("${STRING}" STRING_CONTENT)
   if("${STRING_CONTENT}" MATCHES "${REGEX}")
-    message(
-      FATAL_ERROR
-      "expected string:\n  ${STRING_CONTENT}\nnot to match:\n  ${REGEX}"
-    )
+    _assert_internal_format_message(
+      MESSAGE "expected string:" "${STRING_CONTENT}" "not to match:" "${REGEX}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -119,10 +153,10 @@ macro(_assert_internal_assert_3_strequal STRING1 STRING2)
   _assert_internal_get_content("${STRING1}" STRING1_CONTENT)
   _assert_internal_get_content("${STRING2}" STRING2_CONTENT)
   if(NOT "${STRING1_CONTENT}" STREQUAL "${STRING2_CONTENT}")
-    message(
-      FATAL_ERROR
-      "expected string:\n  ${STRING1_CONTENT}\nto be equal to:\n  ${STRING2_CONTENT}"
-    )
+    _assert_internal_format_message(
+      MESSAGE "expected string:" "${STRING1_CONTENT}"
+      "to be equal to:" "${STRING2_CONTENT}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -135,10 +169,10 @@ macro(_assert_internal_assert_3_not_strequal STRING1 STRING2)
   _assert_internal_get_content("${STRING1}" STRING1_CONTENT)
   _assert_internal_get_content("${STRING2}" STRING2_CONTENT)
   if("${STRING1_CONTENT}" STREQUAL "${STRING2_CONTENT}")
-    message(
-      FATAL_ERROR
-      "expected string:\n  ${STRING1_CONTENT}\nnot to be equal to:\n  ${STRING2_CONTENT}"
-    )
+    _assert_internal_format_message(
+      MESSAGE "expected string:" "${STRING1_CONTENT}"
+      "not to be equal to:" "${STRING2_CONTENT}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -151,7 +185,9 @@ macro(_assert_internal_assert_1 ARG0)
     # Do nothing on an empty condition.
   else()
     if(NOT "${ARG0}")
-      message(FATAL_ERROR "expected:\n  ${ARG0}\nto resolve to true")
+      _assert_internal_format_message(
+        MESSAGE "expected:" "${ARG0}" "to resolve to true")
+      message(FATAL_ERROR "${MESSAGE}")
     endif()
   endif()
 endmacro()
@@ -162,7 +198,9 @@ endmacro()
 #   - ARG0: The first argument.
 macro(_assert_internal_assert_1_not ARG0)
   if("${ARG0}")
-    message(FATAL_ERROR "expected:\n  ${ARG0}\nto resolve to false")
+    _assert_internal_format_message(
+      MESSAGE "expected:" "${ARG0}" "to resolve to false")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -181,7 +219,9 @@ macro(_assert_internal_assert_2 ARG0 ARG1)
         CALL "_assert_internal_assert_2_${OPERATOR}" "${ARG1}"
       )
     else()
-      message(FATAL_ERROR "unsupported condition:\n  ${ARG0} ${ARG1}")
+      _assert_internal_format_message(
+        MESSAGE "unsupported condition:" "${ARG0} ${ARG1}")
+      message(FATAL_ERROR "${MESSAGE}")
     endif()
   endif()
 endmacro()
@@ -198,7 +238,9 @@ macro(_assert_internal_assert_2_not ARG0 ARG1)
       CALL "_assert_internal_assert_2_not_${OPERATOR}" "${ARG1}"
     )
   else()
-    message(FATAL_ERROR "unsupported condition:\n  NOT ${ARG0} ${ARG1}")
+    _assert_internal_format_message(
+      MESSAGE "unsupported condition:" "NOT ${ARG0} ${ARG1}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -218,7 +260,9 @@ macro(_assert_internal_assert_3 ARG0 ARG1 ARG2)
         CALL "_assert_internal_assert_3_${OPERATOR}" "${ARG0}" "${ARG2}"
       )
     else()
-      message(FATAL_ERROR "unsupported condition:\n  ${ARG0} ${ARG1} ${ARG2}")
+      _assert_internal_format_message(
+        MESSAGE "unsupported condition:" "${ARG0} ${ARG1} ${ARG2}")
+      message(FATAL_ERROR "${MESSAGE}")
     endif()
   endif()
 endmacro()
@@ -236,7 +280,9 @@ macro(_assert_internal_assert_3_not ARG0 ARG1 ARG2)
       CALL "_assert_internal_assert_3_not_${OPERATOR}" "${ARG0}" "${ARG2}"
     )
   else()
-    message(FATAL_ERROR "unsupported condition:\n  NOT ${ARG0} ${ARG1} ${ARG2}")
+    _assert_internal_format_message(
+      MESSAGE "unsupported condition:" "NOT ${ARG0} ${ARG1} ${ARG2}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -251,7 +297,9 @@ macro(_assert_internal_assert_4 ARG0 ARG1 ARG2 ARG3)
   if("${ARG0}" STREQUAL NOT)
     _assert_internal_assert_3_not("${ARG1}" "${ARG2}" "${ARG3}")
   else()
-    message(FATAL_ERROR "unsupported condition:\n  ${ARG0} ${ARG1} ${ARG2} ${ARG3}")
+    _assert_internal_format_message(
+      MESSAGE "unsupported condition:" "${ARG0} ${ARG1} ${ARG2} ${ARG3}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endmacro()
 
@@ -279,7 +327,8 @@ function(assert)
     foreach(I RANGE 4 "${STOP}")
       set(ARGS "${ARGS} ${ARGV${I}}")
     endforeach()
-    message(FATAL_ERROR "unsupported condition:\n  ${ARGS}")
+    _assert_internal_format_message(MESSAGE "unsupported condition:" "${ARGS}")
+    message(FATAL_ERROR "${MESSAGE}")
   endif()
 endfunction()
 

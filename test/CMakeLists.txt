@@ -14,6 +14,7 @@ endfunction()
 add_cmake_test(
   cmake/InternalTest.cmake
   "Variable content retrieval"
+  "Assertion message formatting"
 )
 
 add_cmake_test(
