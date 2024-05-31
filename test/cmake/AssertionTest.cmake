@@ -219,7 +219,15 @@ endfunction()
 
 function("Mock message")
   mock_message()
-    call_sample_messages()
+    message(WARNING "some warning message")
+    message(WARNING "some other warning message")
+
+    mock_message()
+      message(ERROR "some error message")
+    end_mock_message()
+
+    message(FATAL_ERROR "some fatal error message")
+    message(ERROR "some other error message")
   end_mock_message()
 
   assert(DEFINED WARNING_MESSAGES)
