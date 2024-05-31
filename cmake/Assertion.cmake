@@ -157,30 +157,24 @@ function(end_mock_message)
   set_property(GLOBAL PROPERTY message_mocked OFF)
 endfunction()
 
-# Asserts whether the 'message' function was called with the expected arguments.
+# Asserts whether a fatal error was received with the expected message.
 #
-# This function asserts whether a message with the specified mode was called
-# with the expected message content.
-#
-# This function can only assert calls to the mocked 'message' function, which is
-# enabled by calling the 'mock_message' function.
+# This function can only assert a fatal error sent from the mocked 'message'
+# function, which is enabled by calling the 'mock_message' function.
 #
 # Arguments:
-#   - MODE: The message mode.
-#   - EXPECTED_MESSAGE: The expected message content.
-function(assert_message MODE EXPECTED_MESSAGE)
-  list(POP_FRONT ${MODE}_MESSAGES MESSAGE)
+#   - EXPECTED_MESSAGE: The expected fatal error message.
+function(assert_fatal_error EXPECTED_MESSAGE)
+  list(POP_FRONT FATAL_ERROR_MESSAGES MESSAGE)
   if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
-    string(TOLOWER "${MODE}" MODE)
-    string(REPLACE "_" " " MODE "${MODE}")
     _assert_internal_format_message(
-      ASSERT_MESSAGE "expected ${MODE} message:" "${MESSAGE}"
+      ASSERT_MESSAGE "expected fatal error message:" "${MESSAGE}"
       "to be equal to:" "${EXPECTED_MESSAGE}")
     message(FATAL_ERROR "${ASSERT_MESSAGE}")
   endif()
 
-  if(DEFINED ${MODE}_MESSAGES)
-    set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+  if(DEFINED FATAL_ERROR_MESSAGES)
+    set(FATAL_ERROR_MESSAGES "${FATAL_ERROR_MESSAGES}" PARENT_SCOPE)
   endif()
 endfunction()
 

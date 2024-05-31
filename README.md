@@ -19,14 +19,14 @@ This module can be integrated into a CMake project in the following ways:
 - Use [`file(DOWNLOAD)`](https://cmake.org/cmake/help/latest/command/file.html#download) to automatically download the `Assertion.cmake` file:
   ```cmake
   file(
-    DOWNLOAD https://threeal.github.io/assertion-cmake/v0.2.0
+    DOWNLOAD https://threeal.github.io/assertion-cmake/v0.3.0
     ${CMAKE_BINARY_DIR}/Assertion.cmake
   )
   include(${CMAKE_BINARY_DIR}/Assertion.cmake)
   ```
 - Use [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to add this package to the CMake project:
   ```cmake
-  cpmaddpackage(gh:threeal/assertion-cmake@0.2.0)
+  cpmaddpackage(gh:threeal/assertion-cmake@0.3.0)
   include(${Assertion_SOURCE_DIR}/cmake/Assertion.cmake)
   ```
 
@@ -51,18 +51,20 @@ assert(EXISTS some_file)
 assert(NOT DIRECTORY some_file)
 ```
 
-### Mock and Assert Messages
+### Mock Messages and Assert Fatal Errors
 
-Use the `mock_message` function to mock the `message` function, allowing assertions on the `message` function as shown in the following example:
+Use the `mock_message` function to mock the `message` function, allowing assertions on the fatal error messages as shown in the following example:
 
 ```cmake
+function(some_function)
+  message(FATAL_ERROR "some fatal error message")
+endfunction()
+
 mock_message()
-  message(STATUS "some status message")
-  message(ERROR "some error message")
+  some_function()
 end_mock_message()
 
-assert_message(STATUS "some status message")
-assert_message(ERROR "some error message")
+assert_fatal_error("some fatal error message")
 ```
 
 ### Assert Process Execution
