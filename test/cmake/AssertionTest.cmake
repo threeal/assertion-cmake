@@ -19,7 +19,7 @@ function("Boolean assertions")
   mock_message()
     assert(NOT TRUE)
   end_mock_message()
-  assert_message(FATAL_ERROR "expected:\n  TRUE\nto resolve to false")
+  assert_message(FATAL_ERROR "expected:\n  NOT TRUE\nto resolve to true")
 endfunction()
 
 function("Variable existence assertions")
