@@ -122,18 +122,16 @@ endfunction()
 
 # Begins a scope for mocking the 'message' function.
 #
-# This function begins a scope for mocking the 'message' function by modifying
-# its behavior to store the message into a list variable instead of printing it
-# to the log.
+# It begins a scope for mocking the 'message' function by modifying its behavior
+# to store the message into a list variable instead of printing it to the log.
 #
-# Use the 'end_mock_message' function to end the scope for mocking the
-# 'message' function, reverting it to the original behavior.
-function(mock_message)
-  set_property(GLOBAL PROPERTY message_mocked ON)
+# Use the 'end_mock_message' macro to end the scope for mocking the 'message'
+# function, reverting it to the original behavior.
+macro(mock_message)
+  set(MESSAGE_MOCKED ON)
 
   macro(message MODE MESSAGE)
-    get_property(ENABLED GLOBAL PROPERTY message_mocked)
-    if("${ENABLED}")
+    if(MESSAGE_MOCKED)
       list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
       set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
       if("${MODE}" STREQUAL FATAL_ERROR)
@@ -144,18 +142,18 @@ function(mock_message)
     endif()
   endmacro()
 
-  function(mock_message)
-    set_property(GLOBAL PROPERTY message_mocked ON)
-  endfunction()
-endfunction()
+  macro(mock_message)
+    set(MESSAGE_MOCKED ON)
+  endmacro()
+endmacro()
 
 # Ends a scope for mocking the 'message' function.
 #
-# This function ends the scope for mocking the 'message' function, reverting it
-# to the original behavior.
-function(end_mock_message)
-  set_property(GLOBAL PROPERTY message_mocked OFF)
-endfunction()
+# It ends the scope for mocking the 'message' function, reverting it to the
+# original behavior.
+macro(end_mock_message)
+  unset(MESSAGE_MOCKED)
+endmacro()
 
 # Asserts whether a fatal error was received with the expected message.
 #
