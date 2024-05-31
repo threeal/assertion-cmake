@@ -44,138 +44,6 @@ function(_assert_internal_format_message OUT_VAR FIRST_LINE)
   set("${OUT_VAR}" "${MESSAGE}" PARENT_SCOPE)
 endfunction()
 
-# Asserts whether the given variable is defined.
-#
-# Arguments:
-#   - VARIABLE: The variable to check.
-macro(_assert_internal_assert_2_defined VARIABLE)
-  if(NOT DEFINED "${VARIABLE}")
-    _assert_internal_format_message(
-      MESSAGE "expected variable:" "${VARIABLE}" "to be defined")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given variable is not defined.
-#
-# Arguments:
-#   - VARIABLE: The variable to check.
-macro(_assert_internal_assert_2_not_defined VARIABLE)
-  if(DEFINED "${VARIABLE}")
-    _assert_internal_format_message(
-      MESSAGE "expected variable:" "${VARIABLE}" "not to be defined")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given path exists.
-#
-# Arguments:
-#   - PATH: The path to check.
-macro(_assert_internal_assert_2_exists PATH)
-  if(NOT EXISTS "${PATH}")
-    _assert_internal_format_message(
-      MESSAGE "expected path:" "${PATH}" "to exist")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given path does not exist.
-#
-# Arguments:
-#   - PATH: The path to check.
-macro(_assert_internal_assert_2_not_exists PATH)
-  if(EXISTS "${PATH}")
-    _assert_internal_format_message(
-      MESSAGE "expected path:" "${PATH}" "not to exist")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given path is a directory.
-#
-# Arguments:
-#   - PATH: The path to check.
-macro(_assert_internal_assert_2_is_directory PATH)
-  if(NOT IS_DIRECTORY "${PATH}")
-    _assert_internal_format_message(
-      MESSAGE "expected path:" "${PATH}" "to be a directory")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given path is not a directory.
-#
-# Arguments:
-#   - PATH: The path to check.
-macro(_assert_internal_assert_2_not_is_directory PATH)
-  if(IS_DIRECTORY "${PATH}")
-    _assert_internal_format_message(
-      MESSAGE "expected path:" "${PATH}" "not to be a directory")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given string matches the given regular expression.
-#
-# Arguments:
-#   - STRING: The string to check.
-#   - REGEX: The regular expression pattern.
-macro(_assert_internal_assert_3_matches STRING REGEX)
-  _assert_internal_get_content("${STRING}" STRING_CONTENT)
-  if(NOT "${STRING_CONTENT}" MATCHES "${REGEX}")
-    _assert_internal_format_message(
-      MESSAGE "expected string:" "${STRING_CONTENT}" "to match:" "${REGEX}")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given string does not match the given regular expression.
-#
-# Arguments:
-#   - STRING: The string to check.
-#   - REGEX: The regular expression pattern.
-macro(_assert_internal_assert_3_not_matches STRING REGEX)
-  _assert_internal_get_content("${STRING}" STRING_CONTENT)
-  if("${STRING_CONTENT}" MATCHES "${REGEX}")
-    _assert_internal_format_message(
-      MESSAGE "expected string:" "${STRING_CONTENT}" "not to match:" "${REGEX}")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given strings are equal.
-#
-# Arguments:
-#   - STRING1: The first string to check.
-#   - STRING2: The second string to check.
-macro(_assert_internal_assert_3_strequal STRING1 STRING2)
-  _assert_internal_get_content("${STRING1}" STRING1_CONTENT)
-  _assert_internal_get_content("${STRING2}" STRING2_CONTENT)
-  if(NOT "${STRING1_CONTENT}" STREQUAL "${STRING2_CONTENT}")
-    _assert_internal_format_message(
-      MESSAGE "expected string:" "${STRING1_CONTENT}"
-      "to be equal to:" "${STRING2_CONTENT}")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given strings are not equal.
-#
-# Arguments:
-#   - STRING1: The first string to check.
-#   - STRING2: The second string to check.
-macro(_assert_internal_assert_3_not_strequal STRING1 STRING2)
-  _assert_internal_get_content("${STRING1}" STRING1_CONTENT)
-  _assert_internal_get_content("${STRING2}" STRING2_CONTENT)
-  if("${STRING1_CONTENT}" STREQUAL "${STRING2_CONTENT}")
-    _assert_internal_format_message(
-      MESSAGE "expected string:" "${STRING1_CONTENT}"
-      "not to be equal to:" "${STRING2_CONTENT}")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
 # Asserts the given condition.
 #
 # This function performs an assertion on the given condition. It will output a
@@ -204,11 +72,24 @@ function(assert)
         message(FATAL_ERROR "${MESSAGE}")
       endif()
     else()
-      string(TOLOWER "${ARGV0}" OPERATOR)
-      if(COMMAND "_assert_internal_assert_2_${OPERATOR}")
-        cmake_language(
-          CALL "_assert_internal_assert_2_${OPERATOR}" "${ARGV1}"
-        )
+      if("${ARGV0}" STREQUAL DEFINED)
+        if(NOT DEFINED "${ARGV1}")
+          _assert_internal_format_message(
+            MESSAGE "expected variable:" "${ARGV1}" "to be defined")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
+      elseif("${ARGV0}" STREQUAL EXISTS)
+        if(NOT EXISTS "${ARGV1}")
+          _assert_internal_format_message(
+            MESSAGE "expected path:" "${ARGV1}" "to exist")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
+      elseif("${ARGV0}" STREQUAL IS_DIRECTORY)
+        if(NOT IS_DIRECTORY "${ARGV1}")
+          _assert_internal_format_message(
+            MESSAGE "expected path:" "${ARGV1}" "to be a directory")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
       else()
         _assert_internal_format_message(
           MESSAGE "unsupported condition:" "${ARGV0} ${ARGV1}")
@@ -217,22 +98,47 @@ function(assert)
     endif()
   elseif(ARGC EQUAL 3)
     if("${ARGV0}" STREQUAL NOT)
-      string(TOLOWER "${ARGV1}" OPERATOR)
-      if(COMMAND "_assert_internal_assert_2_not_${OPERATOR}")
-        cmake_language(
-          CALL "_assert_internal_assert_2_not_${OPERATOR}" "${ARGV2}"
-        )
+      if("${ARGV1}" STREQUAL DEFINED)
+        if(DEFINED "${ARGV2}")
+          _assert_internal_format_message(
+            MESSAGE "expected variable:" "${ARGV2}" "not to be defined")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
+      elseif("${ARGV1}" STREQUAL EXISTS)
+        if(EXISTS "${ARGV2}")
+          _assert_internal_format_message(
+            MESSAGE "expected path:" "${ARGV2}" "not to exist")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
+      elseif("${ARGV1}" STREQUAL IS_DIRECTORY)
+        if(IS_DIRECTORY "${ARGV2}")
+          _assert_internal_format_message(
+            MESSAGE "expected path:" "${ARGV2}" "not to be a directory")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
       else()
         _assert_internal_format_message(
           MESSAGE "unsupported condition:" "${ARGV0} ${ARGV1} ${ARGV2}")
         message(FATAL_ERROR "${MESSAGE}")
       endif()
     else()
-      string(TOLOWER "${ARGV1}" OPERATOR)
-      if(COMMAND "_assert_internal_assert_3_${OPERATOR}")
-        cmake_language(
-          CALL "_assert_internal_assert_3_${OPERATOR}" "${ARGV0}" "${ARGV2}"
-        )
+      if("${ARGV1}" STREQUAL MATCHES)
+        _assert_internal_get_content("${ARGV0}" STRING_CONTENT)
+        if(NOT "${STRING_CONTENT}" MATCHES "${ARGV2}")
+          _assert_internal_format_message(
+            MESSAGE "expected string:" "${STRING_CONTENT}"
+            "to match:" "${ARGV2}")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
+      elseif("${ARGV1}" STREQUAL STREQUAL)
+        _assert_internal_get_content("${ARGV0}" STRING1_CONTENT)
+        _assert_internal_get_content("${ARGV2}" STRING2_CONTENT)
+        if(NOT "${STRING1_CONTENT}" STREQUAL "${STRING2_CONTENT}")
+          _assert_internal_format_message(
+            MESSAGE "expected string:" "${STRING1_CONTENT}"
+            "to be equal to:" "${STRING2_CONTENT}")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
       else()
         _assert_internal_format_message(
           MESSAGE "unsupported condition:" "${ARGV0} ${ARGV1} ${ARGV2}")
@@ -241,11 +147,23 @@ function(assert)
     endif()
   elseif(ARGC EQUAL 4)
     if("${ARGV0}" STREQUAL NOT)
-      string(TOLOWER "${ARGV2}" OPERATOR)
-      if(COMMAND "_assert_internal_assert_3_not_${OPERATOR}")
-        cmake_language(
-          CALL "_assert_internal_assert_3_not_${OPERATOR}" "${ARGV1}" "${ARGV3}"
-        )
+      if("${ARGV2}" STREQUAL MATCHES)
+        _assert_internal_get_content("${ARGV1}" STRING_CONTENT)
+        if("${STRING_CONTENT}" MATCHES "${ARGV3}")
+          _assert_internal_format_message(
+            MESSAGE "expected string:" "${STRING_CONTENT}"
+            "not to match:" "${ARGV3}")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
+      elseif("${ARGV2}" STREQUAL STREQUAL)
+        _assert_internal_get_content("${ARGV1}" STRING1_CONTENT)
+        _assert_internal_get_content("${ARGV3}" STRING2_CONTENT)
+        if("${STRING1_CONTENT}" STREQUAL "${STRING2_CONTENT}")
+          _assert_internal_format_message(
+            MESSAGE "expected string:" "${STRING1_CONTENT}"
+            "not to be equal to:" "${STRING2_CONTENT}")
+          message(FATAL_ERROR "${MESSAGE}")
+        endif()
       else()
         _assert_internal_format_message(
           MESSAGE "unsupported condition:"
