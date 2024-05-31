@@ -176,133 +176,6 @@ macro(_assert_internal_assert_3_not_strequal STRING1 STRING2)
   endif()
 endmacro()
 
-# Asserts whether the given condition is true.
-#
-# Arguments:
-#   - ARG0: The first argument.
-macro(_assert_internal_assert_1 ARG0)
-  if("${ARG0}" STREQUAL NOT)
-    # Do nothing on an empty condition.
-  else()
-    if(NOT "${ARG0}")
-      _assert_internal_format_message(
-        MESSAGE "expected:" "${ARG0}" "to resolve to true")
-      message(FATAL_ERROR "${MESSAGE}")
-    endif()
-  endif()
-endmacro()
-
-# Asserts whether the given condition is false.
-#
-# Arguments:
-#   - ARG0: The first argument.
-macro(_assert_internal_assert_1_not ARG0)
-  if("${ARG0}")
-    _assert_internal_format_message(
-      MESSAGE "expected:" "${ARG0}" "to resolve to false")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given unary condition is true.
-#
-# Arguments:
-#   - ARG0: The first argument.
-#   - ARG1: The second argument.
-macro(_assert_internal_assert_2 ARG0 ARG1)
-  if("${ARG0}" STREQUAL NOT)
-    _assert_internal_assert_1_not("${ARG1}")
-  else()
-    string(TOLOWER "${ARG0}" OPERATOR)
-    if(COMMAND "_assert_internal_assert_2_${OPERATOR}")
-      cmake_language(
-        CALL "_assert_internal_assert_2_${OPERATOR}" "${ARG1}"
-      )
-    else()
-      _assert_internal_format_message(
-        MESSAGE "unsupported condition:" "${ARG0} ${ARG1}")
-      message(FATAL_ERROR "${MESSAGE}")
-    endif()
-  endif()
-endmacro()
-
-# Asserts whether the given unary condition is false.
-#
-# Arguments:
-#   - ARG0: The first argument.
-#   - ARG1: The second argument.
-macro(_assert_internal_assert_2_not ARG0 ARG1)
-  string(TOLOWER "${ARG0}" OPERATOR)
-  if(COMMAND "_assert_internal_assert_2_not_${OPERATOR}")
-    cmake_language(
-      CALL "_assert_internal_assert_2_not_${OPERATOR}" "${ARG1}"
-    )
-  else()
-    _assert_internal_format_message(
-      MESSAGE "unsupported condition:" "NOT ${ARG0} ${ARG1}")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given binary condition is true.
-#
-# Arguments:
-#   - ARG0: The first argument.
-#   - ARG1: The second argument.
-#   - ARG2: The third argument.
-macro(_assert_internal_assert_3 ARG0 ARG1 ARG2)
-  if("${ARG0}" STREQUAL NOT)
-    _assert_internal_assert_2_not("${ARG1}" "${ARG2}")
-  else()
-    string(TOLOWER "${ARG1}" OPERATOR)
-    if(COMMAND "_assert_internal_assert_3_${OPERATOR}")
-      cmake_language(
-        CALL "_assert_internal_assert_3_${OPERATOR}" "${ARG0}" "${ARG2}"
-      )
-    else()
-      _assert_internal_format_message(
-        MESSAGE "unsupported condition:" "${ARG0} ${ARG1} ${ARG2}")
-      message(FATAL_ERROR "${MESSAGE}")
-    endif()
-  endif()
-endmacro()
-
-# Asserts whether the given binary condition is false.
-#
-# Arguments:
-#   - ARG0: The first argument.
-#   - ARG1: The second argument.
-#   - ARG2: The third argument.
-macro(_assert_internal_assert_3_not ARG0 ARG1 ARG2)
-  string(TOLOWER "${ARG1}" OPERATOR)
-  if(COMMAND "_assert_internal_assert_3_not_${OPERATOR}")
-    cmake_language(
-      CALL "_assert_internal_assert_3_not_${OPERATOR}" "${ARG0}" "${ARG2}"
-    )
-  else()
-    _assert_internal_format_message(
-      MESSAGE "unsupported condition:" "NOT ${ARG0} ${ARG1} ${ARG2}")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
-# Asserts whether the given condition is true.
-#
-# Arguments:
-#   - ARG0: The first argument.
-#   - ARG1: The second argument.
-#   - ARG2: The third argument.
-#   - ARG3: The fourth argument.
-macro(_assert_internal_assert_4 ARG0 ARG1 ARG2 ARG3)
-  if("${ARG0}" STREQUAL NOT)
-    _assert_internal_assert_3_not("${ARG1}" "${ARG2}" "${ARG3}")
-  else()
-    _assert_internal_format_message(
-      MESSAGE "unsupported condition:" "${ARG0} ${ARG1} ${ARG2} ${ARG3}")
-    message(FATAL_ERROR "${MESSAGE}")
-  endif()
-endmacro()
-
 # Asserts the given condition.
 #
 # This function performs an assertion on the given condition. It will output a
@@ -314,13 +187,76 @@ function(assert)
   if(ARGC EQUAL 0)
     # Do nothing on an empty condition.
   elseif(ARGC EQUAL 1)
-    _assert_internal_assert_1("${ARGV0}")
+    if("${ARGV0}" STREQUAL NOT)
+      # Do nothing on an empty condition.
+    else()
+      if(NOT "${ARGV0}")
+        _assert_internal_format_message(
+          MESSAGE "expected:" "${ARGV0}" "to resolve to true")
+        message(FATAL_ERROR "${MESSAGE}")
+      endif()
+    endif()
   elseif(ARGC EQUAL 2)
-    _assert_internal_assert_2("${ARGV0}" "${ARGV1}")
+    if("${ARGV0}" STREQUAL NOT)
+      if("${ARGV1}")
+        _assert_internal_format_message(
+          MESSAGE "expected:" "${ARGV1}" "to resolve to false")
+        message(FATAL_ERROR "${MESSAGE}")
+      endif()
+    else()
+      string(TOLOWER "${ARGV0}" OPERATOR)
+      if(COMMAND "_assert_internal_assert_2_${OPERATOR}")
+        cmake_language(
+          CALL "_assert_internal_assert_2_${OPERATOR}" "${ARGV1}"
+        )
+      else()
+        _assert_internal_format_message(
+          MESSAGE "unsupported condition:" "${ARGV0} ${ARGV1}")
+        message(FATAL_ERROR "${MESSAGE}")
+      endif()
+    endif()
   elseif(ARGC EQUAL 3)
-    _assert_internal_assert_3("${ARGV0}" "${ARGV1}" "${ARGV2}")
+    if("${ARGV0}" STREQUAL NOT)
+      string(TOLOWER "${ARGV1}" OPERATOR)
+      if(COMMAND "_assert_internal_assert_2_not_${OPERATOR}")
+        cmake_language(
+          CALL "_assert_internal_assert_2_not_${OPERATOR}" "${ARGV2}"
+        )
+      else()
+        _assert_internal_format_message(
+          MESSAGE "unsupported condition:" "${ARGV0} ${ARGV1} ${ARGV2}")
+        message(FATAL_ERROR "${MESSAGE}")
+      endif()
+    else()
+      string(TOLOWER "${ARGV1}" OPERATOR)
+      if(COMMAND "_assert_internal_assert_3_${OPERATOR}")
+        cmake_language(
+          CALL "_assert_internal_assert_3_${OPERATOR}" "${ARGV0}" "${ARGV2}"
+        )
+      else()
+        _assert_internal_format_message(
+          MESSAGE "unsupported condition:" "${ARGV0} ${ARGV1} ${ARGV2}")
+        message(FATAL_ERROR "${MESSAGE}")
+      endif()
+    endif()
   elseif(ARGC EQUAL 4)
-    _assert_internal_assert_4("${ARGV0}" "${ARGV1}" "${ARGV2}" "${ARGV3}")
+    if("${ARGV0}" STREQUAL NOT)
+      string(TOLOWER "${ARGV2}" OPERATOR)
+      if(COMMAND "_assert_internal_assert_3_not_${OPERATOR}")
+        cmake_language(
+          CALL "_assert_internal_assert_3_not_${OPERATOR}" "${ARGV1}" "${ARGV3}"
+        )
+      else()
+        _assert_internal_format_message(
+          MESSAGE "unsupported condition:"
+          "${ARGV0} ${ARGV1} ${ARGV2} ${ARGV3}")
+        message(FATAL_ERROR "${MESSAGE}")
+      endif()
+    else()
+      _assert_internal_format_message(
+        MESSAGE "unsupported condition:" "${ARGV0} ${ARGV1} ${ARGV2} ${ARGV3}")
+      message(FATAL_ERROR "${MESSAGE}")
+    endif()
   else()
     set(ARGS "${ARGV0} ${ARGV1} ${ARGV2} ${ARGV3}")
     math(EXPR STOP "${ARGC} - 1")
