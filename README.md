@@ -51,18 +51,20 @@ assert(EXISTS some_file)
 assert(NOT DIRECTORY some_file)
 ```
 
-### Mock and Assert Messages
+### Mock Messages and Assert Fatal Errors
 
-Use the `mock_message` function to mock the `message` function, allowing assertions on the `message` function as shown in the following example:
+Use the `mock_message` function to mock the `message` function, allowing assertions on the fatal error messages as shown in the following example:
 
 ```cmake
+function(some_function)
+  message(FATAL_ERROR "some fatal error message")
+endfunction()
+
 mock_message()
-  message(STATUS "some status message")
-  message(ERROR "some error message")
+  some_function()
 end_mock_message()
 
-assert_message(STATUS "some status message")
-assert_message(ERROR "some error message")
+assert_fatal_error("some fatal error message")
 ```
 
 ### Assert Process Execution
