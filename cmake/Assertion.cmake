@@ -128,10 +128,8 @@ endfunction()
 # Use the 'end_mock_message' macro to end the scope for mocking the 'message'
 # function, reverting it to the original behavior.
 macro(mock_message)
-  set(MESSAGE_MOCKED ON)
-
   macro(message MODE MESSAGE)
-    if(MESSAGE_MOCKED)
+    if(DEFINED MESSAGE_MOCK_LEVEL)
       list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
       set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
       if("${MODE}" STREQUAL FATAL_ERROR)
@@ -143,8 +141,13 @@ macro(mock_message)
   endmacro()
 
   macro(mock_message)
-    set(MESSAGE_MOCKED ON)
+    if(NOT DEFINED MESSAGE_MOCK_LEVEL)
+      set(MESSAGE_MOCK_LEVEL 1)
+    else()
+      math(EXPR MESSAGE_MOCK_LEVEL "${MESSAGE_MOCK_LEVEL} + 1")
+    endif()
   endmacro()
+  mock_message()
 endmacro()
 
 # Ends a scope for mocking the 'message' function.
@@ -152,7 +155,12 @@ endmacro()
 # It ends the scope for mocking the 'message' function, reverting it to the
 # original behavior.
 macro(end_mock_message)
-  unset(MESSAGE_MOCKED)
+  if(DEFINED MESSAGE_MOCK_LEVEL)
+    math(EXPR MESSAGE_MOCK_LEVEL "${MESSAGE_MOCK_LEVEL} - 1")
+    if(MESSAGE_MOCK_LEVEL LESS_EQUAL 0)
+      unset(MESSAGE_MOCK_LEVEL)
+    endif()
+  endif()
 endmacro()
 
 # Asserts whether a fatal error was received with the expected message.
