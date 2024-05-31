@@ -25,7 +25,7 @@ add_cmake_test(
   "Directory path assertions"
   "Regular expression match assertions"
   "String equality assertions"
-  "Message assertions"
+  "Fatal error assertions"
   "Process execution assertions"
   "Mock message"
 )
