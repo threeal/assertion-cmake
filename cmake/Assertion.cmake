@@ -163,24 +163,28 @@ macro(end_mock_message)
   endif()
 endmacro()
 
-# Asserts whether a fatal error was received with the expected message.
+# Asserts whether a command call throws a fatal error message.
 #
-# This function can only assert a fatal error sent from the mocked 'message'
-# function, which is enabled by calling the 'mock_message' function.
+# ```cmake
+# assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>)
+# ```
 #
-# Arguments:
-#   - EXPECTED_MESSAGE: The expected fatal error message.
-function(assert_fatal_error EXPECTED_MESSAGE)
+# Asserts whether a command named `<command>` called with the specified
+# arguments throws the expected `<message>` fatal error message.
+function(assert_fatal_error)
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" MESSAGE CALL)
+
+  list(POP_FRONT ARG_CALL COMMAND)
+  mock_message()
+    cmake_language(CALL "${COMMAND}" ${ARG_CALL})
+  end_mock_message()
+
   list(POP_FRONT FATAL_ERROR_MESSAGES MESSAGE)
-  if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
+  if(NOT MESSAGE STREQUAL ARG_MESSAGE)
     _assert_internal_format_message(
       ASSERT_MESSAGE "expected fatal error message:" "${MESSAGE}"
-      "to be equal to:" "${EXPECTED_MESSAGE}")
+      "to be equal to:" "${ARG_MESSAGE}")
     message(FATAL_ERROR "${ASSERT_MESSAGE}")
-  endif()
-
-  if(DEFINED FATAL_ERROR_MESSAGES)
-    set(FATAL_ERROR_MESSAGES "${FATAL_ERROR_MESSAGES}" PARENT_SCOPE)
   endif()
 endfunction()
 
