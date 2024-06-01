@@ -5,7 +5,7 @@ A [CMake](https://cmake.org/) module containing a collection of assertion functi
 ## Key Features
 
 - Contains a collection of assertion functions for testing purposes.
-- Supports mocking and asserting the `message` function.
+- Supports asserting fatal error messages.
 - Supports asserting process execution.
 
 ## Integration
@@ -51,20 +51,16 @@ assert(EXISTS some_file)
 assert(NOT DIRECTORY some_file)
 ```
 
-### Mock Messages and Assert Fatal Errors
+### Assert Fatal Errors
 
-Use the `mock_message` function to mock the `message` function, allowing assertions on the fatal error messages as shown in the following example:
+Use the `assert_fatal_error` function to assert whether a call to the given function or macro throws the expected fatal error message:
 
 ```cmake
 function(some_function)
   message(FATAL_ERROR "some fatal error message")
 endfunction()
 
-mock_message()
-  some_function()
-end_mock_message()
-
-assert_fatal_error("some fatal error message")
+assert_fatal_error(CALL some_function MESSAGE "some fatal error message")
 ```
 
 ### Assert Process Execution
