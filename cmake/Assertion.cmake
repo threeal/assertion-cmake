@@ -120,16 +120,20 @@ function(assert)
   endif()
 endfunction()
 
-# Begins a scope for mocking the 'message' function.
+# Begins a scope for mocking the `message` function.
 #
-# It begins a scope for mocking the 'message' function by modifying its behavior
+# ```cmake
+# _assert_internal_mock_message()
+# ```
+#
+# Begins a scope for mocking the `message` function by modifying its behavior
 # to store the message into a list variable instead of printing it to the log.
 #
-# Use the 'end_mock_message' macro to end the scope for mocking the 'message'
-# function, reverting it to the original behavior.
-macro(mock_message)
+# Use the '_assert_internal_end_mock_message' macro to end the scope for mocking
+# the `message` function, reverting it to the original behavior.
+macro(_assert_internal_mock_message)
   macro(message MODE MESSAGE)
-    if(DEFINED MESSAGE_MOCK_LEVEL)
+    if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
       list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
       set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
       if("${MODE}" STREQUAL FATAL_ERROR)
@@ -140,25 +144,33 @@ macro(mock_message)
     endif()
   endmacro()
 
-  macro(mock_message)
-    if(NOT DEFINED MESSAGE_MOCK_LEVEL)
-      set(MESSAGE_MOCK_LEVEL 1)
+  macro(_assert_internal_mock_message)
+    if(NOT DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
+      set(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL 1)
     else()
-      math(EXPR MESSAGE_MOCK_LEVEL "${MESSAGE_MOCK_LEVEL} + 1")
+      math(
+        EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
+        "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} + 1")
     endif()
   endmacro()
-  mock_message()
+  _assert_internal_mock_message()
 endmacro()
 
-# Ends a scope for mocking the 'message' function.
+# Ends a scope for mocking the `message` function.
 #
-# It ends the scope for mocking the 'message' function, reverting it to the
-# original behavior.
-macro(end_mock_message)
-  if(DEFINED MESSAGE_MOCK_LEVEL)
-    math(EXPR MESSAGE_MOCK_LEVEL "${MESSAGE_MOCK_LEVEL} - 1")
-    if(MESSAGE_MOCK_LEVEL LESS_EQUAL 0)
-      unset(MESSAGE_MOCK_LEVEL)
+# ```cmake
+# _assert_internal_end_mock_message()
+# ```
+#
+# Ends a scope for mocking the `message` function, reverting it to the original
+# behavior.
+macro(_assert_internal_end_mock_message)
+  if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
+    math(
+      EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
+      "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} - 1")
+    if(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL LESS_EQUAL 0)
+      unset(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
     endif()
   endif()
 endmacro()
@@ -175,9 +187,9 @@ function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" MESSAGE CALL)
 
   list(POP_FRONT ARG_CALL COMMAND)
-  mock_message()
+  _assert_internal_mock_message()
     cmake_language(CALL "${COMMAND}" ${ARG_CALL})
-  end_mock_message()
+  _assert_internal_end_mock_message()
 
   list(POP_FRONT FATAL_ERROR_MESSAGES MESSAGE)
   if(NOT MESSAGE STREQUAL ARG_MESSAGE)
