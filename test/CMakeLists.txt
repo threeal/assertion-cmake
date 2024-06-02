@@ -15,6 +15,7 @@ add_cmake_test(
   cmake/InternalTest.cmake
   "Variable content retrieval"
   "Assertion message formatting"
+  "Message function mocking"
 )
 
 add_cmake_test(
@@ -27,5 +28,4 @@ add_cmake_test(
   "String equality assertions"
   "Fatal error assertions"
   "Process execution assertions"
-  "Mock message"
 )
