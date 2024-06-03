@@ -87,10 +87,16 @@ function(assert)
         endif()
       else()
         if(ARGV1 STREQUAL MATCHES)
-          _assert_internal_get_content("${ARGV0}" STRING_CONTENT)
-          _assert_internal_format_message(
-            MESSAGE "expected string:" "${STRING_CONTENT}"
-            "to match:" "${ARGV2}")
+          if(DEFINED "${ARGV0}")
+            _assert_internal_format_message(
+              MESSAGE
+              "expected string:" "${${ARGV0}}"
+              "of variable:" "${ARGV0}"
+              "to match:" "${ARGV2}")
+          else()
+            _assert_internal_format_message(
+              MESSAGE "expected string:" "${ARGV0}" "to match:" "${ARGV2}")
+          endif()
         elseif(ARGV1 STREQUAL STREQUAL)
           _assert_internal_get_content("${ARGV0}" STRING1_CONTENT)
           _assert_internal_get_content("${ARGV2}" STRING2_CONTENT)
@@ -102,10 +108,16 @@ function(assert)
     elseif(ARGC EQUAL 4)
       if(ARGV0 STREQUAL NOT)
         if(ARGV2 STREQUAL MATCHES)
-          _assert_internal_get_content("${ARGV1}" STRING_CONTENT)
-          _assert_internal_format_message(
-            MESSAGE "expected string:" "${STRING_CONTENT}"
-            "not to match:" "${ARGV3}")
+          if(DEFINED "${ARGV1}")
+            _assert_internal_format_message(
+              MESSAGE
+              "expected string:" "${${ARGV1}}"
+              "of variable:" "${ARGV1}"
+              "not to match:" "${ARGV3}")
+          else()
+            _assert_internal_format_message(
+              MESSAGE "expected string:" "${ARGV1}" "not to match:" "${ARGV3}")
+          endif()
         elseif(ARGV2 STREQUAL STREQUAL)
           _assert_internal_get_content("${ARGV1}" STRING1_CONTENT)
           _assert_internal_get_content("${ARGV3}" STRING2_CONTENT)

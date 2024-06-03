@@ -66,18 +66,37 @@ endfunction()
 function("Regular expression match assertions")
   set(STRING_VAR "some string")
 
-  foreach(VALUE STRING_VAR "${STRING_VAR}")
-    assert("${VALUE}" MATCHES "so.*ing")
-    assert(NOT "${VALUE}" MATCHES "so.*other.*ing")
+  assert("some string" MATCHES "so.*ing")
+  assert(NOT "some string" MATCHES "so.*other.*ing")
 
-    assert_fatal_error(
-      CALL assert NOT "${VALUE}" MATCHES "so.*ing"
-      MESSAGE "expected string:\n  some string\nnot to match:\n  so.*ing")
+  assert(STRING_VAR MATCHES "so.*ing")
+  assert(NOT STRING_VAR MATCHES "so.*other.*ing")
 
-    assert_fatal_error(
-      CALL assert "${VALUE}" MATCHES "so.*other.*ing"
-      MESSAGE "expected string:\n  some string\nto match:\n  so.*other.*ing")
-  endforeach()
+  assert_fatal_error(
+    CALL assert NOT "some string" MATCHES "so.*ing"
+    MESSAGE "expected string:\n  some string\nnot to match:\n  so.*ing")
+
+  assert_fatal_error(
+    CALL assert "some string" MATCHES "so.*other.*ing"
+    MESSAGE "expected string:\n  some string\nto match:\n  so.*other.*ing")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "of variable:\n  STRING_VAR"
+    "not to match:\n  so.*ing")
+  assert_fatal_error(
+    CALL assert NOT STRING_VAR MATCHES "so.*ing"
+    MESSAGE "${EXPECTED_MESSAGE}")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "of variable:\n  STRING_VAR"
+    "to match:\n  so.*other.*ing")
+  assert_fatal_error(
+    CALL assert STRING_VAR MATCHES "so.*other.*ing"
+    MESSAGE "${EXPECTED_MESSAGE}")
 endfunction()
 
 function("String equality assertions")
