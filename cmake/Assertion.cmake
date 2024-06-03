@@ -3,23 +3,6 @@
 
 include_guard(GLOBAL)
 
-# Retrieves the content of the given variable.
-#
-# If the given variable is defined, it sets the output variable to the content
-# of the variable. Otherwise, it sets the output variable to the name of the
-# variable.
-#
-# Arguments:
-#   - VARIABLE: The variable to get the content from.
-#   - OUTPUT_VARIABLE: The output variable that holds the content of the variable.
-function(_assert_internal_get_content VARIABLE OUTPUT_VARIABLE)
-  if(DEFINED "${VARIABLE}")
-    set("${OUTPUT_VARIABLE}" "${${VARIABLE}}" PARENT_SCOPE)
-  else()
-    set("${OUTPUT_VARIABLE}" "${VARIABLE}" PARENT_SCOPE)
-  endif()
-endfunction()
-
 # Formats an assertion message with indentation on even lines.
 #
 # Arguments:

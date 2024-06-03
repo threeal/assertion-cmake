@@ -13,7 +13,6 @@ endfunction()
 
 add_cmake_test(
   cmake/InternalTest.cmake
-  "Variable content retrieval"
   "Assertion message formatting"
   "Message function mocking"
 )
