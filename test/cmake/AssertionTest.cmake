@@ -103,27 +103,89 @@ function("String equality assertions")
   set(STRING_VAR "some string")
   set(OTHER_STRING_VAR "some other string")
 
-  foreach(LEFT_VALUE STRING_VAR "${STRING_VAR}")
-    foreach(RIGHT_VALUE STRING_VAR "${STRING_VAR}")
-      assert("${LEFT_VALUE}" STREQUAL "${RIGHT_VALUE}")
-    endforeach()
+  assert("some string" STREQUAL "some string")
+  assert(NOT "some string" STREQUAL "some other string")
 
-    foreach(RIGHT_VALUE OTHER_STRING_VAR "${OTHER_STRING_VAR}")
-      assert(NOT "${LEFT_VALUE}" STREQUAL "${RIGHT_VALUE}")
-    endforeach()
+  assert(STRING_VAR STREQUAL "some string")
+  assert(NOT STRING_VAR STREQUAL "some other string")
 
-    foreach(RIGHT_VALUE OTHER_STRING_VAR "${OTHER_STRING_VAR}")
-      assert_fatal_error(
-        CALL assert "${LEFT_VALUE}" STREQUAL "${RIGHT_VALUE}"
-        MESSAGE "expected string:\n  some string\nto be equal to:\n  some other string")
-    endforeach()
+  assert("some string" STREQUAL STRING_VAR)
+  assert(NOT "some string" STREQUAL OTHER_STRING_VAR)
 
-    foreach(RIGHT_VALUE STRING_VAR "${STRING_VAR}")
-      assert_fatal_error(
-        CALL assert NOT "${LEFT_VALUE}" STREQUAL "${RIGHT_VALUE}"
-        MESSAGE "expected string:\n  some string\nnot to be equal to:\n  some string")
-    endforeach()
-  endforeach()
+  assert(STRING_VAR STREQUAL STRING_VAR)
+  assert(NOT STRING_VAR STREQUAL OTHER_STRING_VAR)
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "not to be equal to:\n  some string")
+  assert_fatal_error(
+    CALL assert NOT "some string" STREQUAL "some string"
+    MESSAGE "${EXPECTED_MESSAGE}")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "to be equal to:\n  some other string")
+  assert_fatal_error(
+    CALL assert "some string" STREQUAL "some other string"
+    MESSAGE "${EXPECTED_MESSAGE}")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "of variable:\n  STRING_VAR"
+    "not to be equal to:\n  some string")
+  assert_fatal_error(
+    CALL assert NOT STRING_VAR STREQUAL "some string"
+    MESSAGE "${EXPECTED_MESSAGE}")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "of variable:\n  STRING_VAR"
+    "to be equal to:\n  some other string")
+  assert_fatal_error(
+    CALL assert STRING_VAR STREQUAL "some other string"
+    MESSAGE "${EXPECTED_MESSAGE}")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "not to be equal to string:\n  some string"
+    "of variable:\n  STRING_VAR")
+  assert_fatal_error(
+    CALL assert NOT "some string" STREQUAL STRING_VAR
+    MESSAGE "${EXPECTED_MESSAGE}")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "to be equal to string:\n  some other string"
+    "of variable:\n  OTHER_STRING_VAR")
+  assert_fatal_error(
+    CALL assert "some string" STREQUAL OTHER_STRING_VAR
+    MESSAGE "${EXPECTED_MESSAGE}")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "of variable:\n  STRING_VAR"
+    "not to be equal to string:\n  some string"
+    "of variable:\n  STRING_VAR")
+  assert_fatal_error(
+    CALL assert NOT STRING_VAR STREQUAL STRING_VAR
+    MESSAGE "${EXPECTED_MESSAGE}")
+
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected string:\n  some string"
+    "of variable:\n  STRING_VAR"
+    "to be equal to string:\n  some other string"
+    "of variable:\n  OTHER_STRING_VAR")
+  assert_fatal_error(
+    CALL assert STRING_VAR STREQUAL OTHER_STRING_VAR
+    MESSAGE "${EXPECTED_MESSAGE}")
 endfunction()
 
 function(call_sample_messages)

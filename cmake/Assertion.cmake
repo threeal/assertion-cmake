@@ -98,11 +98,35 @@ function(assert)
               MESSAGE "expected string:" "${ARGV0}" "to match:" "${ARGV2}")
           endif()
         elseif(ARGV1 STREQUAL STREQUAL)
-          _assert_internal_get_content("${ARGV0}" STRING1_CONTENT)
-          _assert_internal_get_content("${ARGV2}" STRING2_CONTENT)
-          _assert_internal_format_message(
-            MESSAGE "expected string:" "${STRING1_CONTENT}"
-            "to be equal to:" "${STRING2_CONTENT}")
+          if(DEFINED "${ARGV0}")
+            if(DEFINED "${ARGV2}")
+              _assert_internal_format_message(
+                MESSAGE
+                "expected string:" "${${ARGV0}}"
+                "of variable:" "${ARGV0}"
+                "to be equal to string:" "${${ARGV2}}"
+                "of variable:" "${ARGV2}")
+            else()
+              _assert_internal_format_message(
+                MESSAGE
+                "expected string:" "${${ARGV0}}"
+                "of variable:" "${ARGV0}"
+                "to be equal to:" "${ARGV2}")
+            endif()
+          else()
+            if(DEFINED "${ARGV2}")
+              _assert_internal_format_message(
+                MESSAGE
+                "expected string:" "${ARGV0}"
+                "to be equal to string:" "${${ARGV2}}"
+                "of variable:" "${ARGV2}")
+            else()
+              _assert_internal_format_message(
+                MESSAGE
+                "expected string:" "${ARGV0}"
+                "to be equal to:" "${ARGV2}")
+            endif()
+          endif()
         endif()
       endif()
     elseif(ARGC EQUAL 4)
@@ -119,11 +143,35 @@ function(assert)
               MESSAGE "expected string:" "${ARGV1}" "not to match:" "${ARGV3}")
           endif()
         elseif(ARGV2 STREQUAL STREQUAL)
-          _assert_internal_get_content("${ARGV1}" STRING1_CONTENT)
-          _assert_internal_get_content("${ARGV3}" STRING2_CONTENT)
-          _assert_internal_format_message(
-            MESSAGE "expected string:" "${STRING1_CONTENT}"
-            "not to be equal to:" "${STRING2_CONTENT}")
+          if(DEFINED "${ARGV1}")
+            if(DEFINED "${ARGV3}")
+              _assert_internal_format_message(
+                MESSAGE
+                "expected string:" "${${ARGV1}}"
+                "of variable:" "${ARGV1}"
+                "not to be equal to string:" "${${ARGV3}}"
+                "of variable:" "${ARGV3}")
+            else()
+              _assert_internal_format_message(
+                MESSAGE
+                "expected string:" "${${ARGV1}}"
+                "of variable:" "${ARGV1}"
+                "not to be equal to:" "${ARGV3}")
+            endif()
+          else()
+            if(DEFINED "${ARGV3}")
+              _assert_internal_format_message(
+                MESSAGE
+                "expected string:" "${ARGV1}"
+                "not to be equal to string:" "${${ARGV3}}"
+                "of variable:" "${ARGV3}")
+            else()
+              _assert_internal_format_message(
+                MESSAGE
+                "expected string:" "${ARGV1}"
+                "not to be equal to:" "${ARGV3}")
+            endif()
+          endif()
         endif()
       endif()
     endif()
