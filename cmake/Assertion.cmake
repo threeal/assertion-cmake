@@ -3,12 +3,13 @@
 
 include_guard(GLOBAL)
 
-# Formats an assertion message with indentation on even lines.
+# Formats an assertion message with indentation on each even line.
 #
-# Arguments:
-#   - OUT_VAR: The output variable that holds the formatted message.
-#   - FIRST_LINE: The first line of the message.
-#   - ARGN: The rest of the lines of the message.
+# _assert_internal_format_message(<out_var> [<lines>...])
+#
+# This function formats the given lines by appending all of them into a single
+# string. Each even line will be indented by 2 spaces. The formatted string will
+# then be stored in the `<out_var>` variable.
 function(_assert_internal_format_message OUT_VAR FIRST_LINE)
   set(MESSAGE "${FIRST_LINE}")
   if(ARGC GREATER 2)
@@ -29,10 +30,12 @@ endfunction()
 
 # Asserts the given condition.
 #
+# assert(<condition>)
+#
 # This function performs an assertion on the given condition. It will output a
 # fatal error message if the assertion fails.
 #
-# Refer to the documentation of the 'if' function for supported conditions to
+# Refer to the documentation of the `if` function for supported conditions to
 # perform the assertion.
 function(assert)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "")
@@ -163,16 +166,15 @@ function(assert)
   endif()
 endfunction()
 
-# Begins a scope for mocking the `message` function.
+# Begins a new scope for mocking the `message` function.
 #
-# ```cmake
 # _assert_internal_mock_message()
-# ```
 #
-# Begins a scope for mocking the `message` function by modifying its behavior
-# to store the message into a list variable instead of printing it to the log.
+# This macro begins a new scope for mocking the `message` function by modifying
+# its behavior to store the message into a list variable instead of printing it
+# to the log.
 #
-# Use the '_assert_internal_end_mock_message' macro to end the scope for mocking
+# Use the `_assert_internal_end_mock_message` macro to end the scope for mocking
 # the `message` function, reverting it to the original behavior.
 macro(_assert_internal_mock_message)
   macro(message MODE MESSAGE)
@@ -199,14 +201,12 @@ macro(_assert_internal_mock_message)
   _assert_internal_mock_message()
 endmacro()
 
-# Ends a scope for mocking the `message` function.
+# Ends the current scope for mocking the `message` function.
 #
-# ```cmake
 # _assert_internal_end_mock_message()
-# ```
 #
-# Ends a scope for mocking the `message` function, reverting it to the original
-# behavior.
+# This macro ends the current scope for mocking the `message` function,
+# reverting it to the original behavior.
 macro(_assert_internal_end_mock_message)
   if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
     math(
@@ -220,12 +220,11 @@ endmacro()
 
 # Asserts whether a command call throws a fatal error message.
 #
-# ```cmake
 # assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>)
-# ```
 #
-# Asserts whether a command named `<command>` called with the specified
-# arguments throws the expected `<message>` fatal error message.
+# This function asserts whether a function or macro named `<command>` called
+# with the specified arguments throws the expected `<message>` fatal error
+# message.
 function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" MESSAGE CALL)
 
@@ -243,18 +242,20 @@ function(assert_fatal_error)
   endif()
 endfunction()
 
-# Asserts whether the given command executes a process.
+# Asserts whether the given command correctly executes a process.
 #
-# This function asserts whether the given command successfully executes a
-# process. If the `ERROR` argument is specified, this function asserts
-# whether the given command fails to execute the process.
+# assert_execute_process(
+#   COMMAND <command> [<arg>...] [OUTPUT <output>] [ERROR <error>])
 #
-# Optional arguments:
-#   - COMMAND: The command to execute.
-#   - OUTPUT: If set, asserts whether the output of the executed process matches
-#     the given regular expression.
-#   - ERROR: If set, asserts whether the error of the executed process matches
-#     the given regular expression.
+# This function asserts whether the given command and arguments successfully
+# execute a process.
+#
+# If `OUTPUT` is specified, it also asserts whether the output of the executed
+# process matches the expected `<output>`.
+#
+# If `ERROR` is specified, this function asserts whether the given command and
+# arguments fail to execute a process. It also asserts whether the error of the
+# executed process matches the expected `<error>`.
 function(assert_execute_process)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "OUTPUT;ERROR" "COMMAND")
 
@@ -294,23 +295,19 @@ endfunction()
 
 # Begins a new test section.
 #
-# ```cmake
 # section(<name>)
-# ```
 #
-# Begins a new test section named `name`. Use the `endsection` macro to end the
-# test section.
+# This macro begins a new test section named `<name>`. Use the `endsection`
+# macro to end the test section.
 macro(section NAME)
   message(CHECK_START "${NAME}")
 endmacro()
 
 # Ends the current test section.
 #
-# ```cmake
 # endsection()
-# ```
 #
-# Ends the current test section and marks it as passed.
+# This macro ends the current test section and marks it as passed.
 macro(endsection)
   message(CHECK_PASS passed)
 endmacro()
