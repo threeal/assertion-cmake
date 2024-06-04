@@ -242,18 +242,20 @@ function(assert_fatal_error)
   endif()
 endfunction()
 
-# Asserts whether the given command executes a process.
+# Asserts whether the given command correctly executes a process.
 #
-# This function asserts whether the given command successfully executes a
-# process. If the `ERROR` argument is specified, this function asserts
-# whether the given command fails to execute the process.
+# assert_execute_process(
+#   COMMAND <command> [<arg>...] [OUTPUT <output>] [ERROR <error>])
 #
-# Optional arguments:
-#   - COMMAND: The command to execute.
-#   - OUTPUT: If set, asserts whether the output of the executed process matches
-#     the given regular expression.
-#   - ERROR: If set, asserts whether the error of the executed process matches
-#     the given regular expression.
+# This function asserts whether the given command and arguments successfully
+# execute a process.
+#
+# If `OUTPUT` is specified, it also asserts whether the output of the executed
+# process matches the expected `<output>`.
+#
+# If `ERROR` is specified, this function asserts whether the given command and
+# arguments fail to execute a process. It also asserts whether the error of the
+# executed process matches the expected `<error>`.
 function(assert_execute_process)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "OUTPUT;ERROR" "COMMAND")
 
