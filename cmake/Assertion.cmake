@@ -201,14 +201,12 @@ macro(_assert_internal_mock_message)
   _assert_internal_mock_message()
 endmacro()
 
-# Ends a scope for mocking the `message` function.
+# Ends the current scope for mocking the `message` function.
 #
-# ```cmake
 # _assert_internal_end_mock_message()
-# ```
 #
-# Ends a scope for mocking the `message` function, reverting it to the original
-# behavior.
+# This macro ends the current scope for mocking the `message` function,
+# reverting it to the original behavior.
 macro(_assert_internal_end_mock_message)
   if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
     math(
