@@ -305,11 +305,9 @@ endmacro()
 
 # Ends the current test section.
 #
-# ```cmake
 # endsection()
-# ```
 #
-# Ends the current test section and marks it as passed.
+# This macro ends the current test section and marks it as passed.
 macro(endsection)
   message(CHECK_PASS passed)
 endmacro()
