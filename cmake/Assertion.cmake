@@ -295,12 +295,10 @@ endfunction()
 
 # Begins a new test section.
 #
-# ```cmake
 # section(<name>)
-# ```
 #
-# Begins a new test section named `name`. Use the `endsection` macro to end the
-# test section.
+# This macro begins a new test section named `<name>`. Use the `endsection`
+# macro to end the test section.
 macro(section NAME)
   message(CHECK_START "${NAME}")
 endmacro()
