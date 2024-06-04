@@ -220,12 +220,11 @@ endmacro()
 
 # Asserts whether a command call throws a fatal error message.
 #
-# ```cmake
 # assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>)
-# ```
 #
-# Asserts whether a command named `<command>` called with the specified
-# arguments throws the expected `<message>` fatal error message.
+# This function asserts whether a function or macro named `<command>` called
+# with the specified arguments throws the expected `<message>` fatal error
+# message.
 function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" MESSAGE CALL)
 
