@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 
 include(Assertion)
 
-message(CHECK_START "boolean assertions")
-block()
+section("boolean assertions")
   assert(TRUE)
   assert(NOT FALSE)
 
@@ -14,11 +13,9 @@ block()
   assert_fatal_error(
     CALL assert NOT TRUE
     MESSAGE "expected:\n  NOT TRUE\nto resolve to true")
-endblock()
-message(CHECK_PASS passed)
+endsection()
 
-message(CHECK_START "variable existence assertions")
-block()
+section("variable existence assertions")
   set(EXISTING_VARIABLE TRUE)
   unset(NON_EXSITING_VARIABLE)
 
@@ -32,11 +29,9 @@ block()
   assert_fatal_error(
     CALL assert NOT DEFINED EXISTING_VARIABLE
     MESSAGE "expected variable:\n  EXISTING_VARIABLE\nnot to be defined")
-endblock()
-message(CHECK_PASS passed)
+endsection()
 
-message(CHECK_START "path existence assertions")
-block()
+section("path existence assertions")
   file(TOUCH some_file)
   file(REMOVE_RECURSE non_existing_file)
 
@@ -50,11 +45,9 @@ block()
   assert_fatal_error(
     CALL assert NOT EXISTS some_file
     MESSAGE "expected path:\n  some_file\nnot to exist")
-endblock()
-message(CHECK_PASS passed)
+endsection()
 
-message(CHECK_START "directory path assertions")
-block()
+section("directory path assertions")
   file(MAKE_DIRECTORY some_directory)
   file(TOUCH some_file)
 
@@ -68,11 +61,9 @@ block()
   assert_fatal_error(
     CALL assert NOT IS_DIRECTORY some_directory
     MESSAGE "expected path:\n  some_directory\nnot to be a directory")
-endblock()
-message(CHECK_PASS passed)
+endsection()
 
-message(CHECK_START "regular expression match assertions")
-block()
+section("regular expression match assertions")
   set(STRING_VAR "some string")
 
   assert("some string" MATCHES "so.*ing")
@@ -106,11 +97,9 @@ block()
   assert_fatal_error(
     CALL assert STRING_VAR MATCHES "so.*other.*ing"
     MESSAGE "${EXPECTED_MESSAGE}")
-endblock()
-message(CHECK_PASS passed)
+endsection()
 
-message(CHECK_START "String equality assertions")
-block()
+section("string equality assertions")
   set(STRING_VAR "some string")
   set(OTHER_STRING_VAR "some other string")
 
@@ -197,5 +186,4 @@ block()
   assert_fatal_error(
     CALL assert STRING_VAR STREQUAL OTHER_STRING_VAR
     MESSAGE "${EXPECTED_MESSAGE}")
-endblock()
-message(CHECK_PASS passed)
+endsection()
