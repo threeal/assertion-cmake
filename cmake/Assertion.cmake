@@ -3,12 +3,13 @@
 
 include_guard(GLOBAL)
 
-# Formats an assertion message with indentation on even lines.
+# Formats an assertion message with indentation on each even line.
 #
-# Arguments:
-#   - OUT_VAR: The output variable that holds the formatted message.
-#   - FIRST_LINE: The first line of the message.
-#   - ARGN: The rest of the lines of the message.
+# _assert_internal_format_message(<out_var> [<lines>...])
+#
+# This function formats the given lines by appending all of them into a single
+# string. Each even line will be indented by 2 spaces. The formatted string will
+# then be stored in the `<out_var>` variable.
 function(_assert_internal_format_message OUT_VAR FIRST_LINE)
   set(MESSAGE "${FIRST_LINE}")
   if(ARGC GREATER 2)
