@@ -7,6 +7,7 @@ A [CMake](https://cmake.org/) module containing a collection of assertion functi
 - Contains a collection of assertion functions for testing purposes.
 - Supports asserting fatal error messages.
 - Supports asserting process execution.
+- Supports separating tests into sections.
 
 ## Integration
 
@@ -83,6 +84,17 @@ assert_execute_process(
   COMMAND "${CMAKE_COMMAND}" invalid-dir
   ERROR "CMake Error: The source directory .* does not exist."
 )
+```
+
+### Separate Tests Into Sections
+
+Use the `section` macro to begin a new test section and end it using the `endsection` macro:
+
+```cmake
+section("some section")
+  set(SOME_VARIABLE "some value")
+  assert(DEFINED SOME_VARIABLE)
+endsection()
 ```
 
 ## License
