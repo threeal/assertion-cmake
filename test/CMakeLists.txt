@@ -11,6 +11,11 @@ function(add_cmake_test FILE)
   endforeach()
 endfunction()
 
+add_test(
+  NAME "condition assertions"
+  COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Assert.cmake)
+
 add_cmake_test(
   cmake/InternalTest.cmake
   "Assertion message formatting"
@@ -19,12 +24,6 @@ add_cmake_test(
 
 add_cmake_test(
   cmake/AssertionTest.cmake
-  "Boolean assertions"
-  "Variable existence assertions"
-  "Path existence assertions"
-  "Directory path assertions"
-  "Regular expression match assertions"
-  "String equality assertions"
   "Fatal error assertions"
   "Process execution assertions"
 )
