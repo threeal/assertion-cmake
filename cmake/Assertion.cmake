@@ -30,10 +30,12 @@ endfunction()
 
 # Asserts the given condition.
 #
+# assert(<condition>)
+#
 # This function performs an assertion on the given condition. It will output a
 # fatal error message if the assertion fails.
 #
-# Refer to the documentation of the 'if' function for supported conditions to
+# Refer to the documentation of the `if` function for supported conditions to
 # perform the assertion.
 function(assert)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "")
