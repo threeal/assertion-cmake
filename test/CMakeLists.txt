@@ -21,13 +21,13 @@ add_test(
   COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
     -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/AssertFatalError.cmake)
 
+add_test(
+  NAME "execute process assertions"
+  COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/AssertExecuteProcess.cmake)
+
 add_cmake_test(
   cmake/InternalTest.cmake
   "Assertion message formatting"
   "Message function mocking"
-)
-
-add_cmake_test(
-  cmake/AssertionTest.cmake
-  "Process execution assertions"
 )
