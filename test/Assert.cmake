@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.17)
 
 include(Assertion)
 
-function("Boolean assertions")
+message(CHECK_START "boolean assertions")
+block()
   assert(TRUE)
   assert(NOT FALSE)
 
@@ -13,9 +14,11 @@ function("Boolean assertions")
   assert_fatal_error(
     CALL assert NOT TRUE
     MESSAGE "expected:\n  NOT TRUE\nto resolve to true")
-endfunction()
+endblock()
+message(CHECK_PASS passed)
 
-function("Variable existence assertions")
+message(CHECK_START "variable existence assertions")
+block()
   set(EXISTING_VARIABLE TRUE)
   unset(NON_EXSITING_VARIABLE)
 
@@ -29,9 +32,11 @@ function("Variable existence assertions")
   assert_fatal_error(
     CALL assert NOT DEFINED EXISTING_VARIABLE
     MESSAGE "expected variable:\n  EXISTING_VARIABLE\nnot to be defined")
-endfunction()
+endblock()
+message(CHECK_PASS passed)
 
-function("Path existence assertions")
+message(CHECK_START "path existence assertions")
+block()
   file(TOUCH some_file)
   file(REMOVE_RECURSE non_existing_file)
 
@@ -45,9 +50,11 @@ function("Path existence assertions")
   assert_fatal_error(
     CALL assert NOT EXISTS some_file
     MESSAGE "expected path:\n  some_file\nnot to exist")
-endfunction()
+endblock()
+message(CHECK_PASS passed)
 
-function("Directory path assertions")
+message(CHECK_START "directory path assertions")
+block()
   file(MAKE_DIRECTORY some_directory)
   file(TOUCH some_file)
 
@@ -61,9 +68,11 @@ function("Directory path assertions")
   assert_fatal_error(
     CALL assert NOT IS_DIRECTORY some_directory
     MESSAGE "expected path:\n  some_directory\nnot to be a directory")
-endfunction()
+endblock()
+message(CHECK_PASS passed)
 
-function("Regular expression match assertions")
+message(CHECK_START "regular expression match assertions")
+block()
   set(STRING_VAR "some string")
 
   assert("some string" MATCHES "so.*ing")
@@ -97,9 +106,11 @@ function("Regular expression match assertions")
   assert_fatal_error(
     CALL assert STRING_VAR MATCHES "so.*other.*ing"
     MESSAGE "${EXPECTED_MESSAGE}")
-endfunction()
+endblock()
+message(CHECK_PASS passed)
 
-function("String equality assertions")
+message(CHECK_START "String equality assertions")
+block()
   set(STRING_VAR "some string")
   set(OTHER_STRING_VAR "some other string")
 
@@ -186,87 +197,5 @@ function("String equality assertions")
   assert_fatal_error(
     CALL assert STRING_VAR STREQUAL OTHER_STRING_VAR
     MESSAGE "${EXPECTED_MESSAGE}")
-endfunction()
-
-function(call_sample_messages)
-  message(WARNING "some warning message")
-  message(WARNING "some other warning message")
-  message(ERROR "some error message")
-  message(FATAL_ERROR "some fatal error message")
-  message(ERROR "some other error message")
-endfunction()
-
-function("Fatal error assertions")
-  function(throw_fatal_error MESSAGE)
-    message(FATAL_ERROR "${MESSAGE}")
-  endfunction()
-
-  assert_fatal_error(
-    CALL throw_fatal_error "some fatal error message"
-    MESSAGE "some fatal error message")
-
-  macro(assert_fail)
-    assert_fatal_error(
-      CALL throw_fatal_error "some fatal error message"
-      MESSAGE "some other fatal error message")
-  endmacro()
-
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected fatal error message:"
-    "  some fatal error message"
-    "to be equal to:"
-    "  some other fatal error message")
-  assert_fatal_error(CALL assert_fail MESSAGE "${EXPECTED_MESSAGE}")
-endfunction()
-
-function("Process execution assertions")
-  assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true)
-  assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E false ERROR .*)
-
-  assert_fatal_error(
-    CALL assert_execute_process COMMAND "${CMAKE_COMMAND}" -E true ERROR .*
-    MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E true\nto fail")
-
-  assert_fatal_error(
-    CALL assert_execute_process COMMAND "${CMAKE_COMMAND}" -E false
-    MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E false\nnot to fail")
-
-  assert_execute_process(
-    COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-    OUTPUT "Hello.*!")
-
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected the output:"
-    "  Hello world!"
-    "of command:"
-    "  ${CMAKE_COMMAND} -E echo Hello world!"
-    "to match:"
-    "  Hi.*!")
-  assert_fatal_error(
-    CALL assert_execute_process
-      COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-      OUTPUT "Hi.*!"
-    MESSAGE "${EXPECTED_MESSAGE}")
-
-  assert_execute_process(
-    COMMAND "${CMAKE_COMMAND}" -E touch /
-    ERROR "cmake -E touch: failed to update")
-
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected the error:"
-    "  cmake -E touch: failed to update \"/\"."
-    "of command:"
-    "  ${CMAKE_COMMAND} -E touch /"
-    "to match:"
-    "  cmake -E touch: not failed to update")
-  assert_fatal_error(
-    CALL assert_execute_process
-      COMMAND "${CMAKE_COMMAND}" -E touch /
-      ERROR "cmake -E touch: not failed to update"
-    MESSAGE "${EXPECTED_MESSAGE}")
-endfunction()
-
-cmake_language(CALL "${TEST_COMMAND}")
+endblock()
+message(CHECK_PASS passed)

@@ -20,7 +20,31 @@ endif()
 if(NOT SUBPROJECT)
   if(BUILD_TESTING)
     enable_testing()
-    add_subdirectory(test)
+
+    add_test(
+      NAME "condition assertions"
+      COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/Assert.cmake)
+
+    add_test(
+      NAME "fatal error assertions"
+      COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertFatalError.cmake)
+
+    add_test(
+      NAME "execute process assertions"
+      COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertExecuteProcess.cmake)
+
+    add_test(
+      NAME "internal assertion message formatting"
+      COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/InternalFormatMessage.cmake)
+
+    add_test(
+      NAME "internal message mocking"
+      COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/InternalMockMessage.cmake)
   endif()
 
   include(CMakePackageConfigHelpers)
