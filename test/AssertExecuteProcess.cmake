@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 
 include(Assertion)
 
-message(CHECK_START "execute process assertions")
-block()
+section("execute process assertions")
   assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true)
   assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E false ERROR .*)
 
@@ -14,11 +13,9 @@ block()
   assert_fatal_error(
     CALL assert_execute_process COMMAND "${CMAKE_COMMAND}" -E false
     MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E false\nnot to fail")
-endblock()
-message(CHECK_PASS passed)
+endsection()
 
-message(CHECK_START "execute process output assertions")
-block()
+section("execute process output assertions")
   assert_execute_process(
     COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
     OUTPUT "Hello.*!")
@@ -36,11 +33,9 @@ block()
       COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
       OUTPUT "Hi.*!"
     MESSAGE "${EXPECTED_MESSAGE}")
-endblock()
-message(CHECK_PASS passed)
+endsection()
 
-message(CHECK_START "execute process error assertions")
-block()
+section("execute process error assertions")
   assert_execute_process(
     COMMAND "${CMAKE_COMMAND}" -E touch /
     ERROR "cmake -E touch: failed to update")
@@ -58,5 +53,4 @@ block()
       COMMAND "${CMAKE_COMMAND}" -E touch /
       ERROR "cmake -E touch: not failed to update"
     MESSAGE "${EXPECTED_MESSAGE}")
-endblock()
-message(CHECK_PASS passed)
+endsection()

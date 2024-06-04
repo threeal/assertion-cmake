@@ -291,3 +291,26 @@ function(assert_execute_process)
     message(FATAL_ERROR "${MESSAGE}")
   endif()
 endfunction()
+
+# Begins a new test section.
+#
+# ```cmake
+# section(<name>)
+# ```
+#
+# Begins a new test section named `name`. Use the `endsection` macro to end the
+# test section.
+macro(section NAME)
+  message(CHECK_START "${NAME}")
+endmacro()
+
+# Ends the current test section.
+#
+# ```cmake
+# endsection()
+# ```
+#
+# Ends the current test section and marks it as passed.
+macro(endsection)
+  message(CHECK_PASS passed)
+endmacro()
