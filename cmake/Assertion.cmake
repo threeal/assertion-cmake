@@ -166,16 +166,15 @@ function(assert)
   endif()
 endfunction()
 
-# Begins a scope for mocking the `message` function.
+# Begins a new scope for mocking the `message` function.
 #
-# ```cmake
 # _assert_internal_mock_message()
-# ```
 #
-# Begins a scope for mocking the `message` function by modifying its behavior
-# to store the message into a list variable instead of printing it to the log.
+# This macro begins a new scope for mocking the `message` function by modifying
+# its behavior to store the message into a list variable instead of printing it
+# to the log.
 #
-# Use the '_assert_internal_end_mock_message' macro to end the scope for mocking
+# Use the `_assert_internal_end_mock_message` macro to end the scope for mocking
 # the `message` function, reverting it to the original behavior.
 macro(_assert_internal_mock_message)
   macro(message MODE MESSAGE)
