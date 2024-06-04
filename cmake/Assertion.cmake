@@ -177,28 +177,30 @@ endfunction()
 # Use the `_assert_internal_end_mock_message` macro to end the scope for mocking
 # the `message` function, reverting it to the original behavior.
 macro(_assert_internal_mock_message)
-  macro(message MODE MESSAGE)
-    if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
-      list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
-      set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
-      if("${MODE}" STREQUAL FATAL_ERROR)
-        return()
+  get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
+  if(NOT MESSAGE_MOCKED)
+    macro(message MODE MESSAGE)
+      if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
+        list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
+        set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
+        if("${MODE}" STREQUAL FATAL_ERROR)
+          return()
+        endif()
+      else()
+        _message("${MODE}" "${MESSAGE}")
       endif()
-    else()
-      _message("${MODE}" "${MESSAGE}")
-    endif()
-  endmacro()
+    endmacro()
 
-  macro(_assert_internal_mock_message)
-    if(NOT DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
-      set(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL 1)
-    else()
-      math(
-        EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
-        "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} + 1")
-    endif()
-  endmacro()
-  _assert_internal_mock_message()
+    set_property(GLOBAL PROPERTY _assert_internal_message_mocked ON)
+  endif()
+
+  if(NOT DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
+    set(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL 1)
+  else()
+    math(
+      EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
+      "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} + 1")
+  endif()
 endmacro()
 
 # Ends the current scope for mocking the `message` function.
