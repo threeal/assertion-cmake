@@ -180,14 +180,13 @@ function(assert_fatal_error)
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
   if(NOT MESSAGE_MOCKED)
     # Override the `message` function to allow the behavior to be mocked by
-    # storing a fatal error message into a global property instead of printing
-    # it to the log.
+    # capturing a fatal error message and storing it in a global property.
     macro(message MODE MESSAGE)
       set(
-        MOCK_ENABLED
-        DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
+        CAPTURE_FATAL_ERROR
+        DEFINED _ASSERT_INTERNAL_CAPTURE_FATAL_ERROR_MESSAGE
         AND "${MODE}" STREQUAL FATAL_ERROR)
-      if(${MOCK_ENABLED})
+      if(${CAPTURE_FATAL_ERROR})
         set_property(
           GLOBAL PROPERTY _assert_internal_fatal_error_message "${MESSAGE}")
         return()
@@ -198,23 +197,11 @@ function(assert_fatal_error)
     set_property(GLOBAL PROPERTY _assert_internal_message_mocked ON)
   endif()
 
-  if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
-    math(
-      EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
-      "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} + 1")
-  else()
-    set(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL 1)
-  endif()
-
-  list(POP_FRONT ARG_CALL COMMAND)
-  cmake_language(CALL "${COMMAND}" ${ARG_CALL})
-
-  math(
-    EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
-    "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} - 1")
-  if(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL LESS_EQUAL 0)
-    unset(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
-  endif()
+  block()
+    set(_ASSERT_INTERNAL_CAPTURE_FATAL_ERROR_MESSAGE ON)
+    list(POP_FRONT ARG_CALL COMMAND)
+    cmake_language(CALL "${COMMAND}" ${ARG_CALL})
+  endblock()
 
   get_property(MESSAGE GLOBAL PROPERTY _assert_internal_fatal_error_message)
   if(NOT MESSAGE STREQUAL ARG_MESSAGE)
