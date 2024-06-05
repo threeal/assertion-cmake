@@ -180,14 +180,16 @@ function(assert_fatal_error)
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
   if(NOT MESSAGE_MOCKED)
     # Override the `message` function to allow the behavior to be mocked by
-    # storing the message into a variable instead of printing it to the log.
+    # storing a fatal error message into a variable instead of printing it to
+    # the log.
     macro(message MODE MESSAGE)
-      if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
-        list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
-        set(${MODE}_MESSAGES "${${MODE}_MESSAGES}" PARENT_SCOPE)
-        if("${MODE}" STREQUAL FATAL_ERROR)
-          return()
-        endif()
+      set(
+        MOCK_ENABLED
+        DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
+        AND "${MODE}" STREQUAL FATAL_ERROR)
+      if(${MOCK_ENABLED})
+        set(FATAL_ERROR_MESSAGE "${MESSAGE}" PARENT_SCOPE)
+        return()
       else()
         _message("${MODE}" "${MESSAGE}")
       endif()
@@ -213,10 +215,9 @@ function(assert_fatal_error)
     unset(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
   endif()
 
-  list(POP_FRONT FATAL_ERROR_MESSAGES MESSAGE)
-  if(NOT MESSAGE STREQUAL ARG_MESSAGE)
+  if(NOT FATAL_ERROR_MESSAGE STREQUAL ARG_MESSAGE)
     _assert_internal_format_message(
-      ASSERT_MESSAGE "expected fatal error message:" "${MESSAGE}"
+      ASSERT_MESSAGE "expected fatal error message:" "${FATAL_ERROR_MESSAGE}"
       "to be equal to:" "${ARG_MESSAGE}")
     message(FATAL_ERROR "${ASSERT_MESSAGE}")
   endif()
