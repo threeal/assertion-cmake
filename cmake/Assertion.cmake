@@ -166,19 +166,21 @@ function(assert)
   endif()
 endfunction()
 
-# Begins a new scope for mocking the `message` function.
+# Asserts whether a command call throws a fatal error message.
 #
-# _assert_internal_mock_message()
+# assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>)
 #
-# This macro begins a new scope for mocking the `message` function by modifying
-# its behavior to store the message into a list variable instead of printing it
-# to the log.
-#
-# Use the `_assert_internal_end_mock_message` macro to end the scope for mocking
-# the `message` function, reverting it to the original behavior.
-macro(_assert_internal_mock_message)
+# This function asserts whether a function or macro named `<command>` called
+# with the specified arguments throws the expected `<message>` fatal error
+# message.
+function(assert_fatal_error)
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" MESSAGE CALL)
+
+  # Override the `message` function if it has not been overridden.
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
   if(NOT MESSAGE_MOCKED)
+    # Override the `message` function to allow the behavior to be mocked by
+    # storing the message into a variable instead of printing it to the log.
     macro(message MODE MESSAGE)
       if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
         list(APPEND ${MODE}_MESSAGES "${MESSAGE}")
@@ -190,50 +192,26 @@ macro(_assert_internal_mock_message)
         _message("${MODE}" "${MESSAGE}")
       endif()
     endmacro()
-
     set_property(GLOBAL PROPERTY _assert_internal_message_mocked ON)
   endif()
 
-  if(NOT DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
-    set(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL 1)
-  else()
-    math(
-      EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
-      "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} + 1")
-  endif()
-endmacro()
-
-# Ends the current scope for mocking the `message` function.
-#
-# _assert_internal_end_mock_message()
-#
-# This macro ends the current scope for mocking the `message` function,
-# reverting it to the original behavior.
-macro(_assert_internal_end_mock_message)
   if(DEFINED _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
     math(
       EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
-      "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} - 1")
-    if(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL LESS_EQUAL 0)
-      unset(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
-    endif()
+      "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} + 1")
+  else()
+    set(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL 1)
   endif()
-endmacro()
-
-# Asserts whether a command call throws a fatal error message.
-#
-# assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>)
-#
-# This function asserts whether a function or macro named `<command>` called
-# with the specified arguments throws the expected `<message>` fatal error
-# message.
-function(assert_fatal_error)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" MESSAGE CALL)
 
   list(POP_FRONT ARG_CALL COMMAND)
-  _assert_internal_mock_message()
-    cmake_language(CALL "${COMMAND}" ${ARG_CALL})
-  _assert_internal_end_mock_message()
+  cmake_language(CALL "${COMMAND}" ${ARG_CALL})
+
+  math(
+    EXPR _ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL
+    "${_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL} - 1")
+  if(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL LESS_EQUAL 0)
+    unset(_ASSERT_INTERNAL_MESSAGE_MOCK_LEVEL)
+  endif()
 
   list(POP_FRONT FATAL_ERROR_MESSAGES MESSAGE)
   if(NOT MESSAGE STREQUAL ARG_MESSAGE)
