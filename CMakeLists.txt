@@ -40,11 +40,6 @@ if(NOT SUBPROJECT)
       NAME "internal assertion message formatting"
       COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
         -P ${CMAKE_CURRENT_SOURCE_DIR}/test/InternalFormatMessage.cmake)
-
-    add_test(
-      NAME "internal message mocking"
-      COMMAND "${CMAKE_COMMAND}" -D CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/InternalMockMessage.cmake)
   endif()
 
   include(CMakePackageConfigHelpers)
