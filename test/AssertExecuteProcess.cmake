@@ -18,7 +18,8 @@ section("execute process assertions")
     JOIN "\n" EXPECTED_MESSAGE
     "expected command:"
     "  ${CMAKE_COMMAND} -E make_directory some-file"
-    "not to fail")
+    "not to fail with error:"
+    "  Error creating directory \"some-file\".")
   assert_fatal_error(
     CALL assert_execute_process
       COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
