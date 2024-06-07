@@ -244,7 +244,8 @@ function(assert_execute_process)
   elseif(NOT DEFINED ARG_ERROR AND NOT RES EQUAL 0)
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
-      MESSAGE "expected command:" "${COMMAND}" "not to fail")
+      MESSAGE "expected command:" "${COMMAND}"
+      "not to fail with error:" "${ERR}")
     message(FATAL_ERROR "${MESSAGE}")
   elseif(DEFINED ARG_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_OUTPUT}")
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")

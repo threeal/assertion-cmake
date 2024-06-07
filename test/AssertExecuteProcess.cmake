@@ -3,16 +3,27 @@ cmake_minimum_required(VERSION 3.17)
 include(Assertion)
 
 section("execute process assertions")
+  file(TOUCH some-file)
+
   assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true)
-  assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E false ERROR .*)
+
+  assert_execute_process(
+    COMMAND "${CMAKE_COMMAND}" -E make_directory some-file ERROR .*)
 
   assert_fatal_error(
     CALL assert_execute_process COMMAND "${CMAKE_COMMAND}" -E true ERROR .*
     MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E true\nto fail")
 
+  string(
+    JOIN "\n" EXPECTED_MESSAGE
+    "expected command:"
+    "  ${CMAKE_COMMAND} -E make_directory some-file"
+    "not to fail with error:"
+    "  Error creating directory \"some-file\".")
   assert_fatal_error(
-    CALL assert_execute_process COMMAND "${CMAKE_COMMAND}" -E false
-    MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E false\nnot to fail")
+    CALL assert_execute_process
+      COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
+    MESSAGE "${EXPECTED_MESSAGE}")
 endsection()
 
 section("execute process output assertions")
@@ -36,21 +47,23 @@ section("execute process output assertions")
 endsection()
 
 section("execute process error assertions")
+  file(TOUCH some-file)
+
   assert_execute_process(
-    COMMAND "${CMAKE_COMMAND}" -E touch /
-    ERROR "cmake -E touch: failed to update")
+    COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
+    ERROR "Error creating directory \"some-file\".")
 
   string(
     JOIN "\n" EXPECTED_MESSAGE
     "expected the error:"
-    "  cmake -E touch: failed to update \"/\"."
+    "  Error creating directory \"some-file\"."
     "of command:"
-    "  ${CMAKE_COMMAND} -E touch /"
+    "  ${CMAKE_COMMAND} -E make_directory some-file"
     "to match:"
-    "  cmake -E touch: not failed to update")
+    "  Error creating directory \"some-other-file\".")
   assert_fatal_error(
     CALL assert_execute_process
-      COMMAND "${CMAKE_COMMAND}" -E touch /
-      ERROR "cmake -E touch: not failed to update"
+      COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
+      ERROR "Error creating directory \"some-other-file\"."
     MESSAGE "${EXPECTED_MESSAGE}")
 endsection()
