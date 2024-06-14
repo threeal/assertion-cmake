@@ -180,36 +180,27 @@ function(assert_fatal_error)
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
   if(NOT MESSAGE_MOCKED)
     # Override the `message` function to allow the behavior to be mocked by
-    # capturing a fatal error message and storing it in a global property.
-    macro(message MODE MESSAGE)
-      set(
-        CAPTURE_FATAL_ERROR
-        DEFINED _ASSERT_INTERNAL_CAPTURE_FATAL_ERROR_MESSAGE
-        AND "${MODE}" STREQUAL FATAL_ERROR)
-      if(${CAPTURE_FATAL_ERROR})
-        set_property(
-          GLOBAL PROPERTY _assert_internal_fatal_error_message "${MESSAGE}")
-        return()
+    # asserting a fatal error message.
+    function(message MODE MESSAGE)
+      list(LENGTH _ASSERT_INTERNAL_EXPECTED_MESSAGES EXPECTED_MESSAGE_LENGTH)
+      if(EXPECTED_MESSAGE_LENGTH GREATER 0 AND MODE STREQUAL FATAL_ERROR)
+        list(POP_BACK _ASSERT_INTERNAL_EXPECTED_MESSAGES EXPECTED_MESSAGE)
+        if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
+          _assert_internal_format_message(
+            ASSERT_MESSAGE "expected fatal error message:" "${MESSAGE}"
+            "to be equal to:" "${EXPECTED_MESSAGE}")
+          message(FATAL_ERROR "${ASSERT_MESSAGE}")
+        endif()
       else()
         _message("${MODE}" "${MESSAGE}")
       endif()
-    endmacro()
+    endfunction()
     set_property(GLOBAL PROPERTY _assert_internal_message_mocked ON)
   endif()
 
-  block()
-    set(_ASSERT_INTERNAL_CAPTURE_FATAL_ERROR_MESSAGE ON)
-    list(POP_FRONT ARG_CALL COMMAND)
-    cmake_language(CALL "${COMMAND}" ${ARG_CALL})
-  endblock()
-
-  get_property(MESSAGE GLOBAL PROPERTY _assert_internal_fatal_error_message)
-  if(NOT MESSAGE STREQUAL ARG_MESSAGE)
-    _assert_internal_format_message(
-      ASSERT_MESSAGE "expected fatal error message:" "${MESSAGE}"
-      "to be equal to:" "${ARG_MESSAGE}")
-    message(FATAL_ERROR "${ASSERT_MESSAGE}")
-  endif()
+  list(APPEND _ASSERT_INTERNAL_EXPECTED_MESSAGES "${ARG_MESSAGE}")
+  list(POP_FRONT ARG_CALL COMMAND)
+  cmake_language(CALL "${COMMAND}" ${ARG_CALL})
 endfunction()
 
 # Asserts whether the given command correctly executes a process.
