@@ -8,33 +8,35 @@ project(
   LANGUAGES NONE
 )
 
+option(ASSERT_ENABLE_INSTALL "Enable install targets." ${PROJECT_IS_TOP_LEVEL})
+
 include(cmake/Assertion.cmake)
 
-if(PROJECT_IS_TOP_LEVEL)
-  if(BUILD_TESTING)
-    enable_testing()
+if(PROJECT_IS_TOP_LEVEL AND BUILD_TESTING)
+  enable_testing()
 
-    add_test(
-      NAME "condition assertions"
-      COMMAND "${CMAKE_COMMAND}"
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/Assert.cmake)
+  add_test(
+    NAME "condition assertions"
+    COMMAND "${CMAKE_COMMAND}"
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/test/Assert.cmake)
 
-    add_test(
-      NAME "fatal error assertions"
-      COMMAND "${CMAKE_COMMAND}"
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertFatalError.cmake)
+  add_test(
+    NAME "fatal error assertions"
+    COMMAND "${CMAKE_COMMAND}"
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertFatalError.cmake)
 
-    add_test(
-      NAME "execute process assertions"
-      COMMAND "${CMAKE_COMMAND}"
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertExecuteProcess.cmake)
+  add_test(
+    NAME "execute process assertions"
+    COMMAND "${CMAKE_COMMAND}"
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertExecuteProcess.cmake)
 
-    add_test(
-      NAME "internal assertion message formatting"
-      COMMAND "${CMAKE_COMMAND}"
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/InternalFormatMessage.cmake)
-  endif()
+  add_test(
+    NAME "internal assertion message formatting"
+    COMMAND "${CMAKE_COMMAND}"
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/test/InternalFormatMessage.cmake)
+endif()
 
+if(ASSERT_ENABLE_INSTALL)
   include(CMakePackageConfigHelpers)
   write_basic_package_version_file(
     AssertionConfigVersion.cmake
