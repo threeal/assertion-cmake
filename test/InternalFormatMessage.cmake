@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-include(Assertion)
+find_package(Assertion REQUIRED PATHS ${CMAKE_CURRENT_LIST_DIR}/../cmake)
 
 _assert_internal_format_message(
   MESSAGE "first line" "second line" "third line\nthird line" "fourth line\nfourth line")
