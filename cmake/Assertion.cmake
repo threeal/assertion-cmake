@@ -168,13 +168,13 @@ endfunction()
 
 # Asserts whether a command call throws a fatal error message.
 #
-# assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>)
+# assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>...)
 #
 # This function asserts whether a function or macro named `<command>` called
 # with the specified arguments throws the expected `<message>` fatal error
 # message.
 function(assert_fatal_error)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" MESSAGE CALL)
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;MESSAGE")
 
   # Override the `message` function if it has not been overridden.
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
@@ -200,7 +200,8 @@ function(assert_fatal_error)
     set_property(GLOBAL PROPERTY _assert_internal_message_mocked ON)
   endif()
 
-  list(APPEND _ASSERT_INTERNAL_EXPECTED_MESSAGES "${ARG_MESSAGE}")
+  string(JOIN "" EXPECTED_MESSAGE ${ARG_MESSAGE})
+  list(APPEND _ASSERT_INTERNAL_EXPECTED_MESSAGES "${EXPECTED_MESSAGE}")
   list(POP_FRONT ARG_CALL COMMAND)
   cmake_language(CALL "${COMMAND}" ${ARG_CALL})
 endfunction()
