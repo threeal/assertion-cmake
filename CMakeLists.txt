@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.21)
 
 project(
   Assertion
@@ -8,16 +8,12 @@ project(
   LANGUAGES NONE
 )
 
-if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-  set(SUBPROJECT TRUE)
-endif()
-
 list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-if(SUBPROJECT)
+if(NOT PROJECT_IS_TOP_LEVEL)
   set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" PARENT_SCOPE)
 endif()
 
-if(NOT SUBPROJECT)
+if(PROJECT_IS_TOP_LEVEL)
   if(BUILD_TESTING)
     enable_testing()
 
