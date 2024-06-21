@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
+find_package(Assertion REQUIRED PATHS ${CMAKE_CURRENT_LIST_DIR}/../cmake)
 include(Assertion)
 
 function(throw_fatal_error MESSAGE)
