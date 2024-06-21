@@ -5,13 +5,13 @@ find_package(Assertion REQUIRED PATHS ${CMAKE_CURRENT_LIST_DIR}/../cmake)
 section("execute process assertions")
   file(TOUCH some-file)
 
-  assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true)
+  assert_execute_process("${CMAKE_COMMAND}" -E true)
 
   assert_execute_process(
-    COMMAND "${CMAKE_COMMAND}" -E make_directory some-file ERROR .*)
+    "${CMAKE_COMMAND}" -E make_directory some-file ERROR .*)
 
   assert_fatal_error(
-    CALL assert_execute_process COMMAND "${CMAKE_COMMAND}" -E true ERROR .*
+    CALL assert_execute_process "${CMAKE_COMMAND}" -E true ERROR .*
     MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E true\nto fail")
 
   string(
@@ -21,8 +21,7 @@ section("execute process assertions")
     "not to fail with error:"
     "  Error creating directory \"some-file\".")
   assert_fatal_error(
-    CALL assert_execute_process
-      COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
+    CALL assert_execute_process "${CMAKE_COMMAND}" -E make_directory some-file
     MESSAGE "${EXPECTED_MESSAGE}")
 endsection()
 
