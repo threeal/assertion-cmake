@@ -17,11 +17,12 @@ section("fatal error assertions")
       MESSAGE "some other fatal error message")
   endmacro()
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected fatal error message:\n  some fatal error message"
-    "to be equal to:\n  some other fatal error message")
-  assert_fatal_error(CALL assert_fail MESSAGE "${EXPECTED_MESSAGE}")
+  assert_fatal_error(
+    CALL assert_fail
+    MESSAGE "expected fatal error message:\n"
+      "  some fatal error message\n"
+      "to be equal to:\n"
+      "  some other fatal error message")
 endsection()
 
 section("mocked message check")

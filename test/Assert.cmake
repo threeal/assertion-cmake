@@ -80,23 +80,17 @@ section("regular expression match assertions")
     CALL assert "some string" MATCHES "so.*other.*ing"
     MESSAGE "expected string:\n  some string\nto match:\n  so.*other.*ing")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "of variable:\n  STRING_VAR"
-    "not to match:\n  so.*ing")
   assert_fatal_error(
     CALL assert NOT STRING_VAR MATCHES "so.*ing"
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "of variable:\n  STRING_VAR\n"
+      "not to match:\n  so.*ing")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "of variable:\n  STRING_VAR"
-    "to match:\n  so.*other.*ing")
   assert_fatal_error(
     CALL assert STRING_VAR MATCHES "so.*other.*ing"
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "of variable:\n  STRING_VAR\n"
+      "to match:\n  so.*other.*ing")
 endsection()
 
 section("string equality assertions")
@@ -115,75 +109,51 @@ section("string equality assertions")
   assert(STRING_VAR STREQUAL STRING_VAR)
   assert(NOT STRING_VAR STREQUAL OTHER_STRING_VAR)
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "not to be equal to:\n  some string")
   assert_fatal_error(
     CALL assert NOT "some string" STREQUAL "some string"
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "not to be equal to:\n  some string")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "to be equal to:\n  some other string")
   assert_fatal_error(
     CALL assert "some string" STREQUAL "some other string"
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "to be equal to:\n  some other string")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "of variable:\n  STRING_VAR"
-    "not to be equal to:\n  some string")
   assert_fatal_error(
     CALL assert NOT STRING_VAR STREQUAL "some string"
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "of variable:\n  STRING_VAR\n"
+      "not to be equal to:\n  some string")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "of variable:\n  STRING_VAR"
-    "to be equal to:\n  some other string")
   assert_fatal_error(
     CALL assert STRING_VAR STREQUAL "some other string"
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "of variable:\n  STRING_VAR\n"
+      "to be equal to:\n  some other string")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "not to be equal to string:\n  some string"
-    "of variable:\n  STRING_VAR")
   assert_fatal_error(
     CALL assert NOT "some string" STREQUAL STRING_VAR
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "not to be equal to string:\n  some string\n"
+      "of variable:\n  STRING_VAR")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "to be equal to string:\n  some other string"
-    "of variable:\n  OTHER_STRING_VAR")
   assert_fatal_error(
     CALL assert "some string" STREQUAL OTHER_STRING_VAR
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "to be equal to string:\n  some other string\n"
+      "of variable:\n  OTHER_STRING_VAR")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "of variable:\n  STRING_VAR"
-    "not to be equal to string:\n  some string"
-    "of variable:\n  STRING_VAR")
   assert_fatal_error(
     CALL assert NOT STRING_VAR STREQUAL STRING_VAR
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "of variable:\n  STRING_VAR\n"
+      "not to be equal to string:\n  some string\n"
+      "of variable:\n  STRING_VAR")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected string:\n  some string"
-    "of variable:\n  STRING_VAR"
-    "to be equal to string:\n  some other string"
-    "of variable:\n  OTHER_STRING_VAR")
   assert_fatal_error(
     CALL assert STRING_VAR STREQUAL OTHER_STRING_VAR
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected string:\n  some string\n"
+      "of variable:\n  STRING_VAR\n"
+      "to be equal to string:\n  some other string\n"
+      "of variable:\n  OTHER_STRING_VAR")
 endsection()

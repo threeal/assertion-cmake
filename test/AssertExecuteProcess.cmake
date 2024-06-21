@@ -14,15 +14,12 @@ section("execute process assertions")
     CALL assert_execute_process "${CMAKE_COMMAND}" -E true ERROR .*
     MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E true\nto fail")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected command:"
-    "  ${CMAKE_COMMAND} -E make_directory some-file"
-    "not to fail with error:"
-    "  Error creating directory \"some-file\".")
   assert_fatal_error(
     CALL assert_execute_process "${CMAKE_COMMAND}" -E make_directory some-file
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected command:\n"
+      "  ${CMAKE_COMMAND} -E make_directory some-file\n"
+      "not to fail with error:\n"
+      "  Error creating directory \"some-file\".")
 endsection()
 
 section("execute process output assertions")
@@ -30,19 +27,16 @@ section("execute process output assertions")
     COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
     OUTPUT "Hello.*!")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected the output:"
-    "  Hello world!"
-    "of command:"
-    "  ${CMAKE_COMMAND} -E echo Hello world!"
-    "to match:"
-    "  Hi.*!")
   assert_fatal_error(
     CALL assert_execute_process
       COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
       OUTPUT "Hi.*!"
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected the output:\n"
+      "  Hello world!\n"
+      "of command:\n"
+      "  ${CMAKE_COMMAND} -E echo Hello world!\n"
+      "to match:\n"
+      "  Hi.*!")
 endsection()
 
 section("execute process error assertions")
@@ -52,17 +46,14 @@ section("execute process error assertions")
     COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
     ERROR "Error creating directory \"some-file\".")
 
-  string(
-    JOIN "\n" EXPECTED_MESSAGE
-    "expected the error:"
-    "  Error creating directory \"some-file\"."
-    "of command:"
-    "  ${CMAKE_COMMAND} -E make_directory some-file"
-    "to match:"
-    "  Error creating directory \"some-other-file\".")
   assert_fatal_error(
     CALL assert_execute_process
       COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
       ERROR "Error creating directory \"some-other-file\"."
-    MESSAGE "${EXPECTED_MESSAGE}")
+    MESSAGE "expected the error:\n"
+      "  Error creating directory \"some-file\".\n"
+      "of command:\n"
+      "  ${CMAKE_COMMAND} -E make_directory some-file\n"
+      "to match:\n"
+      "  Error creating directory \"some-other-file\".")
 endsection()
