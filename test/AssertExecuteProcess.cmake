@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
 find_package(Assertion REQUIRED PATHS ${CMAKE_CURRENT_LIST_DIR}/../cmake)
-include(Assertion)
 
 section("execute process assertions")
   file(TOUCH some-file)
