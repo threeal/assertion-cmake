@@ -181,18 +181,20 @@ function(assert_fatal_error)
   if(NOT MESSAGE_MOCKED)
     # Override the `message` function to allow the behavior to be mocked by
     # asserting a fatal error message.
-    function(message MODE MESSAGE)
+    function(message ARG0)
+      cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
       list(LENGTH _ASSERT_INTERNAL_EXPECTED_MESSAGES EXPECTED_MESSAGE_LENGTH)
-      if(EXPECTED_MESSAGE_LENGTH GREATER 0 AND MODE STREQUAL FATAL_ERROR)
+      if(EXPECTED_MESSAGE_LENGTH GREATER 0 AND ARG0 STREQUAL FATAL_ERROR)
         list(POP_BACK _ASSERT_INTERNAL_EXPECTED_MESSAGES EXPECTED_MESSAGE)
-        if(NOT MESSAGE STREQUAL EXPECTED_MESSAGE)
+        if(NOT "${ARG_UNPARSED_ARGUMENTS}" STREQUAL EXPECTED_MESSAGE)
           _assert_internal_format_message(
-            ASSERT_MESSAGE "expected fatal error message:" "${MESSAGE}"
+            ASSERT_MESSAGE
+            "expected fatal error message:" "${ARG_UNPARSED_ARGUMENTS}"
             "to be equal to:" "${EXPECTED_MESSAGE}")
           message(FATAL_ERROR "${ASSERT_MESSAGE}")
         endif()
       else()
-        _message("${MODE}" "${MESSAGE}")
+        _message("${ARG0}" ${ARG_UNPARSED_ARGUMENTS})
       endif()
     endfunction()
     set_property(GLOBAL PROPERTY _assert_internal_message_mocked ON)
