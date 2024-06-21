@@ -208,7 +208,7 @@ endfunction()
 # Asserts whether the given command correctly executes a process.
 #
 # assert_execute_process(
-#   COMMAND <command> [<arg>...] [OUTPUT <output>] [ERROR <error>])
+#   [COMMAND] <command> [<arg>...] [OUTPUT <output>] [ERROR <error>])
 #
 # This function asserts whether the given command and arguments successfully
 # execute a process.
@@ -221,6 +221,10 @@ endfunction()
 # executed process matches the expected `<error>`.
 function(assert_execute_process)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "OUTPUT;ERROR" "COMMAND")
+
+  if(NOT DEFINED ARG_COMMAND)
+    set(ARG_COMMAND ${ARG_UNPARSED_ARGUMENTS})
+  endif()
 
   execute_process(
     COMMAND ${ARG_COMMAND}

@@ -69,7 +69,7 @@ assert_fatal_error(CALL some_function MESSAGE "some fatal error message")
 Use the `assert_execute_process` function to assert whether the given command successfully executed a process:
 
 ```cmake
-assert_execute_process(COMMAND "${CMAKE_COMMAND}" -E true)
+assert_execute_process("${CMAKE_COMMAND}" -E true)
 ```
 
 This function can also assert the standard output and error of the executed process:
