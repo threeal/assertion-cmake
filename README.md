@@ -28,7 +28,6 @@ This module can be integrated into a CMake project in the following ways:
 - Use [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to add this package to the CMake project:
   ```cmake
   cpmaddpackage(gh:threeal/assertion-cmake@0.3.0)
-  include(${Assertion_SOURCE_DIR}/cmake/Assertion.cmake)
   ```
 
 ## Example Usages
