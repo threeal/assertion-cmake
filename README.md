@@ -19,7 +19,10 @@ This module can be integrated into a CMake project in the following ways:
   ```
 - Use [`file(DOWNLOAD)`](https://cmake.org/cmake/help/latest/command/file.html#download) to automatically download the `Assertion.cmake` file:
   ```cmake
-  file(DOWNLOAD https://threeal.github.io/assertion-cmake/v0.3.0 ${CMAKE_BINARY_DIR}/Assertion.cmake)
+  file(
+    DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v0.3.0/Assertion.cmake
+      ${CMAKE_BINARY_DIR}/Assertion.cmake
+    EXPECTED_MD5 851f49c10934d715df5d0b59c8b8c72a)
   include(${CMAKE_BINARY_DIR}/Assertion.cmake)
   ```
 - Use [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to add this package to the CMake project:
