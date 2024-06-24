@@ -75,10 +75,9 @@ function(assert)
         if(ARGV1 STREQUAL MATCHES)
           if(DEFINED "${ARGV0}")
             _assert_internal_format_message(
-              MESSAGE
-              "expected string:" "${${ARGV0}}"
-              "of variable:" "${ARGV0}"
-              "to match:" "${ARGV2}")
+              MESSAGE "expected string:" "${${ARGV0}}"
+                "of variable:" "${ARGV0}"
+                "to match:" "${ARGV2}")
           else()
             _assert_internal_format_message(
               MESSAGE "expected string:" "${ARGV0}" "to match:" "${ARGV2}")
@@ -87,30 +86,26 @@ function(assert)
           if(DEFINED "${ARGV0}")
             if(DEFINED "${ARGV2}")
               _assert_internal_format_message(
-                MESSAGE
-                "expected string:" "${${ARGV0}}"
-                "of variable:" "${ARGV0}"
-                "to be equal to string:" "${${ARGV2}}"
-                "of variable:" "${ARGV2}")
+                MESSAGE "expected string:" "${${ARGV0}}"
+                  "of variable:" "${ARGV0}"
+                  "to be equal to string:" "${${ARGV2}}"
+                  "of variable:" "${ARGV2}")
             else()
               _assert_internal_format_message(
-                MESSAGE
-                "expected string:" "${${ARGV0}}"
-                "of variable:" "${ARGV0}"
-                "to be equal to:" "${ARGV2}")
+                MESSAGE "expected string:" "${${ARGV0}}"
+                  "of variable:" "${ARGV0}"
+                  "to be equal to:" "${ARGV2}")
             endif()
           else()
             if(DEFINED "${ARGV2}")
               _assert_internal_format_message(
-                MESSAGE
-                "expected string:" "${ARGV0}"
-                "to be equal to string:" "${${ARGV2}}"
-                "of variable:" "${ARGV2}")
+                MESSAGE "expected string:" "${ARGV0}"
+                  "to be equal to string:" "${${ARGV2}}"
+                  "of variable:" "${ARGV2}")
             else()
               _assert_internal_format_message(
-                MESSAGE
-                "expected string:" "${ARGV0}"
-                "to be equal to:" "${ARGV2}")
+                MESSAGE "expected string:" "${ARGV0}"
+                  "to be equal to:" "${ARGV2}")
             endif()
           endif()
         endif()
@@ -120,10 +115,9 @@ function(assert)
         if(ARGV2 STREQUAL MATCHES)
           if(DEFINED "${ARGV1}")
             _assert_internal_format_message(
-              MESSAGE
-              "expected string:" "${${ARGV1}}"
-              "of variable:" "${ARGV1}"
-              "not to match:" "${ARGV3}")
+              MESSAGE "expected string:" "${${ARGV1}}"
+                "of variable:" "${ARGV1}"
+                "not to match:" "${ARGV3}")
           else()
             _assert_internal_format_message(
               MESSAGE "expected string:" "${ARGV1}" "not to match:" "${ARGV3}")
@@ -132,30 +126,26 @@ function(assert)
           if(DEFINED "${ARGV1}")
             if(DEFINED "${ARGV3}")
               _assert_internal_format_message(
-                MESSAGE
-                "expected string:" "${${ARGV1}}"
-                "of variable:" "${ARGV1}"
-                "not to be equal to string:" "${${ARGV3}}"
-                "of variable:" "${ARGV3}")
+                MESSAGE "expected string:" "${${ARGV1}}"
+                  "of variable:" "${ARGV1}"
+                  "not to be equal to string:" "${${ARGV3}}"
+                  "of variable:" "${ARGV3}")
             else()
               _assert_internal_format_message(
-                MESSAGE
-                "expected string:" "${${ARGV1}}"
-                "of variable:" "${ARGV1}"
-                "not to be equal to:" "${ARGV3}")
+                MESSAGE "expected string:" "${${ARGV1}}"
+                  "of variable:" "${ARGV1}"
+                  "not to be equal to:" "${ARGV3}")
             endif()
           else()
             if(DEFINED "${ARGV3}")
               _assert_internal_format_message(
-                MESSAGE
-                "expected string:" "${ARGV1}"
-                "not to be equal to string:" "${${ARGV3}}"
-                "of variable:" "${ARGV3}")
+                MESSAGE "expected string:" "${ARGV1}"
+                  "not to be equal to string:" "${${ARGV3}}"
+                  "of variable:" "${ARGV3}")
             else()
               _assert_internal_format_message(
-                MESSAGE
-                "expected string:" "${ARGV1}"
-                "not to be equal to:" "${ARGV3}")
+                MESSAGE "expected string:" "${ARGV1}"
+                  "not to be equal to:" "${ARGV3}")
             endif()
           endif()
         endif()
@@ -231,8 +221,7 @@ function(assert_execute_process)
     COMMAND ${ARG_COMMAND}
     RESULT_VARIABLE RES
     OUTPUT_VARIABLE OUT
-    ERROR_VARIABLE ERR
-  )
+    ERROR_VARIABLE ERR)
 
   if(DEFINED ARG_ERROR AND RES EQUAL 0)
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
@@ -243,21 +232,21 @@ function(assert_execute_process)
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
       MESSAGE "expected command:" "${COMMAND}"
-      "not to fail with error:" "${ERR}")
+        "not to fail with error:" "${ERR}")
     message(FATAL_ERROR "${MESSAGE}")
   elseif(DEFINED ARG_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_OUTPUT}")
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
       MESSAGE "expected the output:" "${OUT}"
-      "of command:" "${COMMAND}"
-      "to match:" "${ARG_OUTPUT}")
+        "of command:" "${COMMAND}"
+        "to match:" "${ARG_OUTPUT}")
     message(FATAL_ERROR "${MESSAGE}")
   elseif(DEFINED ARG_ERROR AND NOT "${ERR}" MATCHES "${ARG_ERROR}")
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
       MESSAGE "expected the error:" "${ERR}"
-      "of command:" "${COMMAND}"
-      "to match:" "${ARG_ERROR}")
+        "of command:" "${COMMAND}"
+        "to match:" "${ARG_ERROR}")
     message(FATAL_ERROR "${MESSAGE}")
   endif()
 endfunction()
