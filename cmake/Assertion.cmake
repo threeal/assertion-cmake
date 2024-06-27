@@ -161,8 +161,8 @@ endfunction()
 # assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>...)
 #
 # This function asserts whether a function or macro named `<command>` called
-# with the specified arguments throws the expected `<message>` fatal error
-# message.
+# with the specified arguments throws a fatal error message that matches the
+# expected `<message>`.
 function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;MESSAGE")
 
@@ -176,11 +176,11 @@ function(assert_fatal_error)
       list(LENGTH _ASSERT_INTERNAL_EXPECTED_MESSAGES EXPECTED_MESSAGE_LENGTH)
       if(EXPECTED_MESSAGE_LENGTH GREATER 0 AND ARG0 STREQUAL FATAL_ERROR)
         list(POP_BACK _ASSERT_INTERNAL_EXPECTED_MESSAGES EXPECTED_MESSAGE)
-        if(NOT "${ARG_UNPARSED_ARGUMENTS}" STREQUAL EXPECTED_MESSAGE)
+        if(NOT "${ARG_UNPARSED_ARGUMENTS}" MATCHES "${EXPECTED_MESSAGE}")
           _assert_internal_format_message(
             ASSERT_MESSAGE
             "expected fatal error message:" "${ARG_UNPARSED_ARGUMENTS}"
-            "to be equal to:" "${EXPECTED_MESSAGE}")
+            "to match:" "${EXPECTED_MESSAGE}")
           message(FATAL_ERROR "${ASSERT_MESSAGE}")
         endif()
       else()
