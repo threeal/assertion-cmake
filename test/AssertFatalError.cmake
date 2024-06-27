@@ -9,20 +9,20 @@ section("fatal error assertions")
 
   assert_fatal_error(
     CALL throw_fatal_error "some fatal error message"
-    MESSAGE "some fatal error message")
+    MESSAGE "some.*error message")
 
   macro(assert_fail)
     assert_fatal_error(
       CALL throw_fatal_error "some fatal error message"
-      MESSAGE "some other fatal error message")
+      MESSAGE "some other.*error message")
   endmacro()
 
   assert_fatal_error(
     CALL assert_fail
     MESSAGE "expected fatal error message:\n"
       "  some fatal error message\n"
-      "to be equal to:\n"
-      "  some other fatal error message")
+      "to match:\n"
+      "  some other.*error message")
 endsection()
 
 section("mocked message check")
