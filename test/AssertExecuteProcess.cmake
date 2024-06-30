@@ -25,18 +25,18 @@ endsection()
 section("execute process output assertions")
   assert_execute_process(
     COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-    OUTPUT "Hello.*!")
+    OUTPUT "Hello" ".*!")
 
   assert_fatal_error(
     CALL assert_execute_process
       COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-      OUTPUT "Hi.*!"
+      OUTPUT "Hello" ".*earth!"
     MESSAGE "expected the output:\n"
-      "  Hello world!\n"
+      ".*\n"
       "of command:\n"
       "  ${CMAKE_COMMAND} -E echo Hello world!\n"
       "to match:\n"
-      "  Hi.*!")
+      "  Hello.*earth!")
 endsection()
 
 section("execute process error assertions")
@@ -44,16 +44,16 @@ section("execute process error assertions")
 
   assert_execute_process(
     COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-    ERROR "Error creating directory \"some-file\".")
+    ERROR "Error creating directory" ".*some-file")
 
   assert_fatal_error(
     CALL assert_execute_process
       COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-      ERROR "Error creating directory \"some-other-file\"."
+      ERROR "Error creating directory" ".*some-other-file"
     MESSAGE "expected the error:\n"
-      "  Error creating directory \"some-file\".\n"
+      ".*\n"
       "of command:\n"
       "  ${CMAKE_COMMAND} -E make_directory some-file\n"
       "to match:\n"
-      "  Error creating directory \"some-other-file\".")
+      "  Error creating directory.*some-other-file")
 endsection()
