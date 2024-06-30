@@ -261,21 +261,26 @@ endfunction()
 
 # Begins a new test section.
 #
-# section(<name>)
+# section(<name>...)
 #
-# This macro begins a new test section named `<name>`. Use the `endsection`
-# macro to end the test section.
-macro(section NAME)
+# This function begins a new test section named `<name>`. Use the `endsection`
+# function to end the test section.
+function(section NAME)
+  cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
+  string(JOIN "" NAME "${NAME}" ${ARG_UNPARSED_ARGUMENTS})
+
   message(CHECK_START "${NAME}")
   list(APPEND CMAKE_MESSAGE_INDENT "  ")
-endmacro()
+  set(CMAKE_MESSAGE_INDENT "${CMAKE_MESSAGE_INDENT}" PARENT_SCOPE)
+endfunction()
 
 # Ends the current test section.
 #
 # endsection()
 #
-# This macro ends the current test section and marks it as passed.
-macro(endsection)
+# This function ends the current test section and marks it as passed.
+function(endsection)
   list(POP_BACK CMAKE_MESSAGE_INDENT)
+  set(CMAKE_MESSAGE_INDENT "${CMAKE_MESSAGE_INDENT}" PARENT_SCOPE)
   message(CHECK_PASS passed)
-endmacro()
+endfunction()
