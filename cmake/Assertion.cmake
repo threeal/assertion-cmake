@@ -199,7 +199,7 @@ endfunction()
 # Asserts whether the given command correctly executes a process.
 #
 # assert_execute_process(
-#   [COMMAND] <command> [<arg>...] [OUTPUT <output>] [ERROR <error>])
+#   [COMMAND] <command> [<arg>...] [OUTPUT <output>...] [ERROR <error>...])
 #
 # This function asserts whether the given command and arguments successfully
 # execute a process.
@@ -211,10 +211,18 @@ endfunction()
 # arguments fail to execute a process. It also asserts whether the error of the
 # executed process matches the expected `<error>`.
 function(assert_execute_process)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "OUTPUT;ERROR" "COMMAND")
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "COMMAND;OUTPUT;ERROR")
 
   if(NOT DEFINED ARG_COMMAND)
     set(ARG_COMMAND ${ARG_UNPARSED_ARGUMENTS})
+  endif()
+
+  if(DEFINED ARG_OUTPUT)
+    string(JOIN "" EXPECTED_OUTPUT ${ARG_OUTPUT})
+  endif()
+
+  if(DEFINED ARG_ERROR)
+    string(JOIN "" EXPECTED_ERROR ${ARG_ERROR})
   endif()
 
   execute_process(
@@ -234,19 +242,19 @@ function(assert_execute_process)
       MESSAGE "expected command:" "${COMMAND}"
         "not to fail with error:" "${ERR}")
     message(FATAL_ERROR "${MESSAGE}")
-  elseif(DEFINED ARG_OUTPUT AND NOT "${OUT}" MATCHES "${ARG_OUTPUT}")
+  elseif(DEFINED EXPECTED_OUTPUT AND NOT "${OUT}" MATCHES "${EXPECTED_OUTPUT}")
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
       MESSAGE "expected the output:" "${OUT}"
         "of command:" "${COMMAND}"
-        "to match:" "${ARG_OUTPUT}")
+        "to match:" "${EXPECTED_OUTPUT}")
     message(FATAL_ERROR "${MESSAGE}")
-  elseif(DEFINED ARG_ERROR AND NOT "${ERR}" MATCHES "${ARG_ERROR}")
+  elseif(DEFINED EXPECTED_ERROR AND NOT "${ERR}" MATCHES "${EXPECTED_ERROR}")
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
       MESSAGE "expected the error:" "${ERR}"
         "of command:" "${COMMAND}"
-        "to match:" "${ARG_ERROR}")
+        "to match:" "${EXPECTED_ERROR}")
     message(FATAL_ERROR "${MESSAGE}")
   endif()
 endfunction()
