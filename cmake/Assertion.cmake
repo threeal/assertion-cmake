@@ -261,11 +261,14 @@ endfunction()
 
 # Begins a new test section.
 #
-# section(<name>)
+# section(<name>...)
 #
 # This function begins a new test section named `<name>`. Use the `endsection`
 # function to end the test section.
 function(section NAME)
+  cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
+  string(JOIN "" NAME "${NAME}" ${ARG_UNPARSED_ARGUMENTS})
+
   message(CHECK_START "${NAME}")
   list(APPEND CMAKE_MESSAGE_INDENT "  ")
   set(CMAKE_MESSAGE_INDENT "${CMAKE_MESSAGE_INDENT}" PARENT_SCOPE)
