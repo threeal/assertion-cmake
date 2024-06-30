@@ -259,6 +259,7 @@ endfunction()
 # macro to end the test section.
 macro(section NAME)
   message(CHECK_START "${NAME}")
+  list(APPEND CMAKE_MESSAGE_INDENT "  ")
 endmacro()
 
 # Ends the current test section.
@@ -267,5 +268,6 @@ endmacro()
 #
 # This macro ends the current test section and marks it as passed.
 macro(endsection)
+  list(POP_BACK CMAKE_MESSAGE_INDENT)
   message(CHECK_PASS passed)
 endmacro()
