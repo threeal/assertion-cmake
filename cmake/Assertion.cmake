@@ -6,14 +6,16 @@ cmake_minimum_required(VERSION 3.17)
 # This variable contains the path to the included `Assertion.cmake` module.
 set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 
-# Formats an assertion message with indentation on each even line.
+# Formats an assertion message with indentation on values.
 #
-# _assert_internal_format_message(<out_var> [<lines>...])
+# _assert_internal_format_message(<out_var> [<message>...])
 #
 # This function formats the given lines by appending all of them into a single
 # string. Each even line will be indented by 2 spaces. The formatted string will
 # then be stored in the `<out_var>` variable.
 function(_assert_internal_format_message OUT_VAR FIRST_LINE)
+  cmake_parse_arguments(PARSE_ARGV 2 ARG "" "" "")
+  foreach(
   set(MESSAGE "${FIRST_LINE}")
   if(ARGC GREATER 2)
     math(EXPR STOP "${ARGC} - 1")
