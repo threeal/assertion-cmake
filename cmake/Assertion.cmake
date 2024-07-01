@@ -1,6 +1,8 @@
 # This code is licensed under the terms of the MIT License.
 # Copyright (c) 2024 Alfi Maulana
 
+cmake_minimum_required(VERSION 3.17)
+
 # Formats an assertion message with indentation on each even line.
 #
 # _assert_internal_format_message(<out_var> [<lines>...])
