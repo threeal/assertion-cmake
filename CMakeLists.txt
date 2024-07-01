@@ -16,6 +16,11 @@ if(ASSERT_ENABLE_TESTS)
   enable_testing()
 
   add_test(
+    NAME "inclusion of other modules"
+    COMMAND "${CMAKE_COMMAND}"
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/test/IncludeOtherModules.cmake)
+
+  add_test(
     NAME "condition assertions"
     COMMAND "${CMAKE_COMMAND}"
       -P ${CMAKE_CURRENT_SOURCE_DIR}/test/Assert.cmake)
