@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.17)
-
-find_package(Assertion REQUIRED PATHS ${CMAKE_CURRENT_LIST_DIR}/../cmake)
-
 section("it should include modules")
   file(WRITE foo.cmake "message(STATUS \"foo\")\n")
   file(WRITE goo.cmake "message(STATUS \"goo\")\n")
