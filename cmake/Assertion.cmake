@@ -1,7 +1,7 @@
 # This code is licensed under the terms of the MIT License.
 # Copyright (c) 2024 Alfi Maulana
 
-include_guard(GLOBAL)
+cmake_minimum_required(VERSION 3.17)
 
 # Formats an assertion message with indentation on each even line.
 #
@@ -284,3 +284,18 @@ function(endsection)
   set(CMAKE_MESSAGE_INDENT "${CMAKE_MESSAGE_INDENT}" PARENT_SCOPE)
   message(CHECK_PASS passed)
 endfunction()
+
+# These lines allow this module to include other modules when run in script mode
+# by passing the paths of the other modules as arguments after `--`.
+if(NOT DEFINED CMAKE_PARENT_LIST_FILE)
+  math(EXPR END "${CMAKE_ARGC} - 1")
+  foreach(I RANGE 0 "${END}")
+    if("${CMAKE_ARGV${I}}" STREQUAL --)
+      math(EXPR I "${I} + 1")
+      foreach(I RANGE "${I}" "${END}")
+        include("${CMAKE_ARGV${I}}")
+      endforeach()
+      break()
+    endif()
+  endforeach()
+endif()
