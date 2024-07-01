@@ -17,38 +17,32 @@ if(ASSERT_ENABLE_TESTS)
 
   add_test(
     NAME "inclusion of other modules"
-    COMMAND "${CMAKE_COMMAND}"
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Assertion.cmake
+    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
       -- ${CMAKE_CURRENT_SOURCE_DIR}/test/IncludeOtherModules.cmake)
 
   add_test(
     NAME "condition assertions"
-    COMMAND "${CMAKE_COMMAND}"
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Assertion.cmake
+    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
       -- ${CMAKE_CURRENT_SOURCE_DIR}/test/Assert.cmake)
 
   add_test(
     NAME "fatal error assertions"
-    COMMAND "${CMAKE_COMMAND}"
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Assertion.cmake
+    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
       -- ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertFatalError.cmake)
 
   add_test(
     NAME "execute process assertions"
-    COMMAND "${CMAKE_COMMAND}"
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Assertion.cmake
+    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
       -- ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertExecuteProcess.cmake)
 
   add_test(
     NAME "internal assertion message formatting"
-    COMMAND "${CMAKE_COMMAND}"
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Assertion.cmake
+    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
       -- ${CMAKE_CURRENT_SOURCE_DIR}/test/InternalFormatMessage.cmake)
 
   add_test(
     NAME "section creation"
-    COMMAND "${CMAKE_COMMAND}"
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Assertion.cmake
+    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
       -- ${CMAKE_CURRENT_SOURCE_DIR}/test/SectionCreation.cmake)
 endif()
 

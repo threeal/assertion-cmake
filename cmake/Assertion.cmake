@@ -3,6 +3,9 @@
 
 cmake_minimum_required(VERSION 3.17)
 
+# This variable contains the path to the included `Assertion.cmake` module.
+set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
+
 # Formats an assertion message with indentation on each even line.
 #
 # _assert_internal_format_message(<out_var> [<lines>...])
