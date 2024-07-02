@@ -6,41 +6,31 @@ cmake_minimum_required(VERSION 3.17)
 # This variable contains the path to the included `Assertion.cmake` module.
 set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 
-# Formats lines for an assertion message.
-#
-# _assert_internal_format_message(<out_var> [<lines>...])
-#
-# This macro formats the given lines by appending all of them into a single
-# string. For each given line, if it is a variable, it will be expanded and
-# indented by 2 spaces. The formatted string will then be stored in the
-# `<out_var>` variable.
-macro(_assert_internal_format_message OUT_VAR FIRST_LINE)
-  if(DEFINED "${FIRST_LINE}")
-    set("${OUT_VAR}" "${${FIRST_LINE}}")
-  else()
-    set("${OUT_VAR}" "${FIRST_LINE}")
-  endif()
-
-  foreach(LINE IN ITEMS ${ARGN})
-    if(DEFINED "${LINE}")
-      string(REPLACE "\n" "\n  " LINE "${${LINE}}")
-      string(APPEND "${OUT_VAR}" "\n  ${LINE}")
-    else()
-      string(APPEND "${OUT_VAR}" "\n${LINE}")
-    endif()
-  endforeach()
-endmacro()
-
 # Throws a formatted fatal error message.
 #
 # fail(<lines>...)
 #
 # This macro throws a fatal error message formatted from the given lines.
 #
-# Refer to the `_assert_internal_format_message` macro for more information on
-# how the fatal error message is formatted.
+# It formats the given `<lines>` by appending all of them into a single string.
+# For each given line, if it is a variable, it will be expanded and indented by
+# 2 spaces.
 macro(fail FIRST_LINE)
-  _assert_internal_format_message(MESSAGE "${FIRST_LINE}" ${ARGN})
+  if(DEFINED "${FIRST_LINE}")
+    set(MESSAGE "${${FIRST_LINE}}")
+  else()
+    set(MESSAGE "${FIRST_LINE}")
+  endif()
+
+  foreach(LINE IN ITEMS ${ARGN})
+    if(DEFINED "${LINE}")
+      string(REPLACE "\n" "\n  " LINE "${${LINE}}")
+      string(APPEND MESSAGE "\n  ${LINE}")
+    else()
+      string(APPEND MESSAGE "\n${LINE}")
+    endif()
+  endforeach()
+
   message(FATAL_ERROR "${MESSAGE}")
 endmacro()
 
