@@ -6,30 +6,30 @@ cmake_minimum_required(VERSION 3.17)
 # This variable contains the path to the included `Assertion.cmake` module.
 set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 
-# Formats an assertion message with indentation on each even line.
+# Formats lines for an assertion message.
 #
 # _assert_internal_format_message(<out_var> [<lines>...])
 #
-# This function formats the given lines by appending all of them into a single
-# string. Each even line will be indented by 2 spaces. The formatted string will
-# then be stored in the `<out_var>` variable.
-function(_assert_internal_format_message OUT_VAR FIRST_LINE)
-  set(MESSAGE "${FIRST_LINE}")
-  if(ARGC GREATER 2)
-    math(EXPR STOP "${ARGC} - 1")
-    foreach(I RANGE 2 "${STOP}")
-      string(STRIP "${ARGV${I}}" LINE)
-      math(EXPR MOD "${I} % 2")
-      if(MOD EQUAL 0)
-        string(REPLACE "\n" "\n  " LINE "${LINE}")
-        set(MESSAGE "${MESSAGE}\n  ${LINE}")
-      else()
-        set(MESSAGE "${MESSAGE}\n${LINE}")
-      endif()
-    endforeach()
+# This macro formats the given lines by appending all of them into a single
+# string. For each given line, if it is a variable, it will be expanded and
+# indented by 2 spaces. The formatted string will then be stored in the
+# `<out_var>` variable.
+macro(_assert_internal_format_message OUT_VAR FIRST_LINE)
+  if(DEFINED "${FIRST_LINE}")
+    set("${OUT_VAR}" "${${FIRST_LINE}}")
+  else()
+    set("${OUT_VAR}" "${FIRST_LINE}")
   endif()
-  set("${OUT_VAR}" "${MESSAGE}" PARENT_SCOPE)
-endfunction()
+
+  foreach(LINE IN ITEMS ${ARGN})
+    if(DEFINED "${LINE}")
+      string(REPLACE "\n" "\n  " LINE "${${LINE}}")
+      string(APPEND "${OUT_VAR}" "\n  ${LINE}")
+    else()
+      string(APPEND "${OUT_VAR}" "\n${LINE}")
+    endif()
+  endforeach()
+endmacro()
 
 # Asserts the given condition.
 #
@@ -47,68 +47,68 @@ function(assert)
   else()
     string(REPLACE ";" " " ARGS "${ARG_UNPARSED_ARGUMENTS}")
     _assert_internal_format_message(
-      MESSAGE "expected:" "${ARGS}" "to resolve to true")
+      MESSAGE "expected:" ARGS "to resolve to true")
 
     if(ARGC EQUAL 2)
       if(NOT ARGV0 STREQUAL NOT)
         if(ARGV0 STREQUAL DEFINED)
           _assert_internal_format_message(
-            MESSAGE "expected variable:" "${ARGV1}" "to be defined")
+            MESSAGE "expected variable:" ARGV1 "to be defined")
         elseif(ARGV0 STREQUAL EXISTS)
           _assert_internal_format_message(
-            MESSAGE "expected path:" "${ARGV1}" "to exist")
+            MESSAGE "expected path:" ARGV1 "to exist")
         elseif(ARGV0 STREQUAL IS_DIRECTORY)
           _assert_internal_format_message(
-            MESSAGE "expected path:" "${ARGV1}" "to be a directory")
+            MESSAGE "expected path:" ARGV1 "to be a directory")
         endif()
       endif()
     elseif(ARGC EQUAL 3)
       if(ARGV0 STREQUAL NOT)
         if(ARGV1 STREQUAL DEFINED)
           _assert_internal_format_message(
-            MESSAGE "expected variable:" "${ARGV2}" "not to be defined")
+            MESSAGE "expected variable:" ARGV2 "not to be defined")
         elseif(ARGV1 STREQUAL EXISTS)
           _assert_internal_format_message(
-            MESSAGE "expected path:" "${ARGV2}" "not to exist")
+            MESSAGE "expected path:" ARGV2 "not to exist")
         elseif(ARGV1 STREQUAL IS_DIRECTORY)
           _assert_internal_format_message(
-            MESSAGE "expected path:" "${ARGV2}" "not to be a directory")
+            MESSAGE "expected path:" ARGV2 "not to be a directory")
         endif()
       else()
         if(ARGV1 STREQUAL MATCHES)
           if(DEFINED "${ARGV0}")
             _assert_internal_format_message(
-              MESSAGE "expected string:" "${${ARGV0}}"
-                "of variable:" "${ARGV0}"
-                "to match:" "${ARGV2}")
+              MESSAGE "expected string:" "${ARGV0}"
+                "of variable:" ARGV0
+                "to match:" ARGV2)
           else()
             _assert_internal_format_message(
-              MESSAGE "expected string:" "${ARGV0}" "to match:" "${ARGV2}")
+              MESSAGE "expected string:" ARGV0 "to match:" ARGV2)
           endif()
         elseif(ARGV1 STREQUAL STREQUAL)
           if(DEFINED "${ARGV0}")
             if(DEFINED "${ARGV2}")
               _assert_internal_format_message(
-                MESSAGE "expected string:" "${${ARGV0}}"
-                  "of variable:" "${ARGV0}"
-                  "to be equal to string:" "${${ARGV2}}"
-                  "of variable:" "${ARGV2}")
+                MESSAGE "expected string:" "${ARGV0}"
+                  "of variable:" ARGV0
+                  "to be equal to string:" "${ARGV2}"
+                  "of variable:" ARGV2)
             else()
               _assert_internal_format_message(
-                MESSAGE "expected string:" "${${ARGV0}}"
-                  "of variable:" "${ARGV0}"
-                  "to be equal to:" "${ARGV2}")
+                MESSAGE "expected string:" "${ARGV0}"
+                  "of variable:" ARGV0
+                  "to be equal to:" ARGV2)
             endif()
           else()
             if(DEFINED "${ARGV2}")
               _assert_internal_format_message(
-                MESSAGE "expected string:" "${ARGV0}"
-                  "to be equal to string:" "${${ARGV2}}"
-                  "of variable:" "${ARGV2}")
+                MESSAGE "expected string:" ARGV0
+                  "to be equal to string:" "${ARGV2}"
+                  "of variable:" ARGV2)
             else()
               _assert_internal_format_message(
-                MESSAGE "expected string:" "${ARGV0}"
-                  "to be equal to:" "${ARGV2}")
+                MESSAGE "expected string:" ARGV0
+                  "to be equal to:" ARGV2)
             endif()
           endif()
         endif()
@@ -118,37 +118,37 @@ function(assert)
         if(ARGV2 STREQUAL MATCHES)
           if(DEFINED "${ARGV1}")
             _assert_internal_format_message(
-              MESSAGE "expected string:" "${${ARGV1}}"
-                "of variable:" "${ARGV1}"
-                "not to match:" "${ARGV3}")
+              MESSAGE "expected string:" "${ARGV1}"
+                "of variable:" ARGV1
+                "not to match:" ARGV3)
           else()
             _assert_internal_format_message(
-              MESSAGE "expected string:" "${ARGV1}" "not to match:" "${ARGV3}")
+              MESSAGE "expected string:" ARGV1 "not to match:" ARGV3)
           endif()
         elseif(ARGV2 STREQUAL STREQUAL)
           if(DEFINED "${ARGV1}")
             if(DEFINED "${ARGV3}")
               _assert_internal_format_message(
-                MESSAGE "expected string:" "${${ARGV1}}"
-                  "of variable:" "${ARGV1}"
-                  "not to be equal to string:" "${${ARGV3}}"
-                  "of variable:" "${ARGV3}")
+                MESSAGE "expected string:" "${ARGV1}"
+                  "of variable:" ARGV1
+                  "not to be equal to string:" "${ARGV3}"
+                  "of variable:" ARGV3)
             else()
               _assert_internal_format_message(
-                MESSAGE "expected string:" "${${ARGV1}}"
-                  "of variable:" "${ARGV1}"
-                  "not to be equal to:" "${ARGV3}")
+                MESSAGE "expected string:" "${ARGV1}"
+                  "of variable:" ARGV1
+                  "not to be equal to:" ARGV3)
             endif()
           else()
             if(DEFINED "${ARGV3}")
               _assert_internal_format_message(
-                MESSAGE "expected string:" "${ARGV1}"
-                  "not to be equal to string:" "${${ARGV3}}"
-                  "of variable:" "${ARGV3}")
+                MESSAGE "expected string:" ARGV1
+                  "not to be equal to string:" "${ARGV3}"
+                  "of variable:" ARGV3)
             else()
               _assert_internal_format_message(
-                MESSAGE "expected string:" "${ARGV1}"
-                  "not to be equal to:" "${ARGV3}")
+                MESSAGE "expected string:" ARGV1
+                  "not to be equal to:" ARGV3)
             endif()
           endif()
         endif()
@@ -182,8 +182,8 @@ function(assert_fatal_error)
         if(NOT "${ARG_UNPARSED_ARGUMENTS}" MATCHES "${EXPECTED_MESSAGE}")
           _assert_internal_format_message(
             ASSERT_MESSAGE
-            "expected fatal error message:" "${ARG_UNPARSED_ARGUMENTS}"
-            "to match:" "${EXPECTED_MESSAGE}")
+            "expected fatal error message:" ARG_UNPARSED_ARGUMENTS
+            "to match:" EXPECTED_MESSAGE)
           message(FATAL_ERROR "${ASSERT_MESSAGE}")
         endif()
       else()
@@ -237,27 +237,27 @@ function(assert_execute_process)
   if(DEFINED ARG_ERROR AND RES EQUAL 0)
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
-      MESSAGE "expected command:" "${COMMAND}" "to fail")
+      MESSAGE "expected command:" COMMAND "to fail")
     message(FATAL_ERROR "${MESSAGE}")
   elseif(NOT DEFINED ARG_ERROR AND NOT RES EQUAL 0)
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
-      MESSAGE "expected command:" "${COMMAND}"
-        "not to fail with error:" "${ERR}")
+      MESSAGE "expected command:" COMMAND
+        "not to fail with error:" ERR)
     message(FATAL_ERROR "${MESSAGE}")
   elseif(DEFINED EXPECTED_OUTPUT AND NOT "${OUT}" MATCHES "${EXPECTED_OUTPUT}")
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
-      MESSAGE "expected the output:" "${OUT}"
-        "of command:" "${COMMAND}"
-        "to match:" "${EXPECTED_OUTPUT}")
+      MESSAGE "expected the output:" OUT
+        "of command:" COMMAND
+        "to match:" EXPECTED_OUTPUT)
     message(FATAL_ERROR "${MESSAGE}")
   elseif(DEFINED EXPECTED_ERROR AND NOT "${ERR}" MATCHES "${EXPECTED_ERROR}")
     string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
     _assert_internal_format_message(
-      MESSAGE "expected the error:" "${ERR}"
-        "of command:" "${COMMAND}"
-        "to match:" "${EXPECTED_ERROR}")
+      MESSAGE "expected the error:" ERR
+        "of command:" COMMAND
+        "to match:" EXPECTED_ERROR)
     message(FATAL_ERROR "${MESSAGE}")
   endif()
 endfunction()
