@@ -10,26 +10,23 @@ set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 #
 # _assert_internal_format_message(<out_var> [<lines>...])
 #
-# This function formats the given lines by appending all of them into a single
+# This macro formats the given lines by appending all of them into a single
 # string. Each even line will be indented by 2 spaces. The formatted string will
 # then be stored in the `<out_var>` variable.
-function(_assert_internal_format_message OUT_VAR FIRST_LINE)
-  set(MESSAGE "${FIRST_LINE}")
-  if(ARGC GREATER 2)
-    math(EXPR STOP "${ARGC} - 1")
-    foreach(I RANGE 2 "${STOP}")
-      string(STRIP "${ARGV${I}}" LINE)
-      math(EXPR MOD "${I} % 2")
-      if(MOD EQUAL 0)
-        string(REPLACE "\n" "\n  " LINE "${LINE}")
-        set(MESSAGE "${MESSAGE}\n  ${LINE}")
-      else()
-        set(MESSAGE "${MESSAGE}\n${LINE}")
-      endif()
-    endforeach()
-  endif()
-  set("${OUT_VAR}" "${MESSAGE}" PARENT_SCOPE)
-endfunction()
+macro(_assert_internal_format_message OUT_VAR FIRST_LINE)
+  set("${OUT_VAR}" "${FIRST_LINE}")
+  set(IS_EVEN TRUE)
+  foreach(LINE IN ITEMS ${ARGN})
+    if(IS_EVEN)
+      string(REPLACE "\n" "\n  " LINE "${LINE}")
+      string(APPEND "${OUT_VAR}" "\n  ${LINE}")
+      set(IS_EVEN FALSE)
+    else()
+      string(APPEND "${OUT_VAR}" "\n${LINE}")
+      set(IS_EVEN TRUE)
+    endif()
+  endforeach()
+endmacro()
 
 # Asserts the given condition.
 #
