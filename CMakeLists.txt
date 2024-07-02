@@ -21,6 +21,11 @@ if(ASSERT_ENABLE_TESTS)
       -- ${CMAKE_CURRENT_SOURCE_DIR}/test/IncludeOtherModules.cmake)
 
   add_test(
+    NAME "failure invocation"
+    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
+      -- ${CMAKE_CURRENT_SOURCE_DIR}/test/Fail.cmake)
+
+  add_test(
     NAME "condition assertions"
     COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
       -- ${CMAKE_CURRENT_SOURCE_DIR}/test/Assert.cmake)
