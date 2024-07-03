@@ -156,6 +156,7 @@ endfunction()
 # expected `<message>`.
 function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;MESSAGE")
+  string(JOIN "" EXPECTED_MESSAGE ${ARG_MESSAGE})
 
   # Override the `message` function if it has not been overridden.
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
@@ -198,9 +199,22 @@ function(assert_fatal_error)
   list(POP_FRONT ARG_CALL COMMAND)
   cmake_language(CALL "${COMMAND}" ${ARG_CALL})
 
+  # Assert if a fatal error message is captured. This can be done by checking
+  # whether the capture level is decreased.
+  get_property(NEW_CAPTURE_LEVEL GLOBAL PROPERTY fatal_error_capture_level)
+  if(NEW_CAPTURE_LEVEL GREATER_EQUAL CAPTURE_LEVEL)
+    # Decrease the level for capturing a fatal error message, reverting to the
+    # level before this assertion.
+    math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} - 1")
+    set_property(GLOBAL PROPERTY fatal_error_capture_level "${CAPTURE_LEVEL}")
+
+    fail("expected to receive a fatal error message that matches:"
+      EXPECTED_MESSAGE)
+    return()
+  endif()
+
   # Assert the captured fatal error message with the expected message.
   get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_fatal_error)
-  string(JOIN "" EXPECTED_MESSAGE ${ARG_MESSAGE})
   if(NOT "${ACTUAL_MESSAGE}" MATCHES "${EXPECTED_MESSAGE}")
     fail("expected fatal error message:" ACTUAL_MESSAGE
       "to match:" EXPECTED_MESSAGE)
