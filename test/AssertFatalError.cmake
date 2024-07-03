@@ -1,27 +1,25 @@
-section("fatal error assertions")
-  function(throw_fatal_error MESSAGE)
-    message(FATAL_ERROR "${MESSAGE}")
-  endfunction()
-
+section("it should assert a fatal error message")
   assert_fatal_error(
-    CALL throw_fatal_error "some fatal error message"
-    MESSAGE "some.*error message")
+    CALL message FATAL_ERROR "some fatal error message"
+    MESSAGE "some fa.*ror message")
+endsection()
 
-  macro(assert_fail)
+section("it should fail to assert a fatal error message")
+  macro(failed_assertion)
     assert_fatal_error(
-      CALL throw_fatal_error "some fatal error message"
-      MESSAGE "some other.*error message")
+      CALL message FATAL_ERROR "some fatal error message"
+      MESSAGE "some other fa.*ror message")
   endmacro()
 
   assert_fatal_error(
-    CALL assert_fail
+    CALL failed_assertion
     MESSAGE "expected fatal error message:\n"
       "  some fatal error message\n"
       "to match:\n"
-      "  some other.*error message")
+      "  some other fa.*ror message")
 endsection()
 
-section("mocked message check")
+section("it should be able to call the message function")
   message("some unspecified message")
   message(STATUS "some status message")
   message(STATUS "some status message" " with additional information")
