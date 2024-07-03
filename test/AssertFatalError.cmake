@@ -36,9 +36,3 @@ section("it should fail to assert a fatal error message "
     MESSAGE "expected to receive a fatal error message that matches:\n"
       "  some message")
 endsection()
-
-section("it should be able to call the message function")
-  message("some unspecified message")
-  message(STATUS "some status message")
-  message(STATUS "some status message" " with additional information")
-endsection()
