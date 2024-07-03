@@ -170,11 +170,11 @@ function(assert_fatal_error)
       # one or above.
       get_property(CAPTURE_LEVEL GLOBAL PROPERTY fatal_error_capture_level)
       if(CAPTURE_LEVEL GREATER_EQUAL 1 AND MODE STREQUAL FATAL_ERROR)
-        # Capture the fatal error message and decrease the level for capturing
-        # a fatal error message, indicating the requirement to capture a fatal
-        # error message is fulfilled.
-        set_property(GLOBAL PROPERTY captured_fatal_error
-          "${ARG_UNPARSED_ARGUMENTS}")
+        string(JOIN "" MESSAGE ${ARG_UNPARSED_ARGUMENTS})
+        set_property(GLOBAL PROPERTY captured_fatal_error "${MESSAGE}")
+
+        # Decrease the level for capturing a fatal error message, indicating
+        # the requirement to capture a fatal error message is fulfilled.
         math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} - 1")
         set_property(GLOBAL PROPERTY fatal_error_capture_level
           "${CAPTURE_LEVEL}")
