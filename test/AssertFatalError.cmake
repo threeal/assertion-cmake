@@ -19,6 +19,19 @@ section("it should fail to assert a fatal error message")
       "  some other fa.*ror message")
 endsection()
 
+section("it should fail to assert a fatal error message "
+  "because there is nothing to assert")
+
+  macro(failed_assertion)
+    assert_fatal_error(CALL message "some message" MESSAGE "some message")
+  endmacro()
+
+  assert_fatal_error(
+    CALL failed_assertion
+    MESSAGE "expected to receive a fatal error message that matches:\n"
+      "  some message")
+endsection()
+
 section("it should be able to call the message function")
   message("some unspecified message")
   message(STATUS "some status message")
