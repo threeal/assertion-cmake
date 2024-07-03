@@ -2,6 +2,11 @@ section("it should assert a fatal error message")
   assert_fatal_error(
     CALL message FATAL_ERROR "some fatal error message"
     MESSAGE "some fa.*ror message")
+
+  assert_fatal_error(
+    CALL message FATAL_ERROR "some fatal error message "
+      "with additional message"
+    MESSAGE "some fa.*ror message with additional message")
 endsection()
 
 section("it should fail to assert a fatal error message")
