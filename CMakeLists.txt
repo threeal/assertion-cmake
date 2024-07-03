@@ -18,6 +18,7 @@ if(ASSERT_ENABLE_TESTS)
   assertion_add_test(
     "inclusion of other modules" test/IncludeOtherModules.cmake)
 
+  assertion_add_test("test creation" test/TestCreation.cmake)
   assertion_add_test("failure invocation" test/Fail.cmake)
   assertion_add_test("condition assertions" test/Assert.cmake)
   assertion_add_test("fatal error assertions" test/AssertFatalError.cmake)
