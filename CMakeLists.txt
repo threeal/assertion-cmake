@@ -15,35 +15,18 @@ include(cmake/Assertion.cmake)
 if(ASSERT_ENABLE_TESTS)
   enable_testing()
 
-  add_test(
-    NAME "inclusion of other modules"
-    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
-      -- ${CMAKE_CURRENT_SOURCE_DIR}/test/IncludeOtherModules.cmake)
+  assertion_add_test(
+    "inclusion of other modules" test/IncludeOtherModules.cmake)
 
-  add_test(
-    NAME "failure invocation"
-    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
-      -- ${CMAKE_CURRENT_SOURCE_DIR}/test/Fail.cmake)
+  assertion_add_test("test creation" test/TestCreation.cmake)
+  assertion_add_test("failure invocation" test/Fail.cmake)
+  assertion_add_test("condition assertions" test/Assert.cmake)
+  assertion_add_test("fatal error assertions" test/AssertFatalError.cmake)
 
-  add_test(
-    NAME "condition assertions"
-    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
-      -- ${CMAKE_CURRENT_SOURCE_DIR}/test/Assert.cmake)
+  assertion_add_test(
+    "execute process assertions" test/AssertExecuteProcess.cmake)
 
-  add_test(
-    NAME "fatal error assertions"
-    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
-      -- ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertFatalError.cmake)
-
-  add_test(
-    NAME "execute process assertions"
-    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
-      -- ${CMAKE_CURRENT_SOURCE_DIR}/test/AssertExecuteProcess.cmake)
-
-  add_test(
-    NAME "section creation"
-    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
-      -- ${CMAKE_CURRENT_SOURCE_DIR}/test/SectionCreation.cmake)
+  assertion_add_test("section creation" test/SectionCreation.cmake)
 endif()
 
 if(ASSERT_ENABLE_INSTALL)

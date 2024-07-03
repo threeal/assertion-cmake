@@ -6,6 +6,19 @@ cmake_minimum_required(VERSION 3.17)
 # This variable contains the path to the included `Assertion.cmake` module.
 set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 
+# Add a new test that runs a CMake file in script mode.
+#
+# assertion_add_test(<name> <file>)
+#
+# This function adds a new test named `<name>` that will run the specified
+# `<file>` CMake file in script mode.
+function(assertion_add_test NAME FILE)
+  add_test(
+    NAME "${NAME}"
+    COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
+      -- ${CMAKE_CURRENT_SOURCE_DIR}/${FILE})
+endfunction()
+
 # Throws a formatted fatal error message.
 #
 # fail(<lines>...)
