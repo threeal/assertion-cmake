@@ -161,27 +161,50 @@ function(assert_fatal_error)
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
   if(NOT MESSAGE_MOCKED)
     # Override the `message` function to allow the behavior to be mocked by
-    # asserting a fatal error message.
-    function(message ARG0)
+    # capturing a fatal error message.
+    function(message MODE)
       cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
-      list(LENGTH _ASSERT_INTERNAL_EXPECTED_MESSAGES EXPECTED_MESSAGE_LENGTH)
-      if(EXPECTED_MESSAGE_LENGTH GREATER 0 AND ARG0 STREQUAL FATAL_ERROR)
-        list(POP_BACK _ASSERT_INTERNAL_EXPECTED_MESSAGES EXPECTED_MESSAGE)
-        if(NOT "${ARG_UNPARSED_ARGUMENTS}" MATCHES "${EXPECTED_MESSAGE}")
-          fail("expected fatal error message:" ARG_UNPARSED_ARGUMENTS
-            "to match:" EXPECTED_MESSAGE)
-        endif()
+
+      # The fatal error message will only be captured if the capture level is
+      # one or above.
+      get_property(CAPTURE_LEVEL GLOBAL PROPERTY fatal_error_capture_level)
+      if(CAPTURE_LEVEL GREATER_EQUAL 1 AND MODE STREQUAL FATAL_ERROR)
+        # Capture the fatal error message and decrease the level for capturing
+        # a fatal error message, indicating the requirement to capture a fatal
+        # error message is fulfilled.
+        set_property(GLOBAL PROPERTY captured_fatal_error
+          "${ARG_UNPARSED_ARGUMENTS}")
+        math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} - 1")
+        set_property(GLOBAL PROPERTY fatal_error_capture_level
+          "${CAPTURE_LEVEL}")
       else()
-        _message("${ARG0}" ${ARG_UNPARSED_ARGUMENTS})
+        _message("${MODE}" ${ARG_UNPARSED_ARGUMENTS})
       endif()
     endfunction()
     set_property(GLOBAL PROPERTY _assert_internal_message_mocked ON)
   endif()
 
-  string(JOIN "" EXPECTED_MESSAGE ${ARG_MESSAGE})
-  list(APPEND _ASSERT_INTERNAL_EXPECTED_MESSAGES "${EXPECTED_MESSAGE}")
+  # Increase the level for capturing a fatal error message, indicating the
+  # requirement to capture a fatal error message.
+  get_property(CAPTURE_LEVEL GLOBAL PROPERTY fatal_error_capture_level)
+  if(CAPTURE_LEVEL GREATER_EQUAL 0)
+    math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} + 1")
+  else()
+    set(CAPTURE_LEVEL 1)
+  endif()
+  set_property(GLOBAL PROPERTY fatal_error_capture_level "${CAPTURE_LEVEL}")
+
+  # Call the command with the specified arguments.
   list(POP_FRONT ARG_CALL COMMAND)
   cmake_language(CALL "${COMMAND}" ${ARG_CALL})
+
+  # Assert the captured fatal error message with the expected message.
+  get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_fatal_error)
+  string(JOIN "" EXPECTED_MESSAGE ${ARG_MESSAGE})
+  if(NOT "${ACTUAL_MESSAGE}" MATCHES "${EXPECTED_MESSAGE}")
+    fail("expected fatal error message:" ACTUAL_MESSAGE
+      "to match:" EXPECTED_MESSAGE)
+  endif()
 endfunction()
 
 # Asserts whether the given command correctly executes a process.
