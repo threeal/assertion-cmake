@@ -303,7 +303,7 @@ function(section NAME)
   cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
   string(JOIN "" NAME "${NAME}" ${ARG_UNPARSED_ARGUMENTS})
 
-  message(CHECK_START "${NAME}")
+  message(STATUS "${NAME}")
   list(APPEND CMAKE_MESSAGE_INDENT "  ")
   set(CMAKE_MESSAGE_INDENT "${CMAKE_MESSAGE_INDENT}" PARENT_SCOPE)
 endfunction()
@@ -312,11 +312,10 @@ endfunction()
 #
 # endsection()
 #
-# This function ends the current test section and marks it as passed.
+# This function ends the current test section.
 function(endsection)
   list(POP_BACK CMAKE_MESSAGE_INDENT)
   set(CMAKE_MESSAGE_INDENT "${CMAKE_MESSAGE_INDENT}" PARENT_SCOPE)
-  message(CHECK_PASS passed)
 endfunction()
 
 # These lines allow this module to include other modules when run in script mode
