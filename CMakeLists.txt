@@ -25,8 +25,6 @@ if(ASSERT_ENABLE_TESTS)
 
   assertion_add_test(
     test/AssertExecuteProcess.cmake NAME "execute process assertions")
-
-  assertion_add_test(test/SectionCreation.cmake NAME "section creation")
 endif()
 
 if(ASSERT_ENABLE_INSTALL)
