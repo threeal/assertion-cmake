@@ -16,17 +16,17 @@ if(ASSERT_ENABLE_TESTS)
   enable_testing()
 
   assertion_add_test(
-    "inclusion of other modules" test/IncludeOtherModules.cmake)
+    test/IncludeOtherModules.cmake NAME "inclusion of other modules")
 
-  assertion_add_test("test creation" test/TestCreation.cmake)
-  assertion_add_test("failure invocation" test/Fail.cmake)
-  assertion_add_test("condition assertions" test/Assert.cmake)
-  assertion_add_test("fatal error assertions" test/AssertFatalError.cmake)
+  assertion_add_test(test/TestCreation.cmake NAME "test creation")
+  assertion_add_test(test/Fail.cmake NAME "failure invocation")
+  assertion_add_test(test/Assert.cmake NAME "condition assertions")
+  assertion_add_test(test/AssertFatalError.cmake NAME "fatal error assertions")
 
   assertion_add_test(
-    "execute process assertions" test/AssertExecuteProcess.cmake)
+    test/AssertExecuteProcess.cmake NAME "execute process assertions")
 
-  assertion_add_test("section creation" test/SectionCreation.cmake)
+  assertion_add_test(test/SectionCreation.cmake NAME "section creation")
 endif()
 
 if(ASSERT_ENABLE_INSTALL)

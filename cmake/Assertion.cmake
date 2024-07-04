@@ -8,13 +8,20 @@ set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 
 # Add a new test that runs a CMake file in script mode.
 #
-# assertion_add_test(<name> <file>)
+# assertion_add_test(<file> [NAME <name>])
 #
-# This function adds a new test named `<name>` that will run the specified
-# `<file>` CMake file in script mode.
-function(assertion_add_test NAME FILE)
+# This function adds a new test that will run the specified `<file>` CMake file
+# in script mode. If `<name>` is specified, it will use that as the test name;
+# otherwise, it will use `<file>` instead.
+function(assertion_add_test FILE)
+  cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME "")
+
+  if(NOT DEFINED ARG_NAME)
+    set(ARG_NAME "${FILE}")
+  endif()
+
   add_test(
-    NAME "${NAME}"
+    NAME "${ARG_NAME}"
     COMMAND "${CMAKE_COMMAND}" -P "${ASSERTION_LIST_FILE}"
       -- ${CMAKE_CURRENT_SOURCE_DIR}/${FILE})
 endfunction()
