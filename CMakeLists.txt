@@ -7,12 +7,13 @@ project(
   HOMEPAGE_URL https://github.com/threeal/assertion-cmake
   LANGUAGES NONE)
 
-option(ASSERT_ENABLE_TESTS "Enable test targets.")
-option(ASSERT_ENABLE_INSTALL "Enable install targets." ${PROJECT_IS_TOP_LEVEL})
+option(ASSERTION_ENABLE_TESTS "Enable test targets.")
+option(ASSERTION_ENABLE_INSTALL "Enable install targets."
+  ${PROJECT_IS_TOP_LEVEL})
 
 include(cmake/Assertion.cmake)
 
-if(ASSERT_ENABLE_TESTS)
+if(ASSERTION_ENABLE_TESTS)
   enable_testing()
 
   assertion_add_test(test/assert_execute_process.cmake)
@@ -23,7 +24,7 @@ if(ASSERT_ENABLE_TESTS)
   assertion_add_test(test/include.cmake)
 endif()
 
-if(ASSERT_ENABLE_INSTALL)
+if(ASSERTION_ENABLE_INSTALL)
   include(CMakePackageConfigHelpers)
   write_basic_package_version_file(
     AssertionConfigVersion.cmake COMPATIBILITY SameMajorVersion)
