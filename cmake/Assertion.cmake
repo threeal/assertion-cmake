@@ -322,8 +322,13 @@ endfunction()
 #
 # section(<name>...)
 #
-# This function begins a new test section named `<name>`. Use the `endsection`
-# function to end the test section.
+# This function begins a new test section named `<name>`. It prints the test
+# section name and indents all subsequent messages by two spaces.
+#
+# If more than one `<name>` string is given, they are concatenated into a single
+# name with no separator between the strings.
+#
+# Use the `endsection` function to end the test section.
 function(section NAME)
   cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
   string(JOIN "" NAME "${NAME}" ${ARG_UNPARSED_ARGUMENTS})
