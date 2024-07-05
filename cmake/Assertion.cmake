@@ -36,11 +36,7 @@ endfunction()
 # For each given line, if it is a variable, it will be expanded and indented by
 # 2 spaces.
 macro(fail FIRST_LINE)
-  if(DEFINED "${FIRST_LINE}")
-    set(MESSAGE "${${FIRST_LINE}}")
-  else()
-    set(MESSAGE "${FIRST_LINE}")
-  endif()
+  set(MESSAGE "${FIRST_LINE}")
 
   foreach(LINE IN ITEMS ${ARGN})
     if(DEFINED "${LINE}")
