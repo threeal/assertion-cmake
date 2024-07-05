@@ -49,11 +49,12 @@ endfunction()
 #
 # fail(<lines>...)
 #
-# This macro throws a fatal error message formatted from the given lines.
+# This macro throws a fatal error message formatted from the given `<lines>`.
 #
-# It formats the given `<lines>` by appending all of them into a single string.
-# For each given line, if it is a variable, it will be expanded and indented by
-# 2 spaces.
+# It formats the message by concatenating all the lines into a single message
+# with no separator between the lines. If one of the lines is a variable, it
+# will be expanded and indented by two spaces before being concatenated with the
+# other lines.
 macro(fail FIRST_LINE)
   if(DEFINED "${FIRST_LINE}")
     set(MESSAGE "${${FIRST_LINE}}")
