@@ -8,8 +8,8 @@ section("it should fail with a formatted fatal error message")
     MESSAGE "something happened\non multiple lines")
 
   assert_fatal_error(
-    CALL fail "something happened" "on multiple lines"
-    MESSAGE "something happened\non multiple lines")
+    CALL fail "something happened" "not on multiple lines"
+    MESSAGE "something happened not on multiple lines")
 endsection()
 
 section("it should fail with a formatted fatal error message "
@@ -18,30 +18,32 @@ section("it should fail with a formatted fatal error message "
   set(REASON_MULTILINE "some reason\non multiple lines")
 
   assert_fatal_error(
-    CALL fail "something happened" REASON
-    MESSAGE "something happened:\n  some reason")
+    CALL fail "something happened because of" REASON
+    MESSAGE "something happened because of 'some reason'")
 
   assert_fatal_error(
-    CALL fail "something happened" REASON_MULTILINE
-    MESSAGE "something happened:\n  some reason\n  on multiple lines")
-
-  assert_fatal_error(
-    CALL fail "something happened\non multiple lines" REASON
-    MESSAGE "something happened\non multiple lines:\n  some reason")
-
-  assert_fatal_error(
-    CALL fail "something happened\non multiple lines" REASON_MULTILINE
-    MESSAGE "something happened\non multiple lines:\n"
+    CALL fail "something happened because of" REASON_MULTILINE
+    MESSAGE "something happened because of:\n"
       "  some reason\n  on multiple lines")
 
   assert_fatal_error(
-    CALL fail "something happened" "on multiple lines" REASON
-    MESSAGE "something happened\non multiple lines:\n  some reason")
+    CALL fail "something happened\non multiple lines because of" REASON
+    MESSAGE "something happened\non multiple lines because of 'some reason'")
+
+  assert_fatal_error(
+    CALL fail "something happened\non multiple lines because of"
+      REASON_MULTILINE
+    MESSAGE "something happened\non multiple lines because of:\n"
+      "  some reason\n  on multiple lines")
+
+  assert_fatal_error(
+    CALL fail "something happened" "not on multiple lines because of" REASON
+    MESSAGE "something happened not on multiple lines because of 'some reason'")
 
   assert_fatal_error(
     CALL fail
-      "something happened" "on multiple lines" REASON
-      "something else happened" REASON_MULTILINE
-    MESSAGE "something happened\non multiple lines:\n  some reason\n"
-      "something else happened:\n  some reason\n  on multiple lines")
+      "something happened" "not on multiple lines because of" REASON
+      "something else happened because of" REASON_MULTILINE
+    MESSAGE "something happened not on multiple lines because of 'some reason' "
+      "something else happened because of:\n  some reason\n  on multiple lines")
 endsection()
