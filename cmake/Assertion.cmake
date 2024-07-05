@@ -1,18 +1,59 @@
-# This code is licensed under the terms of the MIT License.
+# MIT License
+#
 # Copyright (c) 2024 Alfi Maulana
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# This module contains a collection of assertion functions and other utilities
+# for testing CMake code.
+#
+# The main feature of this module is the `assert` function for asserting the
+# given condition in the style of CMake's `if` function. If the assertion fails,
+# it will throw a fatal error message with information about the context of the
+# asserted condition.
+#
+# This module also supports CMake test creation using the `assertion_add_test`
+# function. This function will create a new test that processes the given file
+# in script mode with variables, functions, and macros from this module
+# available in the given file.
+#
+# If this module is processed in script mode, it may optionally include other
+# modules by passing the paths of the other modules as additional arguments
+# after `--`.
 
 cmake_minimum_required(VERSION 3.17)
 
 # This variable contains the path to the included `Assertion.cmake` module.
 set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 
-# Add a new test that runs a CMake file in script mode.
+# Adds a new test that processes the given CMake file in script mode.
 #
 # assertion_add_test(<file> [NAME <name>])
 #
-# This function adds a new test that will run the specified `<file>` CMake file
-# in script mode. If `<name>` is specified, it will use that as the test name;
+# This function adds a new test that will process the given `<file>` in script
+# mode. If `NAME` is specified, it will use `<name>` as the test name;
 # otherwise, it will use `<file>` instead.
+#
+# Internally, the test will process this module in script mode and include the
+# given `<file>` at the end of the module, allowing variables, functions, and
+# macros in this module to be available in the `<file>` without the need to
+# include this module from the `<file>`.
 function(assertion_add_test FILE)
   cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME "")
 
@@ -30,11 +71,12 @@ endfunction()
 #
 # fail(<lines>...)
 #
-# This macro throws a fatal error message formatted from the given lines.
+# This macro throws a fatal error message formatted from the given `<lines>`.
 #
-# It formats the given `<lines>` by appending all of them into a single string.
-# For each given line, if it is a variable, it will be expanded and indented by
-# 2 spaces.
+# It formats the message by concatenating all the lines into a single message
+# with no separator between the lines. If one of the lines is a variable, it
+# will be expanded and indented by two spaces before being concatenated with the
+# other lines.
 macro(fail FIRST_LINE)
   if(DEFINED "${FIRST_LINE}")
     set(MESSAGE "${${FIRST_LINE}}")
@@ -56,13 +98,14 @@ endmacro()
 
 # Asserts the given condition.
 #
-# assert(<condition>)
+# assert(<condition>...)
 #
-# This function performs an assertion on the given condition. It will output a
-# fatal error message if the assertion fails.
+# This function performs an assertion on the given `<condition>`. If the
+# assertion fails, it will output a formatted fatal error message with
+# information about the context of the asserted condition.
 #
-# Refer to the documentation of the `if` function for supported conditions to
-# perform the assertion.
+# Refer to the documentation of CMake's `if` function for more information about
+# supported conditions for the assertion.
 function(assert)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "")
   if(${ARG_UNPARSED_ARGUMENTS})
@@ -166,11 +209,14 @@ endfunction()
 
 # Asserts whether a command call throws a fatal error message.
 #
-# assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>...)
+# assert_fatal_error(CALL <command> [<arguments>...] MESSAGE <message>...)
 #
-# This function asserts whether a function or macro named `<command>` called
-# with the specified arguments throws a fatal error message that matches the
-# expected `<message>`.
+# This function asserts whether a function or macro named `<command>`, called
+# with the specified `<arguments>`, throws a fatal error message that matches
+# the expected `<message>`.
+#
+# If more than one `<message>` string is given, they are concatenated into a
+# single message with no separator between the strings.
 function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;MESSAGE")
   string(JOIN "" EXPECTED_MESSAGE ${ARG_MESSAGE})
@@ -241,17 +287,23 @@ endfunction()
 # Asserts whether the given command correctly executes a process.
 #
 # assert_execute_process(
-#   [COMMAND] <command> [<arg>...] [OUTPUT <output>...] [ERROR <error>...])
+#   [COMMAND] <command> [<arguments>...]
+#   [OUTPUT <output>...]
+#   [ERROR <error>...])
 #
-# This function asserts whether the given command and arguments successfully
-# execute a process.
+# This function asserts whether the given `<command>` and `<arguments>`
+# successfully execute a process. If `ERROR` is specified, it instead asserts
+# whether it fails to execute the process.
 #
 # If `OUTPUT` is specified, it also asserts whether the output of the executed
-# process matches the expected `<output>`.
+# process matches the expected `<output>`. If more than one `<output>` string
+# is given, they are concatenated into a single output with no separator between
+# the strings.
 #
-# If `ERROR` is specified, this function asserts whether the given command and
-# arguments fail to execute a process. It also asserts whether the error of the
-# executed process matches the expected `<error>`.
+# If `ERROR` is specified, it also asserts whether the error of the executed
+# process matches the expected `<error>`. If more than one `<error>` string
+# is given, they are concatenated into a single error with no separator between
+# the strings.
 function(assert_execute_process)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "COMMAND;OUTPUT;ERROR")
 
@@ -303,8 +355,13 @@ endfunction()
 #
 # section(<name>...)
 #
-# This function begins a new test section named `<name>`. Use the `endsection`
-# function to end the test section.
+# This function begins a new test section named `<name>`. It prints the test
+# section name and indents all subsequent messages by two spaces.
+#
+# If more than one `<name>` string is given, they are concatenated into a single
+# name with no separator between the strings.
+#
+# Use the `endsection` function to end the test section.
 function(section NAME)
   cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
   string(JOIN "" NAME "${NAME}" ${ARG_UNPARSED_ARGUMENTS})
