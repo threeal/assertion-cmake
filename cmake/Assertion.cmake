@@ -260,17 +260,23 @@ endfunction()
 # Asserts whether the given command correctly executes a process.
 #
 # assert_execute_process(
-#   [COMMAND] <command> [<arg>...] [OUTPUT <output>...] [ERROR <error>...])
+#   [COMMAND] <command> [<arguments>...]
+#   [OUTPUT <output>...]
+#   [ERROR <error>...])
 #
-# This function asserts whether the given command and arguments successfully
-# execute a process.
+# This function asserts whether the given `<command>` and `<arguments>`
+# successfully execute a process. If `ERROR` is specified, it instead asserts
+# whether it fails to execute the process.
 #
 # If `OUTPUT` is specified, it also asserts whether the output of the executed
-# process matches the expected `<output>`.
+# process matches the expected `<output>`. If more than one `<output>` string
+# is given, they are concatenated into a single output with no separator between
+# the strings.
 #
-# If `ERROR` is specified, this function asserts whether the given command and
-# arguments fail to execute a process. It also asserts whether the error of the
-# executed process matches the expected `<error>`.
+# If `ERROR` is specified, it also asserts whether the error of the executed
+# process matches the expected `<error>`. If more than one `<error>` string
+# is given, they are concatenated into a single error with no separator between
+# the strings.
 function(assert_execute_process)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "COMMAND;OUTPUT;ERROR")
 
