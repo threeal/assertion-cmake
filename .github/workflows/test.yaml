@@ -18,6 +18,6 @@ jobs:
           options: ASSERT_ENABLE_TESTS=ON
 
       - name: Test Project
-        uses: threeal/ctest-action@v1.0.0
+        uses: threeal/ctest-action@v1.1.0
         with:
-          args: --verbose
+          verbose: true
