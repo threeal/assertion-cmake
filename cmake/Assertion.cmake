@@ -318,9 +318,11 @@ function(endsection)
   set(CMAKE_MESSAGE_INDENT "${CMAKE_MESSAGE_INDENT}" PARENT_SCOPE)
 endfunction()
 
-# These lines allow this module to include other modules when run in script mode
-# by passing the paths of the other modules as arguments after `--`.
-if(NOT DEFINED CMAKE_PARENT_LIST_FILE)
+# These lines allow this module to include other modules when processed in
+# script mode by passing the paths of the other modules as additional arguments
+# after `--`.
+if(DEFINED CMAKE_SCRIPT_MODE_FILE AND
+  CMAKE_SCRIPT_MODE_FILE STREQUAL CMAKE_CURRENT_LIST_FILE)
   math(EXPR END "${CMAKE_ARGC} - 1")
   foreach(I RANGE 0 "${END}")
     if("${CMAKE_ARGV${I}}" STREQUAL --)
