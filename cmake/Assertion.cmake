@@ -75,13 +75,14 @@ endmacro()
 
 # Asserts the given condition.
 #
-# assert(<condition>)
+# assert(<condition>...)
 #
-# This function performs an assertion on the given condition. It will output a
-# fatal error message if the assertion fails.
+# This function performs an assertion on the given `<condition>`. If the
+# assertion fails, it will output a formatted fatal error message with
+# information about the context of the asserted condition.
 #
-# Refer to the documentation of the `if` function for supported conditions to
-# perform the assertion.
+# Refer to the documentation of CMake's `if` function for more information about
+# supported conditions for the assertion.
 function(assert)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "")
   if(${ARG_UNPARSED_ARGUMENTS})
