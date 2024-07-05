@@ -185,11 +185,14 @@ endfunction()
 
 # Asserts whether a command call throws a fatal error message.
 #
-# assert_fatal_error(CALL <command> [<arg>...] MESSAGE <message>...)
+# assert_fatal_error(CALL <command> [<arguments>...] MESSAGE <message>...)
 #
-# This function asserts whether a function or macro named `<command>` called
-# with the specified arguments throws a fatal error message that matches the
-# expected `<message>`.
+# This function asserts whether a function or macro named `<command>`, called
+# with the specified `<arguments>`, throws a fatal error message that matches
+# the expected `<message>`.
+#
+# If more than one `<message>` string is given, they are concatenated into a
+# single message with no separator between the strings.
 function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;MESSAGE")
   string(JOIN "" EXPECTED_MESSAGE ${ARG_MESSAGE})
