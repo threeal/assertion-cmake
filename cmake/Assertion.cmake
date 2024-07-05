@@ -20,6 +20,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# This module contains a collection of assertion functions and other utilities
+# for testing CMake code.
+#
+# The main feature of this module is the `assert` function for asserting the
+# given condition in the style of CMake's `if` function. If the assertion fails,
+# it will throw a fatal error message with information about the context of the
+# asserted condition.
+#
+# This module also supports CMake test creation using the `assertion_add_test`
+# function. This function will create a new test that processes the given file
+# in script mode with variables, functions, and macros from this module
+# available in the given file.
+#
+# If this module is processed in script mode, it may optionally include other
+# modules by passing the paths of the other modules as additional arguments
+# after `--`.
+
 cmake_minimum_required(VERSION 3.17)
 
 # This variable contains the path to the included `Assertion.cmake` module.
