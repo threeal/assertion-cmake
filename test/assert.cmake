@@ -15,6 +15,26 @@ section("boolean condition assertions")
   endsection()
 endsection()
 
+section("command existence condition assertions")
+  function(existing_command)
+  endfunction()
+
+  section("it should assert command existence conditions")
+    assert(COMMAND existing_command)
+    assert(NOT COMMAND non_existing_command)
+  endsection()
+
+  section("it should fail to assert command existence conditions")
+    assert_fatal_error(
+      CALL assert COMMAND non_existing_command
+      MESSAGE "expected command:\n  non_existing_command\nto be defined")
+
+    assert_fatal_error(
+      CALL assert NOT COMMAND existing_command
+      MESSAGE "expected command:\n  existing_command\nnot to be defined")
+  endsection()
+endsection()
+
 section("variable existence condition assertions")
   set(EXISTING_VARIABLE TRUE)
   unset(NON_EXISTING_VARIABLE)
