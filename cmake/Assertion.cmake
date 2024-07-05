@@ -262,34 +262,43 @@ function(assert_execute_process)
     set(ARG_COMMAND ${ARG_UNPARSED_ARGUMENTS})
   endif()
 
-  if(DEFINED ARG_OUTPUT)
-    string(JOIN "" EXPECTED_OUTPUT ${ARG_OUTPUT})
-  endif()
-
-  if(DEFINED ARG_ERROR)
-    string(JOIN "" EXPECTED_ERROR ${ARG_ERROR})
-  endif()
-
   execute_process(
     COMMAND ${ARG_COMMAND}
     RESULT_VARIABLE RES
     OUTPUT_VARIABLE OUT
     ERROR_VARIABLE ERR)
 
-  if(DEFINED ARG_ERROR AND RES EQUAL 0)
-    string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
-    fail("expected command" COMMAND "to fail")
-  elseif(NOT DEFINED ARG_ERROR AND NOT RES EQUAL 0)
-    string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
-    fail("expected command" COMMAND "not to fail with error" ERR)
-  elseif(DEFINED EXPECTED_OUTPUT AND NOT "${OUT}" MATCHES "${EXPECTED_OUTPUT}")
-    string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
-    fail("expected the output" OUT "of command" COMMAND
-      "to match" EXPECTED_OUTPUT)
-  elseif(DEFINED EXPECTED_ERROR AND NOT "${ERR}" MATCHES "${EXPECTED_ERROR}")
-    string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
-    fail("expected the error" ERR "of command" COMMAND
-      "to match" EXPECTED_ERROR)
+  if(DEFINED ARG_ERROR)
+    if(RES EQUAL 0)
+      string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
+      fail("expected command" COMMAND "to fail")
+      return()
+    endif()
+  else()
+    if(NOT RES EQUAL 0)
+      string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
+      fail("expected command" COMMAND "not to fail with error" ERR)
+      return()
+    endif()
+  endif()
+
+  if(DEFINED ARG_OUTPUT)
+    string(JOIN "" EXPECTED_OUTPUT ${ARG_OUTPUT})
+    if(NOT "${OUT}" MATCHES "${EXPECTED_OUTPUT}")
+      string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
+      fail("expected the output" OUT "of command" COMMAND
+        "to match" EXPECTED_OUTPUT)
+      return()
+    endif()
+  endif()
+
+  if(DEFINED ARG_ERROR)
+    string(JOIN "" EXPECTED_ERROR ${ARG_ERROR})
+    if(NOT "${ERR}" MATCHES "${EXPECTED_ERROR}")
+      string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
+      fail("expected the error" ERR "of command" COMMAND
+        "to match" EXPECTED_ERROR)
+    endif()
   endif()
 endfunction()
 
