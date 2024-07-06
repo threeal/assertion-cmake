@@ -118,6 +118,19 @@ functions, and macros in the `Assertion.cmake` module to be available in the
 `<file>` without the need to include the `Assertion.cmake` module from the
 `<file>`.
 
+#### Example
+
+```cmake
+assertion_add_test(test/first_test.cmake)
+
+assertion_add_test(test/second_test.cmake NAME "Second Test")
+```
+
+The above example adds two new tests. The first one is named
+`test/first_test.cmake`, which will process the file with the same name as the
+test. The second one is named `Second Test`, which will process the
+`test/second_test.cmake` file.
+
 ### `fail`
 
 Throws a formatted fatal error message.
