@@ -52,6 +52,45 @@ section("policy existence condition assertions")
   endsection()
 endsection()
 
+section("target existence condition assertions")
+  file(MAKE_DIRECTORY project)
+
+  section("it should assert target existence conditions")
+    file(
+      WRITE project/CMakeLists.txt
+      "cmake_minimum_required(VERSION 3.5)\n"
+      "project(SomeProject)\n"
+      "\n"
+      "add_custom_target(some_target)\n"
+      "\n"
+      "include(${ASSERTION_LIST_FILE})\n"
+      "\n"
+      "assert(TARGET some_target)\n"
+      "assert(NOT TARGET non_existing_target)\n")
+    assert_execute_process("${CMAKE_COMMAND}" project -B project/build)
+  endsection()
+
+  section("it should fail to assert target existence conditions")
+    file(
+      WRITE project/CMakeLists.txt
+      "cmake_minimum_required(VERSION 3.5)\n"
+      "project(SomeProject)\n"
+      "\n"
+      "add_custom_target(some_target)\n"
+      "\n"
+      "include(${ASSERTION_LIST_FILE})\n"
+      "\n"
+      "assert_fatal_error(\n"
+      "  CALL assert TARGET non_existing_target\n"
+      "  MESSAGE \"expected target:\\n  non_existing_target\\nto exist\")\n"
+      "\n"
+      "assert_fatal_error(\n"
+      "  CALL assert NOT TARGET some_target\n"
+      "  MESSAGE \"expected target:\\n  some_target\\nnot to exist\")\n")
+    assert_execute_process("${CMAKE_COMMAND}" project -B project/build)
+  endsection()
+endsection()
+
 section("variable existence condition assertions")
   set(EXISTING_VARIABLE TRUE)
   unset(NON_EXISTING_VARIABLE)
