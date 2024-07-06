@@ -95,6 +95,32 @@ section("directory path condition assertions")
   endsection()
 endsection()
 
+section("executable path condition assertions")
+  file(TOUCH some_executable)
+  file(
+    CHMOD some_executable
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+      GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE)
+
+  file(TOUCH some_file)
+
+  section("it should assert executable path conditions")
+    assert(IS_EXECUTABLE some_executable)
+    assert(NOT IS_EXECUTABLE some_file)
+  endsection()
+
+  section("it should fail to assert executable path conditions")
+    assert_fatal_error(
+      CALL assert IS_EXECUTABLE some_file
+      MESSAGE "expected path:\n  some_file\nto be an executable")
+
+    assert_fatal_error(
+      CALL assert NOT IS_EXECUTABLE some_executable
+      MESSAGE "expected path:\n  some_executable\nnot to be an executable")
+  endsection()
+endsection()
+
 section("regular expression match condition assertions")
   section("given a string")
     section("it should assert regular expression match conditions")
