@@ -146,6 +146,24 @@ with no separator between the lines. If one of the lines is a variable, it will
 be expanded and indented by two spaces before being concatenated with the other
 lines.
 
+#### Example
+
+```cmake
+set(COMMAND "some_command arg0 arg1 arg2")
+set(REASON "some reason")
+
+fail("something happened when executing" COMMAND "because of" REASON)
+```
+
+The above example throws a fatal error message formatted as follows:
+
+```
+something happened when executing:
+  some_command arg0 arg1 arg2
+because of:
+  some reason
+```
+
 ### `assert`
 
 Asserts the given condition.
