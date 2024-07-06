@@ -1,3 +1,34 @@
+# Asserts whether the given code of a sample project can be configured
+# successfully.
+#
+# assert_configure_sample_project(<code>...)
+#
+# This function asserts whether the given CMake `<code>` of a sample project can
+# be configured successfully. If more than one `<code>` string is given, they
+# are concatenated into a single block of code with no separator between the
+# strings.
+#
+# It performs the assertion by first writing the given `<code>` to a
+# `CMakeLists.txt` file under the `sample-project` directory, and then
+# configuring the `sample-project` directory using the CMake command.
+#
+# If the configuration fails, it will output a formatted fatal error message
+# with information about the context of the configuration command.
+function(assert_configure_sample_project FIRST_CODE)
+  cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
+
+  file(MAKE_DIRECTORY sample-project)
+  file(WRITE sample-project/CMakeLists.txt
+    "cmake_minimum_required(VERSION 3.5)\n"
+    "project(SomeProject)\n"
+    "include(${ASSERTION_LIST_FILE})\n"
+    "${FIRST_CODE}"
+    ${ARG_UNPARSED_ARGUMENTS})
+
+  assert_execute_process(
+    "${CMAKE_COMMAND}" sample-project -B sample-project/build)
+endfunction()
+
 section("boolean condition assertions")
   section("it should assert boolean conditions")
     assert(TRUE)
@@ -56,29 +87,16 @@ section("target existence condition assertions")
   file(MAKE_DIRECTORY project)
 
   section("it should assert target existence conditions")
-    file(
-      WRITE project/CMakeLists.txt
-      "cmake_minimum_required(VERSION 3.5)\n"
-      "project(SomeProject)\n"
-      "\n"
+    assert_configure_sample_project(
       "add_custom_target(some_target)\n"
-      "\n"
-      "include(${ASSERTION_LIST_FILE})\n"
       "\n"
       "assert(TARGET some_target)\n"
       "assert(NOT TARGET non_existing_target)\n")
-    assert_execute_process("${CMAKE_COMMAND}" project -B project/build)
   endsection()
 
   section("it should fail to assert target existence conditions")
-    file(
-      WRITE project/CMakeLists.txt
-      "cmake_minimum_required(VERSION 3.5)\n"
-      "project(SomeProject)\n"
-      "\n"
+    assert_configure_sample_project(
       "add_custom_target(some_target)\n"
-      "\n"
-      "include(${ASSERTION_LIST_FILE})\n"
       "\n"
       "assert_fatal_error(\n"
       "  CALL assert TARGET non_existing_target\n"
@@ -87,7 +105,6 @@ section("target existence condition assertions")
       "assert_fatal_error(\n"
       "  CALL assert NOT TARGET some_target\n"
       "  MESSAGE \"expected target:\\n  some_target\\nnot to exist\")\n")
-    assert_execute_process("${CMAKE_COMMAND}" project -B project/build)
   endsection()
 endsection()
 
@@ -95,29 +112,16 @@ section("test existence condition assertions")
   file(MAKE_DIRECTORY project)
 
   section("it should assert test existence conditions")
-    file(
-      WRITE project/CMakeLists.txt
-      "cmake_minimum_required(VERSION 3.5)\n"
-      "project(SomeProject)\n"
-      "\n"
+    assert_configure_sample_project(
       "add_test(NAME some_test COMMAND some_command)\n"
-      "\n"
-      "include(${ASSERTION_LIST_FILE})\n"
       "\n"
       "assert(TEST some_test)\n"
       "assert(NOT TEST non_existing_test)\n")
-    assert_execute_process("${CMAKE_COMMAND}" project -B project/build)
   endsection()
 
   section("it should fail to assert test existence conditions")
-    file(
-      WRITE project/CMakeLists.txt
-      "cmake_minimum_required(VERSION 3.5)\n"
-      "project(SomeProject)\n"
-      "\n"
+    assert_configure_sample_project(
       "add_test(NAME some_test COMMAND some_command)\n"
-      "\n"
-      "include(${ASSERTION_LIST_FILE})\n"
       "\n"
       "assert_fatal_error(\n"
       "  CALL assert TEST non_existing_test\n"
@@ -126,7 +130,6 @@ section("test existence condition assertions")
       "assert_fatal_error(\n"
       "  CALL assert NOT TEST some_test\n"
       "  MESSAGE \"expected test:\\n  some_test\\nnot to exist\")\n")
-    assert_execute_process("${CMAKE_COMMAND}" project -B project/build)
   endsection()
 endsection()
 
