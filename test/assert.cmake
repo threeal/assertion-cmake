@@ -35,6 +35,23 @@ section("command existence condition assertions")
   endsection()
 endsection()
 
+section("policy existence condition assertions")
+  section("it should assert policy existence conditions")
+    assert(POLICY CMP0000)
+    assert(NOT POLICY CPMXXXX)
+  endsection()
+
+  section("it should fail to assert policy existence conditions")
+    assert_fatal_error(
+      CALL assert POLICY CMPXXXX
+      MESSAGE "expected policy:\n  CMPXXXX\nto exist")
+
+    assert_fatal_error(
+      CALL assert NOT POLICY CMP0000
+      MESSAGE "expected policy:\n  CMP0000\nnot to exist")
+  endsection()
+endsection()
+
 section("variable existence condition assertions")
   set(EXISTING_VARIABLE TRUE)
   unset(NON_EXISTING_VARIABLE)
