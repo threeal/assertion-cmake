@@ -205,6 +205,32 @@ name with no separator between the strings.
 
 Use the `endsection` function to end the test section.
 
+#### Example
+
+```cmake
+section("test something")
+  section("it should not fail")
+    message(STATUS "nothing happened")
+  endsection()
+
+  section("it should fail" " because something might happen")
+    fail("something happened")
+  endsection()
+endsection()
+```
+
+The above example begins several test sections. If processed, it will output the
+following lines:
+
+```
+-- test something
+--   it should not fail
+--     nothing happened
+--   it should fail because something might happen
+CMake Error (message):
+  something happened
+```
+
 ### `endsection`
 
 Ends the current test section.
