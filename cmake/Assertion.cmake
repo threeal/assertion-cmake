@@ -46,9 +46,9 @@ set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 #
 # assertion_add_test(<file> [NAME <name>])
 #
-# This function adds a new test that will process the given `<file>` in script
+# This function adds a new test that processes the given `<file>` in script
 # mode. If `NAME` is specified, it will use `<name>` as the test name;
-# otherwise, it will use `<file>` instead.
+# otherwise, it will use `<file>`.
 #
 # Internally, the test will process this module in script mode and include the
 # given `<file>` at the end of the module, allowing variables, functions, and
