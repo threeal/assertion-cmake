@@ -94,6 +94,127 @@ section("some section")
 endsection()
 ```
 
+## API Reference
+
+### `ASSERTION_LIST_FILE`
+
+This variable contains the path to the included `Assertion.cmake` module.
+
+### `assertion_add_test`
+
+Adds a new test that processes the given CMake file in script mode.
+
+```cmake
+assertion_add_test(<file> [NAME <name>])
+```
+
+This function adds a new test that processes the given `<file>` in script mode.
+If `NAME` is specified, it will use `<name>` as the test name; otherwise, it
+will use `<file>`.
+
+Internally, the test will process the `Assertion.cmake` module in script mode
+and include the given `<file>` at the end of the module, allowing variables,
+functions, and macros in the `Assertion.cmake` module to be available in the
+`<file>` without the need to include the `Assertion.cmake` module from the
+`<file>`.
+
+### `fail`
+
+Throws a formatted fatal error message.
+
+```cmake
+fail(<lines>...)
+```
+
+This macro throws a fatal error message formatted from the given `<lines>`.
+
+It formats the message by concatenating all the lines into a single message
+with no separator between the lines. If one of the lines is a variable, it will
+be expanded and indented by two spaces before being concatenated with the other
+lines.
+
+### `assert`
+
+Asserts the given condition.
+
+```cmake
+assert(<condition>...)
+```
+
+This function performs an assertion on the given `<condition>`. If the assertion
+fails, it will output a formatted fatal error message with information about the
+context of the asserted condition.
+
+Refer to the documentation of CMake's
+[`if`](https://cmake.org/cmake/help/latest/command/if.html) function for more
+information about supported conditions for the assertion.
+
+### `assert_fatal_error`
+
+Asserts whether a command call throws a fatal error message.
+
+```cmake
+assert_fatal_error(CALL <command> [<arguments>...] MESSAGE <message>...)
+```
+
+This function asserts whether a function or macro named `<command>`, called with
+the specified `<arguments>`, throws a fatal error message that matches the
+expected `<message>`.
+
+If more than one `<message>` string is given, they are concatenated into a
+single message with no separator between the strings.
+
+### `assert_execute_process`
+
+Asserts whether the given command correctly executes a process.
+
+```cmake
+assert_execute_process(
+  [COMMAND] <command> [<arguments>...]
+  [OUTPUT <output>...]
+  [ERROR <error>...])
+```
+
+This function asserts whether the given `<command>` and `<arguments>`
+successfully execute a process. If `ERROR` is specified, it instead asserts
+whether it fails to execute the process.
+
+If `OUTPUT` is specified, it also asserts whether the output of the executed
+process matches the expected `<output>`. If more than one `<output>` string is
+given, they are concatenated into a single output with no separator between the
+strings.
+
+If `ERROR` is specified, it also asserts whether the error of the executed
+process matches the expected `<error>`. If more than one `<error>` string is
+given, they are concatenated into a single error with no separator between the
+strings.
+
+### `section`
+
+Begins a new test section.
+
+```cmake
+section(<name>...)
+```
+
+This function begins a new test section named `<name>`. It prints the test
+section name and indents all subsequent messages by two spaces.
+
+If more than one `<name>` string is given, they are concatenated into a single
+name with no separator between the strings.
+
+Use the `endsection` function to end the test section.
+
+### `endsection`
+
+Ends the current test section.
+
+```cmake
+endsection()
+```
+
+This function ends the current test section.
+
 ## License
 
 This project is licensed under the terms of the [MIT License](./LICENSE).
