@@ -91,6 +91,45 @@ section("target existence condition assertions")
   endsection()
 endsection()
 
+section("test existence condition assertions")
+  file(MAKE_DIRECTORY project)
+
+  section("it should assert test existence conditions")
+    file(
+      WRITE project/CMakeLists.txt
+      "cmake_minimum_required(VERSION 3.5)\n"
+      "project(SomeProject)\n"
+      "\n"
+      "add_test(NAME some_test COMMAND some_command)\n"
+      "\n"
+      "include(${ASSERTION_LIST_FILE})\n"
+      "\n"
+      "assert(TEST some_test)\n"
+      "assert(NOT TEST non_existing_test)\n")
+    assert_execute_process("${CMAKE_COMMAND}" project -B project/build)
+  endsection()
+
+  section("it should fail to assert test existence conditions")
+    file(
+      WRITE project/CMakeLists.txt
+      "cmake_minimum_required(VERSION 3.5)\n"
+      "project(SomeProject)\n"
+      "\n"
+      "add_test(NAME some_test COMMAND some_command)\n"
+      "\n"
+      "include(${ASSERTION_LIST_FILE})\n"
+      "\n"
+      "assert_fatal_error(\n"
+      "  CALL assert TEST non_existing_test\n"
+      "  MESSAGE \"expected test:\\n  non_existing_test\\nto exist\")\n"
+      "\n"
+      "assert_fatal_error(\n"
+      "  CALL assert NOT TEST some_test\n"
+      "  MESSAGE \"expected test:\\n  some_test\\nnot to exist\")\n")
+    assert_execute_process("${CMAKE_COMMAND}" project -B project/build)
+  endsection()
+endsection()
+
 section("variable existence condition assertions")
   set(EXISTING_VARIABLE TRUE)
   unset(NON_EXISTING_VARIABLE)
