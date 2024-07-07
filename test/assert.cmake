@@ -249,8 +249,7 @@ section("path readability condition assertions")
 
   file(REMOVE non_readable_file)
   file(TOUCH non_readable_file)
-  file(CHMOD non_readable_file
-    PERMISSIONS OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
+  file(CHMOD non_readable_file PERMISSIONS OWNER_WRITE)
 
   section("it should assert path readability conditions")
     assert(IS_READABLE some_file)
@@ -265,6 +264,28 @@ section("path readability condition assertions")
     assert_fatal_error(
       CALL assert NOT IS_READABLE some_file
       MESSAGE "expected path:\n  some_file\nnot to be readable")
+  endsection()
+endsection()
+
+section("path writability condition assertions")
+  file(TOUCH some_file)
+
+  file(TOUCH non_writable_file)
+  file(CHMOD non_writable_file PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+
+  section("it should assert path writability conditions")
+    assert(IS_WRITABLE some_file)
+    assert(NOT IS_WRITABLE non_writable_file)
+  endsection()
+
+  section("it should fail to assert path writability conditions")
+    assert_fatal_error(
+      CALL assert IS_WRITABLE non_writable_file
+      MESSAGE "expected path:\n  non_writable_file\nto be writable")
+
+    assert_fatal_error(
+      CALL assert NOT IS_WRITABLE some_file
+      MESSAGE "expected path:\n  some_file\nnot to be writable")
   endsection()
 endsection()
 
