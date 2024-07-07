@@ -315,6 +315,26 @@ section("executable path condition assertions")
   endsection()
 endsection()
 
+section("symbolic link path condition assertions")
+  file(TOUCH some_file)
+  file(CREATE_LINK some_file some_symlink SYMBOLIC)
+
+  section("it should assert symbolic link path conditions")
+    assert(IS_SYMLINK some_symlink)
+    assert(NOT IS_SYMLINK some_file)
+  endsection()
+
+  section("it should fail to assert symbolic link path conditions")
+    assert_fatal_error(
+      CALL assert IS_SYMLINK some_file
+      MESSAGE "expected path:\n  some_file\nto be a symbolic link")
+
+    assert_fatal_error(
+      CALL assert NOT IS_SYMLINK some_symlink
+      MESSAGE "expected path:\n  some_symlink\nnot to be a symbolic link")
+  endsection()
+endsection()
+
 section("regular expression match condition assertions")
   section("given a string")
     section("it should assert regular expression match conditions")
