@@ -244,6 +244,30 @@ section("directory path condition assertions")
   endsection()
 endsection()
 
+section("path readability condition assertions")
+  file(TOUCH some_file)
+
+  file(REMOVE non_readable_file)
+  file(TOUCH non_readable_file)
+  file(CHMOD non_readable_file
+    PERMISSIONS OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
+
+  section("it should assert path readability conditions")
+    assert(IS_READABLE some_file)
+    assert(NOT IS_READABLE non_readable_file)
+  endsection()
+
+  section("it should fail to assert path readability conditions")
+    assert_fatal_error(
+      CALL assert IS_READABLE non_readable_file
+      MESSAGE "expected path:\n  non_readable_file\nto be readable")
+
+    assert_fatal_error(
+      CALL assert NOT IS_READABLE some_file
+      MESSAGE "expected path:\n  some_file\nnot to be readable")
+  endsection()
+endsection()
+
 section("executable path condition assertions")
   file(TOUCH some_executable)
   file(
