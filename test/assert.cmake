@@ -335,6 +335,23 @@ section("symbolic link path condition assertions")
   endsection()
 endsection()
 
+section("absolute path condition assertions")
+  section("it should assert absolute path conditions")
+    assert(IS_ABSOLUTE /some/absolute/path)
+    assert(NOT IS_ABSOLUTE some/relative/path)
+  endsection()
+
+  section("it should fail to assert absolute path conditions")
+    assert_fatal_error(
+      CALL assert IS_ABSOLUTE some/relative/path
+      MESSAGE "expected path:\n  some/relative/path\nto be absolute")
+
+    assert_fatal_error(
+      CALL assert NOT IS_ABSOLUTE /some/absolute/path
+      MESSAGE "expected path:\n  /some/absolute/path\nnot to be absolute")
+  endsection()
+endsection()
+
 section("regular expression match condition assertions")
   section("given a string")
     section("it should assert regular expression match conditions")
