@@ -20,10 +20,9 @@ modules by passing their paths as additional arguments after `--`.
 
 ## Key Features
 
-- Contains a collection of assertion functions for testing purposes.
-- Supports asserting fatal error messages.
-- Supports asserting process execution.
-- Supports separating tests into sections.
+- Supports condition, fatal error, and process execution assertions.
+- Supports test creation that processes a CMake file.
+- Simple syntax and easy integration.
 
 ## Integration
 
