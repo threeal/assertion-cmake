@@ -179,6 +179,23 @@ Refer to the documentation of CMake's
 [`if`](https://cmake.org/cmake/help/latest/command/if.html) function for more
 information about supported conditions for the assertion.
 
+#### Example
+
+```cmake
+assert(DEFINED EXECUTABLE_PATH)
+assert(IS_EXECUTABLE "${EXECUTABLE_PATH}")
+```
+
+The above example asserts whether the `EXECUTABLE_PATH` variable is defined and
+resolves to the path of an executable. If the variable is not defined, it will
+throw the following fatal error message:
+
+```
+expected variable:
+  EXECUTABLE_PATH
+to be defined
+```
+
 ### `assert_fatal_error`
 
 Asserts whether a command call throws a fatal error message.
