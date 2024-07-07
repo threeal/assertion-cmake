@@ -153,6 +153,57 @@ section("variable existence condition assertions")
   endsection()
 endsection()
 
+section("list element existence condition assertions")
+  set(SOME_LIST "some element" "some other element")
+
+  section("given a string")
+    section("it should assert list element existence conditions")
+      assert("some element" IN_LIST SOME_LIST)
+      assert(NOT "other element" IN_LIST SOME_LIST)
+    endsection()
+
+    section("it should fail to assert list element existence conditions")
+      assert_fatal_error(
+        CALL assert NOT "some element" IN_LIST SOME_LIST
+        MESSAGE "expected string:\n  some element\n"
+          "not to exist in:\n  some element;some other element\n"
+          "of variable:\n  SOME_LIST")
+
+      assert_fatal_error(
+        CALL assert "other element" IN_LIST SOME_LIST
+        MESSAGE "expected string:\n  other element\n"
+          "to exist in:\n  some element;some other element\n"
+          "of variable:\n  SOME_LIST")
+    endsection()
+  endsection()
+
+  section("given a variable")
+    set(ELEMENT_VAR "some element")
+    set(OTHER_ELEMENT_VAR "other element")
+
+    section("it should assert list element existence conditions")
+      assert(ELEMENT_VAR IN_LIST SOME_LIST)
+      assert(NOT OTHER_ELEMENT_VAR IN_LIST SOME_LIST)
+    endsection()
+
+    section("it should fail to assert list element existence conditions")
+      assert_fatal_error(
+        CALL assert NOT ELEMENT_VAR IN_LIST SOME_LIST
+        MESSAGE "expected string:\n  some element\n"
+          "of variable:\n  ELEMENT_VAR\n"
+          "not to exist in:\n  some element;some other element\n"
+          "of variable:\n  SOME_LIST")
+
+      assert_fatal_error(
+        CALL assert OTHER_ELEMENT_VAR IN_LIST SOME_LIST
+        MESSAGE "expected string:\n  other element\n"
+          "of variable:\n  OTHER_ELEMENT_VAR\n"
+          "to exist in:\n  some element;some other element\n"
+          "of variable:\n  SOME_LIST")
+    endsection()
+  endsection()
+endsection()
+
 section("path existence condition assertions")
   file(TOUCH some_file)
   file(REMOVE_RECURSE non_existing_file)
