@@ -9,26 +9,23 @@ A [CMake](https://cmake.org/) module containing a collection of assertion functi
 - Supports asserting process execution.
 - Supports separating tests into sections.
 
-## Integration
+## Usage Guide
 
-This module can be integrated into a CMake project in the following ways:
+### Module Integration
 
-- Manually download the [`Assertion.cmake`](./cmake/Assertion.cmake) file and include it in the CMake project:
-  ```cmake
-  include(path/to/Assertion.cmake)
-  ```
-- Use [`file(DOWNLOAD)`](https://cmake.org/cmake/help/latest/command/file.html#download) to automatically download the `Assertion.cmake` file:
-  ```cmake
-  file(
-    DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v0.3.0/Assertion.cmake
-      ${CMAKE_BINARY_DIR}/Assertion.cmake
-    EXPECTED_MD5 851f49c10934d715df5d0b59c8b8c72a)
-  include(${CMAKE_BINARY_DIR}/Assertion.cmake)
-  ```
-- Use [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to add this package to the CMake project:
-  ```cmake
-  cpmaddpackage(gh:threeal/assertion-cmake@0.3.0)
-  ```
+The recommended way to integrate this module into a project is by downloading it
+during the project configuration using the
+[`file(DOWNLOAD)`](https://cmake.org/cmake/help/latest/command/file.html#download)
+function:
+
+```cmake
+file(DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v0.3.0/Assertion.cmake
+  ${CMAKE_BINARY_DIR}/Assertion.cmake)
+include(${CMAKE_BINARY_DIR}/Assertion.cmake)
+```
+
+Alternatively, to support offline mode, this module can also be vendored
+directly into a project and included normally using the `include` function.
 
 ## API Reference
 
