@@ -1,6 +1,22 @@
 # Assertion.cmake
 
-A [CMake](https://cmake.org/) module containing a collection of assertion functions for testing purposes.
+A [CMake](https://cmake.org/) module containing a collection of assertion
+functions and other utilities for testing CMake code.
+
+The main feature of this module is the `assert` function, which asserts the
+given condition in the style of CMake's
+[`if`](https://cmake.org/cmake/help/latest/command/if.html) function. If the
+assertion fails, it throws a fatal error message with information about the
+context of the asserted condition.
+
+This module also supports
+[CMake test](https://cmake.org/cmake/help/book/mastering-cmake/chapter/Testing%20With%20CMake%20and%20CTest.html)
+creation using the `assertion_add_test` function. This function creates a new
+test that processes the given file in script mode with variables, functions, and
+macros from this module available in the test file.
+
+If this module is processed in script mode, it can optionally include other
+modules by passing their paths as additional arguments after `--`.
 
 ## Key Features
 
