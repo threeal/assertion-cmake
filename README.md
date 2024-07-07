@@ -27,6 +27,58 @@ include(${CMAKE_BINARY_DIR}/Assertion.cmake)
 Alternatively, to support offline mode, this module can also be vendored
 directly into a project and included normally using the `include` function.
 
+### Assertion Example
+
+There are three functions provided by this module that can be used to perform
+assertions in CMake code:
+
+- `assert`: Performs an assertion on the given condition.
+- `assert_fatal_error`: Performs an assertion on whether the given call throws
+  a fatal error.
+- `assert_execute_process`: Performs an assertion on whether the given command
+  correctly executes a process.
+
+For example, given the following `git_clone` function for cloning a Git
+repository from the given `URL` and setting the `OUTPUT_VAR` with the path of
+the cloned Git repository directory:
+
+```cmake
+function(git_clone URL OUTPUT_VAR)
+  string(REGEX REPLACE ".*/" "" DIRECTORY "${URL}")
+  execute_process(
+    COMMAND git clone "${URL}" "${DIRECTORY}"
+    RESULT_VARIABLE RES)
+  if(NOT RES EQUAL 0)
+    message(FATAL_ERROR "failed to clone '${URL}' (${RES})")
+  endif()
+
+  set("${OUTPUT_VAR}" "${DIRECTORY}" PARENT_SCOPE)
+endfunction()
+```
+
+You can create the following assertions to verify if it can successfully clone
+a Git repository and correctly set the output variable:
+
+```cmake
+git_clone(https://github.com/threeal/cmake-starter CMAKE_STARTER_DIR)
+
+assert(DEFINED CMAKE_STARTER_DIR)
+assert(EXISTS "${CMAKE_STARTER_DIR}")
+```
+
+You can further verify if the output variable contains a correct Git directory
+and if it correctly throws a fatal error message on failure:
+
+```cmake
+assert(IS_DIRECTORY "${CMAKE_STARTER_DIR}")
+assert_execute_process(
+  git -C "${CMAKE_STARTER_DIR}" rev-parse --is-inside-work-tree)
+
+assert_fatal_error(
+  CALL git_clone https://github.com GITHUB_DIR
+  MESSAGE "failed to clone 'https://github.com'")
+```
+
 ## API Reference
 
 ### `ASSERTION_LIST_FILE`
