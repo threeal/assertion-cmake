@@ -258,6 +258,25 @@ process matches the expected `<error>`. If more than one `<error>` string is
 given, they are concatenated into a single error with no separator between the
 strings.
 
+#### Example
+
+```cmake
+assert_execute_process(
+  COMMAND ${CMAKE_COMMAND} -E echo hello
+  OUTPUT hello)
+```
+
+The above example asserts whether the call to `${CMAKE_COMMAND} -E echo hello`
+successfully executes a process whose output matches `hello`. If it somehow
+fails to execute the process, it will throw the following fatal error message:
+
+```
+expected command:
+  ${CMAKE_COMMAND} -E echo hello
+not to fail with error:
+  unknown error
+```
+
 ### `section`
 
 Begins a new test section.
