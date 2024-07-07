@@ -211,6 +211,28 @@ expected `<message>`.
 If more than one `<message>` string is given, they are concatenated into a
 single message with no separator between the strings.
 
+#### Example
+
+```cmake
+function(throw_fatal_error MESSAGE)
+  message(FATAL_ERROR "${MESSAGE}")
+endfunction()
+
+assert_fatal_error(
+  CALL throw_fatal_error "some message"
+  MESSAGE "some message")
+```
+
+The above example asserts whether the call to
+`throw_fatal_error("some message")` throws a fatal error message that matches
+`some message`. If it somehow does not capture any fatal error message, it will
+throw the following fatal error message:
+
+```
+expected to receive a fatal error message that matches:
+  some message
+```
+
 ### `assert_execute_process`
 
 Asserts whether the given command correctly executes a process.
