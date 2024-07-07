@@ -79,6 +79,25 @@ assert_fatal_error(
   MESSAGE "failed to clone 'https://github.com'")
 ```
 
+### Test Creation
+
+In CMake, tests are normally created using the `add_test` function and run
+separately from the project configuration and build processes. To simplify test
+creation, this module provides an `assertion_add_test` function.
+
+Given a file named `git_checkout_test.cmake` that contains assertions for a
+`git_clone` function, you can create a new test target that will process that
+file as follows:
+
+```cmake
+assertion_add_test(git_checkout_test.cmake NAME "Git check out test")
+```
+
+The above line creates a new test target named "Git check out test" that will
+process the `git_checkout_test.cmake` file in script mode with assertion
+functions already declared, eliminating the need to include this module inside
+the `git_checkout_test.cmake` file.
+
 ## API Reference
 
 ### `ASSERTION_LIST_FILE`
