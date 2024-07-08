@@ -194,9 +194,11 @@ This function performs an assertion on the given `<condition>`. If the assertion
 fails, it will output a formatted fatal error message with information about the
 context of the asserted condition.
 
-Refer to the documentation of CMake's
-[`if`](https://cmake.org/cmake/help/latest/command/if.html) function for more
-information about supported conditions for the assertion.
+Internally, this function uses CMake's `if` function to check the given
+condition and throws a fatal error message if the condition resolves to false.
+Refer to the
+[CMake's `if` function documentation](https://cmake.org/cmake/help/latest/command/if.html)
+for more information about supported conditions for the assertion.
 
 #### Example
 
