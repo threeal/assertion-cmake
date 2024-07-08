@@ -24,26 +24,94 @@ modules by passing their paths as additional arguments after `--`.
 - Supports test creation that processes a CMake file.
 - Simple syntax and easy integration.
 
-## Integration
+## Usage Guide
 
-This module can be integrated into a CMake project in the following ways:
+### Module Integration
 
-- Manually download the [`Assertion.cmake`](./cmake/Assertion.cmake) file and include it in the CMake project:
-  ```cmake
-  include(path/to/Assertion.cmake)
-  ```
-- Use [`file(DOWNLOAD)`](https://cmake.org/cmake/help/latest/command/file.html#download) to automatically download the `Assertion.cmake` file:
-  ```cmake
-  file(
-    DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v0.3.0/Assertion.cmake
-      ${CMAKE_BINARY_DIR}/Assertion.cmake
-    EXPECTED_MD5 851f49c10934d715df5d0b59c8b8c72a)
-  include(${CMAKE_BINARY_DIR}/Assertion.cmake)
-  ```
-- Use [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to add this package to the CMake project:
-  ```cmake
-  cpmaddpackage(gh:threeal/assertion-cmake@0.3.0)
-  ```
+The recommended way to integrate this module into a project is by downloading it
+during the project configuration using the
+[`file(DOWNLOAD)`](https://cmake.org/cmake/help/latest/command/file.html#download)
+function:
+
+```cmake
+file(DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v0.3.0/Assertion.cmake
+  ${CMAKE_BINARY_DIR}/Assertion.cmake)
+include(${CMAKE_BINARY_DIR}/Assertion.cmake)
+```
+
+Alternatively, to support offline mode, this module can also be vendored
+directly into a project and included normally using the `include` function.
+
+### Assertion Example
+
+There are three functions provided by this module that can be used to perform
+assertions in CMake code:
+
+- `assert`: Performs an assertion on the given condition.
+- `assert_fatal_error`: Performs an assertion on whether the given call throws
+  a fatal error.
+- `assert_execute_process`: Performs an assertion on whether the given command
+  correctly executes a process.
+
+For example, given the following `git_clone` function for cloning a Git
+repository from the given `URL` and setting the `OUTPUT_VAR` with the path of
+the cloned Git repository directory:
+
+```cmake
+function(git_clone URL OUTPUT_VAR)
+  string(REGEX REPLACE ".*/" "" DIRECTORY "${URL}")
+  execute_process(
+    COMMAND git clone "${URL}" "${DIRECTORY}"
+    RESULT_VARIABLE RES)
+  if(NOT RES EQUAL 0)
+    message(FATAL_ERROR "failed to clone '${URL}' (${RES})")
+  endif()
+
+  set("${OUTPUT_VAR}" "${DIRECTORY}" PARENT_SCOPE)
+endfunction()
+```
+
+You can create the following assertions to verify if it can successfully clone
+a Git repository and correctly set the output variable:
+
+```cmake
+git_clone(https://github.com/threeal/cmake-starter CMAKE_STARTER_DIR)
+
+assert(DEFINED CMAKE_STARTER_DIR)
+assert(EXISTS "${CMAKE_STARTER_DIR}")
+```
+
+You can further verify if the output variable contains a correct Git directory
+and if it correctly throws a fatal error message on failure:
+
+```cmake
+assert(IS_DIRECTORY "${CMAKE_STARTER_DIR}")
+assert_execute_process(
+  git -C "${CMAKE_STARTER_DIR}" rev-parse --is-inside-work-tree)
+
+assert_fatal_error(
+  CALL git_clone https://github.com GITHUB_DIR
+  MESSAGE "failed to clone 'https://github.com'")
+```
+
+### Test Creation
+
+In CMake, tests are normally created using the `add_test` function and run
+separately from the project configuration and build processes. To simplify test
+creation, this module provides an `assertion_add_test` function.
+
+Given a file named `git_checkout_test.cmake` that contains assertions for a
+`git_clone` function, you can create a new test target that will process that
+file as follows:
+
+```cmake
+assertion_add_test(git_checkout_test.cmake NAME "Git check out test")
+```
+
+The above line creates a new test target named "Git check out test" that will
+process the `git_checkout_test.cmake` file in script mode with assertion
+functions already declared, eliminating the need to include this module inside
+the `git_checkout_test.cmake` file.
 
 ## API Reference
 
