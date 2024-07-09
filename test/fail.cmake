@@ -16,6 +16,7 @@ endsection()
 
 set(SINGLE "single line variable")
 set(MULTIPLE "multiple\nlines\nvariable")
+set(CONTAINS_SINGLE SINGLE)
 
 section("given variables")
   section("it should fail with a formatted fatal error message")
@@ -28,8 +29,17 @@ section("given variables")
       MESSAGE "multiple\nlines\nvariable")
 
     assert_fatal_error(
+      CALL fail CONTAINS_SINGLE
+      MESSAGE "single line variable\nof variable:\n  SINGLE")
+
+    assert_fatal_error(
       CALL fail SINGLE MULTIPLE
       MESSAGE "single line variable\nmultiple\nlines\nvariable")
+
+    assert_fatal_error(
+      CALL fail SINGLE MULTIPLE CONTAINS_SINGLE
+      MESSAGE "single line variable\nmultiple\nlines\nvariable\n"
+        "single line variable\nof variable:\n  SINGLE")
   endsection()
 endsection()
 
@@ -52,13 +62,27 @@ section("given strings and variables")
       MESSAGE "multiple\nlines\nvariable\nmultiple\nlines\nstring")
 
     assert_fatal_error(
-      CALL fail "single line string" "multiple\nlines\nstring" SINGLE MULTIPLE
-      MESSAGE "single line string\nmultiple\nlines\nstring:\n"
-        "  single line variable\n  multiple\n  lines\n  variable")
+      CALL fail "single line string" CONTAINS_SINGLE
+      MESSAGE "single line string:\n  single line variable\n"
+        "of variable:\n  SINGLE")
 
     assert_fatal_error(
-      CALL fail SINGLE MULTIPLE "single line string" "multiple\nlines\nstring"
+      CALL fail CONTAINS_SINGLE "single line string"
+      MESSAGE "single line variable\nof variable:\n  SINGLE\n"
+        "single line string")
+
+    assert_fatal_error(
+      CALL fail "single line string" "multiple\nlines\nstring"
+        SINGLE MULTIPLE CONTAINS_SINGLE
+      MESSAGE "single line string\nmultiple\nlines\nstring:\n"
+        "  single line variable\n  multiple\n  lines\n  variable\n"
+        "  single line variable\nof variable:\n  SINGLE")
+
+    assert_fatal_error(
+      CALL fail SINGLE MULTIPLE CONTAINS_SINGLE
+        "single line string" "multiple\nlines\nstring"
       MESSAGE "single line variable\nmultiple\nlines\nvariable\n"
+        "single line variable\nof variable:\n  SINGLE\n"
         "single line string\nmultiple\nlines\nstring")
 
     assert_fatal_error(

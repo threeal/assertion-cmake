@@ -417,48 +417,6 @@ section("string equality condition assertions")
     endsection()
   endsection()
 
-  section("given a string and a variable")
-    section("it should assert string equality conditions")
-      assert("some string" STREQUAL STRING_VAR)
-      assert(NOT "some string" STREQUAL OTHER_STRING_VAR)
-    endsection()
-
-    section("it should fail to assert string equality conditions")
-      assert_fatal_error(
-        CALL assert NOT "some string" STREQUAL STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "not to be equal to string:\n  some string\n"
-          "of variable:\n  STRING_VAR")
-
-      assert_fatal_error(
-        CALL assert "some string" STREQUAL OTHER_STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "to be equal to string:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR")
-    endsection()
-  endsection()
-
-  section("given a variable and a string")
-    section("it should assert string equality conditions")
-      assert(STRING_VAR STREQUAL "some string")
-      assert(NOT STRING_VAR STREQUAL "some other string")
-    endsection()
-
-    section("it should fail to assert string equality conditions")
-      assert_fatal_error(
-        CALL assert NOT STRING_VAR STREQUAL "some string"
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "not to be equal to:\n  some string")
-
-      assert_fatal_error(
-        CALL assert STRING_VAR STREQUAL "some other string"
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "to be equal to:\n  some other string")
-    endsection()
-  endsection()
-
   section("given variables")
     section("it should assert string equality conditions")
       assert(STRING_VAR STREQUAL STRING_VAR)
@@ -470,14 +428,14 @@ section("string equality condition assertions")
         CALL assert NOT STRING_VAR STREQUAL STRING_VAR
         MESSAGE "expected string:\n  some string\n"
           "of variable:\n  STRING_VAR\n"
-          "not to be equal to string:\n  some string\n"
+          "not to be equal to:\n  some string\n"
           "of variable:\n  STRING_VAR")
 
       assert_fatal_error(
         CALL assert STRING_VAR STREQUAL OTHER_STRING_VAR
         MESSAGE "expected string:\n  some string\n"
           "of variable:\n  STRING_VAR\n"
-          "to be equal to string:\n  some other string\n"
+          "to be equal to:\n  some other string\n"
           "of variable:\n  OTHER_STRING_VAR")
     endsection()
   endsection()

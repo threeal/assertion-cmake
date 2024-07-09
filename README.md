@@ -162,7 +162,9 @@ This macro throws a fatal error message formatted from the given `<lines>`.
 
 It formats the message by concatenating all the lines into a single message. If
 one of the lines is a variable, it will be expanded and indented by two spaces
-before being concatenated with the other lines.
+before being concatenated with the other lines. If the expanded variable is
+another variable, it will format both the name and the value of the other
+variable.
 
 #### Example
 
