@@ -28,9 +28,14 @@ section("given strings and variables")
       MESSAGE "multiple\nlines\nstring:\n  multiple\n  lines\n  variable")
 
     assert_fatal_error(
-      CALL fail "single line string" "multiple\nlines\nstring" SINGLE
+      CALL fail "single line string" SINGLE MULTIPLE
+      MESSAGE "single line string:\n"
+        "  single line variable\n  multiple\n  lines\n  variable")
+
+    assert_fatal_error(
+      CALL fail "single line string" "multiple\nlines\nstring" SINGLE MULTIPLE
       MESSAGE "single line string\nmultiple\nlines\nstring:\n"
-        "  single line variable")
+        "  single line variable\n  multiple\n  lines\n  variable")
 
     assert_fatal_error(
       CALL fail "single line string" SINGLE "multiple\nlines\nstring" MULTIPLE
