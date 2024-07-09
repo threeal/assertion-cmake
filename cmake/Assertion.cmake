@@ -37,7 +37,7 @@
 # modules by passing the paths of the other modules as additional arguments
 # after `--`.
 
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.24)
 
 # This variable contains the path to the included `Assertion.cmake` module.
 set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
@@ -238,6 +238,9 @@ function(assert)
       elseif(ARGV1 STREQUAL "STREQUAL")
         fail("expected string" ARGV0 "to be equal to" ARGV2)
         return()
+      elseif(ARGV1 STREQUAL "PATH_EQUAL")
+        fail("expected path" ARGV0 "to be equal to" ARGV2)
+        return()
       endif()
     endif()
   elseif(ARGC EQUAL 4)
@@ -250,6 +253,9 @@ function(assert)
         return()
       elseif(ARGV2 STREQUAL "STREQUAL")
         fail("expected string" ARGV1 "not to be equal to" ARGV3)
+        return()
+      elseif(ARGV2 STREQUAL "PATH_EQUAL")
+        fail("expected path" ARGV1 "not to be equal to" ARGV3)
         return()
       endif()
     endif()

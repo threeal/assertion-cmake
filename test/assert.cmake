@@ -440,3 +440,51 @@ section("string equality condition assertions")
     endsection()
   endsection()
 endsection()
+
+section("path equality condition assertions")
+  section("given strings")
+    section("it should assert path equality conditions")
+      assert("/some/path" PATH_EQUAL "/some//path")
+      assert(NOT "/some/path" PATH_EQUAL "/some/other/path")
+    endsection()
+
+    section("it should fail to assert path equality conditions")
+      assert_fatal_error(
+        CALL assert "/some/path" PATH_EQUAL "/some/other/path"
+        MESSAGE "expected path:\n  /some/path\n"
+          "to be equal to:\n  /some/other/path")
+
+      assert_fatal_error(
+        CALL assert NOT "/some/path" PATH_EQUAL "/some//path"
+        MESSAGE "expected path:\n  /some/path\n"
+          "not to be equal to:\n  /some//path")
+    endsection()
+  endsection()
+
+  section("given variables")
+    set(PATH_VAR "/some/path")
+    set(PATHH_VAR "/some//path")
+    set(OTHER_PATH_VAR "/some/other/path")
+
+    section("it should assert path equality conditions")
+      assert(PATH_VAR PATH_EQUAL PATHH_VAR)
+      assert(NOT PATH_VAR PATH_EQUAL OTHER_PATH_VAR)
+    endsection()
+
+    section("it should fail to assert path equality conditions")
+      assert_fatal_error(
+        CALL assert PATH_VAR PATH_EQUAL OTHER_PATH_VAR
+        MESSAGE "expected path:\n  /some/path\n"
+          "of variable:\n  PATH_VAR\n"
+          "to be equal to:\n  /some/other/path\n"
+          "of variable:\n  OTHER_PATH_VAR")
+
+      assert_fatal_error(
+        CALL assert NOT PATH_VAR PATH_EQUAL PATHH_VAR
+        MESSAGE "expected path:\n  /some/path\n"
+          "of variable:\n  PATH_VAR\n"
+          "not to be equal to:\n  /some//path\n"
+          "of variable:\n  PATHH_VAR")
+    endsection()
+  endsection()
+endsection()
