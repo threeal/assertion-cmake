@@ -224,26 +224,6 @@ section("path existence condition assertions")
   endsection()
 endsection()
 
-section("directory path condition assertions")
-  file(MAKE_DIRECTORY some_directory)
-  file(TOUCH some_file)
-
-  section("it should assert directory path conditions")
-    assert(IS_DIRECTORY some_directory)
-    assert(NOT IS_DIRECTORY some_file)
-  endsection()
-
-  section("it should fail to assert directory path conditions")
-    assert_fatal_error(
-      CALL assert IS_DIRECTORY some_file
-      MESSAGE "expected path:\n  some_file\nto be a directory")
-
-    assert_fatal_error(
-      CALL assert NOT IS_DIRECTORY some_directory
-      MESSAGE "expected path:\n  some_directory\nnot to be a directory")
-  endsection()
-endsection()
-
 section("path readability condition assertions")
   file(TOUCH some_file)
 
@@ -312,6 +292,26 @@ section("executable path condition assertions")
     assert_fatal_error(
       CALL assert NOT IS_EXECUTABLE some_executable
       MESSAGE "expected path:\n  some_executable\nnot to be an executable")
+  endsection()
+endsection()
+
+section("directory path condition assertions")
+  file(MAKE_DIRECTORY some_directory)
+  file(TOUCH some_file)
+
+  section("it should assert directory path conditions")
+    assert(IS_DIRECTORY some_directory)
+    assert(NOT IS_DIRECTORY some_file)
+  endsection()
+
+  section("it should fail to assert directory path conditions")
+    assert_fatal_error(
+      CALL assert IS_DIRECTORY some_file
+      MESSAGE "expected path:\n  some_file\nto be a directory")
+
+    assert_fatal_error(
+      CALL assert NOT IS_DIRECTORY some_directory
+      MESSAGE "expected path:\n  some_directory\nnot to be a directory")
   endsection()
 endsection()
 
