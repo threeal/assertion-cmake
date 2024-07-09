@@ -75,19 +75,34 @@ endfunction()
 #
 # It formats the message by concatenating all the lines into a single message.
 # If one of the lines is a variable, it will be expanded and indented by two
-# spaces before being concatenated with the other lines.
+# spaces before being concatenated with the other lines. If the expanded
+# variable is another variable, it will format both the name and the value of
+# the other variable.
 macro(fail FIRST_LINE)
-  if(DEFINED "${FIRST_LINE}")
-    set(MESSAGE "${${FIRST_LINE}}")
+  set(LINES)
+  foreach(LINE IN ITEMS "${FIRST_LINE}" ${ARGN})
+    # Expand variable if it is defined and contains another variable.
+    if(DEFINED "${LINE}" AND DEFINED "${${LINE}}")
+      list(APPEND LINES "${${LINE}}" "of variable" "${LINE}")
+    else()
+      list(APPEND LINES "${LINE}")
+    endif()
+  endforeach()
+
+  # Format the first line.
+  list(POP_FRONT LINES LINE)
+  if(DEFINED "${LINE}")
+    set(MESSAGE "${${LINE}}")
     set(PREV_IS_STRING FALSE)
     set(INDENT_VAR FALSE)
   else()
-    set(MESSAGE "${FIRST_LINE}")
+    set(MESSAGE "${LINE}")
     set(PREV_IS_STRING TRUE)
     set(INDENT_VAR TRUE)
   endif()
 
-  foreach(LINE IN ITEMS ${ARGN})
+  # Format the consecutive lines.
+  foreach(LINE IN ITEMS ${LINES})
     if(DEFINED "${LINE}")
       if(PREV_IS_STRING)
         string(APPEND MESSAGE ":")
@@ -106,6 +121,7 @@ macro(fail FIRST_LINE)
     endif()
   endforeach()
 
+  # Throw a fatal error with the formatted message.
   message(FATAL_ERROR "${MESSAGE}")
 endmacro()
 
@@ -185,6 +201,9 @@ function(assert)
         fail("expected test" ARGV2 "not to exist")
         return()
       elseif(ARGV1 STREQUAL "DEFINED")
+        # Unset this to prevent the value from being formatted.
+        unset("${ARGV2}")
+
         fail("expected variable" ARGV2 "not to be defined")
         return()
       elseif(ARGV1 STREQUAL "EXISTS")
@@ -211,78 +230,26 @@ function(assert)
       endif()
     else()
       if(ARGV1 STREQUAL "IN_LIST")
-        if(DEFINED "${ARGV0}")
-          fail("expected string" "${ARGV0}" "of variable" ARGV0
-            "to exist in" "${ARGV2}" "of variable" ARGV2)
-        else()
-          fail("expected string" ARGV0
-            "to exist in" "${ARGV2}" "of variable" ARGV2)
-        endif()
+        fail("expected string" ARGV0 "to exist in" ARGV2)
         return()
       elseif(ARGV1 STREQUAL "MATCHES")
-        if(DEFINED "${ARGV0}")
-          fail("expected string" "${ARGV0}" "of variable" ARGV0
-            "to match" ARGV2)
-        else()
-          fail("expected string" ARGV0 "to match" ARGV2)
-        endif()
+        fail("expected string" ARGV0 "to match" ARGV2)
         return()
       elseif(ARGV1 STREQUAL "STREQUAL")
-        if(DEFINED "${ARGV0}")
-          if(DEFINED "${ARGV2}")
-            fail("expected string" "${ARGV0}" "of variable" ARGV0
-              "to be equal to string" "${ARGV2}" "of variable" ARGV2)
-          else()
-            fail("expected string" "${ARGV0}" "of variable" ARGV0
-              "to be equal to" ARGV2)
-          endif()
-        else()
-          if(DEFINED "${ARGV2}")
-            fail("expected string" ARGV0
-              "to be equal to string" "${ARGV2}" "of variable" ARGV2)
-          else()
-            fail("expected string" ARGV0 "to be equal to" ARGV2)
-          endif()
-        endif()
+        fail("expected string" ARGV0 "to be equal to" ARGV2)
         return()
       endif()
     endif()
   elseif(ARGC EQUAL 4)
     if(ARGV0 STREQUAL "NOT")
       if(ARGV2 STREQUAL "IN_LIST")
-        if(DEFINED "${ARGV1}")
-          fail("expected string" "${ARGV1}" "of variable" ARGV1
-            "not to exist in" "${ARGV3}" "of variable" ARGV3)
-        else()
-          fail("expected string" ARGV1
-            "not to exist in" "${ARGV3}" "of variable" ARGV3)
-        endif()
+        fail("expected string" ARGV1 "not to exist in" ARGV3)
         return()
       elseif(ARGV2 STREQUAL "MATCHES")
-        if(DEFINED "${ARGV1}")
-          fail("expected string" "${ARGV1}" "of variable" ARGV1
-            "not to match" ARGV3)
-        else()
-          fail("expected string" ARGV1 "not to match" ARGV3)
-        endif()
+        fail("expected string" ARGV1 "not to match" ARGV3)
         return()
       elseif(ARGV2 STREQUAL "STREQUAL")
-        if(DEFINED "${ARGV1}")
-          if(DEFINED "${ARGV3}")
-            fail("expected string" "${ARGV1}" "of variable" ARGV1
-              "not to be equal to string" "${ARGV3}" "of variable" ARGV3)
-          else()
-            fail("expected string" "${ARGV1}" "of variable" ARGV1
-              "not to be equal to" ARGV3)
-          endif()
-        else()
-          if(DEFINED "${ARGV3}")
-            fail("expected string" ARGV1
-              "not to be equal to string" "${ARGV3}" "of variable" ARGV3)
-          else()
-            fail("expected string" ARGV1 "not to be equal to" ARGV3)
-          endif()
-        endif()
+        fail("expected string" ARGV1 "not to be equal to" ARGV3)
         return()
       endif()
     endif()
