@@ -376,6 +376,46 @@ section("regular expression match condition assertions")
   endsection()
 endsection()
 
+section("number equality condition assertions")
+  section("it should assert number equality conditions")
+    set(NUMBER_VAR 11)
+    set(OTHER_NUMBER_VAR 13)
+    set(STRING_VAR "some string")
+
+    assert(11 LESS 13)
+    assert(NOT 13 LESS 11)
+    assert(NOT 13 LESS 13)
+    assert(NOT 13 LESS "some string")
+
+    assert(NUMBER_VAR LESS OTHER_NUMBER_VAR)
+    assert(NOT OTHER_NUMBER_VAR LESS NUMBER_VAR)
+    assert(NOT OTHER_NUMBER_VAR LESS OTHER_NUMBER_VAR)
+    assert(NOT OTHER_NUMBER_VAR LESS STRING_VAR)
+  endsection()
+
+  section("it should fail to assert number equality conditions")
+    assert_fatal_error(
+      CALL assert NOT 11 LESS 13
+      MESSAGE "expected number:\n  11\n"
+        "not to be less than:\n  13")
+
+    assert_fatal_error(
+      CALL assert 13 LESS 11
+      MESSAGE "expected number:\n  13\n"
+        "to be less than:\n  11")
+
+    assert_fatal_error(
+      CALL assert 13 LESS 13
+      MESSAGE "expected number:\n  13\n"
+        "to be less than:\n  13")
+
+    assert_fatal_error(
+      CALL assert 13 LESS "some string"
+      MESSAGE "expected number:\n  13\n"
+        "to be less than:\n  some string")
+  endsection()
+endsection()
+
 section("string equality condition assertions")
   section("it should assert string equality conditions")
     set(STRING_VAR "some string")
