@@ -377,225 +377,119 @@ section("regular expression match condition assertions")
 endsection()
 
 section("string equality condition assertions")
-  set(STRING_VAR "some string")
-  set(OTHER_STRING_VAR "some other string")
+  section("it should assert string equality conditions")
+    set(STRING_VAR "some string")
+    set(OTHER_STRING_VAR "some other string")
 
-  section("given strings")
-    section("it should assert string equality conditions")
-      assert("some other string" STRLESS "some string")
-      assert(NOT "some string" STRLESS "some other string")
-      assert(NOT "some string" STRLESS "some string")
+    assert("some other string" STRLESS "some string")
+    assert(NOT "some string" STRLESS "some other string")
+    assert(NOT "some string" STRLESS "some string")
 
-      assert("some string" STRGREATER "some other string")
-      assert(NOT "some other string" STRGREATER "some string")
-      assert(NOT "some other string" STRGREATER "some other string")
+    assert("some string" STRGREATER "some other string")
+    assert(NOT "some other string" STRGREATER "some string")
+    assert(NOT "some other string" STRGREATER "some other string")
 
-      assert("some string" STREQUAL "some string")
-      assert(NOT "some string" STREQUAL "some other string")
+    assert("some string" STREQUAL "some string")
+    assert(NOT "some string" STREQUAL "some other string")
 
-      assert("some other string" STRLESS_EQUAL "some string")
-      assert("some other string" STRLESS_EQUAL "some other string")
-      assert(NOT "some string" STRLESS_EQUAL "some other string")
+    assert("some other string" STRLESS_EQUAL "some string")
+    assert("some other string" STRLESS_EQUAL "some other string")
+    assert(NOT "some string" STRLESS_EQUAL "some other string")
 
-      assert("some string" STRGREATER_EQUAL "some other string")
-      assert("some string" STRGREATER_EQUAL "some string")
-      assert(NOT "some other string" STRGREATER_EQUAL "some string")
-    endsection()
+    assert("some string" STRGREATER_EQUAL "some other string")
+    assert("some string" STRGREATER_EQUAL "some string")
+    assert(NOT "some other string" STRGREATER_EQUAL "some string")
 
-    section("it should fail to assert string equality conditions")
-      assert_fatal_error(
-        CALL assert NOT "some other string" STRLESS "some string"
-        MESSAGE "expected string:\n  some other string\n"
-          "not to be less than:\n  some string")
+    assert(OTHER_STRING_VAR STRLESS STRING_VAR)
+    assert(NOT STRING_VAR STRLESS OTHER_STRING_VAR)
+    assert(NOT STRING_VAR STRLESS STRING_VAR)
 
-      assert_fatal_error(
-        CALL assert "some string" STRLESS "some other string"
-        MESSAGE "expected string:\n  some string\n"
-          "to be less than:\n  some other string")
+    assert(STRING_VAR STRGREATER OTHER_STRING_VAR)
+    assert(NOT OTHER_STRING_VAR STRGREATER STRING_VAR)
+    assert(NOT OTHER_STRING_VAR STRGREATER OTHER_STRING_VAR)
 
-      assert_fatal_error(
-        CALL assert "some string" STRLESS "some string"
-        MESSAGE "expected string:\n  some string\n"
-          "to be less than:\n  some string")
+    assert(STRING_VAR STREQUAL STRING_VAR)
+    assert(NOT STRING_VAR STREQUAL OTHER_STRING_VAR)
 
-      assert_fatal_error(
-        CALL assert NOT "some string" STRGREATER "some other string"
-        MESSAGE "expected string:\n  some string\n"
-          "not to be greater than:\n  some other string")
+    assert(OTHER_STRING_VAR STRLESS_EQUAL STRING_VAR)
+    assert(OTHER_STRING_VAR STRLESS_EQUAL OTHER_STRING_VAR)
+    assert(NOT STRING_VAR STRLESS_EQUAL OTHER_STRING_VAR)
 
-      assert_fatal_error(
-        CALL assert "some other string" STRGREATER "some string"
-        MESSAGE "expected string:\n  some other string\n"
-          "to be greater than:\n  some string")
-
-      assert_fatal_error(
-        CALL assert "some other string" STRGREATER "some other string"
-        MESSAGE "expected string:\n  some other string\n"
-          "to be greater than:\n  some other string")
-
-      assert_fatal_error(
-        CALL assert NOT "some string" STREQUAL "some string"
-        MESSAGE "expected string:\n  some string\n"
-          "not to be equal to:\n  some string")
-
-      assert_fatal_error(
-        CALL assert "some string" STREQUAL "some other string"
-        MESSAGE "expected string:\n  some string\n"
-          "to be equal to:\n  some other string")
-
-      assert_fatal_error(
-        CALL assert NOT "some other string" STRLESS_EQUAL "some string"
-        MESSAGE "expected string:\n  some other string\n"
-          "not to be less than or equal to:\n  some string")
-
-      assert_fatal_error(
-        CALL assert NOT "some other string" STRLESS_EQUAL "some other string"
-        MESSAGE "expected string:\n  some other string\n"
-          "not to be less than or equal to:\n  some other string")
-
-      assert_fatal_error(
-        CALL assert "some string" STRLESS_EQUAL "some other string"
-        MESSAGE "expected string:\n  some string\n"
-          "to be less than or equal to:\n  some other string")
-
-      assert_fatal_error(
-        CALL assert NOT "some string" STRGREATER_EQUAL "some other string"
-        MESSAGE "expected string:\n  some string\n"
-          "not to be greater than or equal to:\n  some other string")
-
-      assert_fatal_error(
-        CALL assert NOT "some string" STRGREATER_EQUAL "some string"
-        MESSAGE "expected string:\n  some string\n"
-          "not to be greater than or equal to:\n  some string")
-
-      assert_fatal_error(
-        CALL assert "some other string" STRGREATER_EQUAL "some string"
-        MESSAGE "expected string:\n  some other string\n"
-          "to be greater than or equal to:\n  some string")
-    endsection()
+    assert(STRING_VAR STRGREATER_EQUAL OTHER_STRING_VAR)
+    assert(STRING_VAR STRGREATER_EQUAL STRING_VAR)
+    assert(NOT OTHER_STRING_VAR STRGREATER_EQUAL STRING_VAR)
   endsection()
 
-  section("given variables")
-    section("it should assert string equality conditions")
-      assert(OTHER_STRING_VAR STRLESS STRING_VAR)
-      assert(NOT STRING_VAR STRLESS OTHER_STRING_VAR)
-      assert(NOT STRING_VAR STRLESS STRING_VAR)
+  section("it should fail to assert string equality conditions")
+    assert_fatal_error(
+      CALL assert NOT "some other string" STRLESS "some string"
+      MESSAGE "expected string:\n  some other string\n"
+        "not to be less than:\n  some string")
 
-      assert(STRING_VAR STRGREATER OTHER_STRING_VAR)
-      assert(NOT OTHER_STRING_VAR STRGREATER STRING_VAR)
-      assert(NOT OTHER_STRING_VAR STRGREATER OTHER_STRING_VAR)
+    assert_fatal_error(
+      CALL assert "some string" STRLESS "some other string"
+      MESSAGE "expected string:\n  some string\n"
+        "to be less than:\n  some other string")
 
-      assert(STRING_VAR STREQUAL STRING_VAR)
-      assert(NOT STRING_VAR STREQUAL OTHER_STRING_VAR)
+    assert_fatal_error(
+      CALL assert "some string" STRLESS "some string"
+      MESSAGE "expected string:\n  some string\n"
+        "to be less than:\n  some string")
 
-      assert(OTHER_STRING_VAR STRLESS_EQUAL STRING_VAR)
-      assert(OTHER_STRING_VAR STRLESS_EQUAL OTHER_STRING_VAR)
-      assert(NOT STRING_VAR STRLESS_EQUAL OTHER_STRING_VAR)
+    assert_fatal_error(
+      CALL assert NOT "some string" STRGREATER "some other string"
+      MESSAGE "expected string:\n  some string\n"
+        "not to be greater than:\n  some other string")
 
-      assert(STRING_VAR STRGREATER_EQUAL OTHER_STRING_VAR)
-      assert(STRING_VAR STRGREATER_EQUAL STRING_VAR)
-      assert(NOT OTHER_STRING_VAR STRGREATER_EQUAL STRING_VAR)
-    endsection()
+    assert_fatal_error(
+      CALL assert "some other string" STRGREATER "some string"
+      MESSAGE "expected string:\n  some other string\n"
+        "to be greater than:\n  some string")
 
-    section("it should fail to assert string equality conditions")
-      assert_fatal_error(
-        CALL assert NOT OTHER_STRING_VAR STRLESS STRING_VAR
-        MESSAGE "expected string:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR\n"
-          "not to be less than:\n  some string\n"
-          "of variable:\n  STRING_VAR")
+    assert_fatal_error(
+      CALL assert "some other string" STRGREATER "some other string"
+      MESSAGE "expected string:\n  some other string\n"
+        "to be greater than:\n  some other string")
 
-      assert_fatal_error(
-        CALL assert STRING_VAR STRLESS OTHER_STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "to be less than:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR")
+    assert_fatal_error(
+      CALL assert NOT "some string" STREQUAL "some string"
+      MESSAGE "expected string:\n  some string\n"
+        "not to be equal to:\n  some string")
 
-      assert_fatal_error(
-        CALL assert STRING_VAR STRLESS STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "to be less than:\n  some string\n"
-          "of variable:\n  STRING_VAR")
+    assert_fatal_error(
+      CALL assert "some string" STREQUAL "some other string"
+      MESSAGE "expected string:\n  some string\n"
+        "to be equal to:\n  some other string")
 
-      assert_fatal_error(
-        CALL assert NOT STRING_VAR STRGREATER OTHER_STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "not to be greater than:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR")
+    assert_fatal_error(
+      CALL assert NOT "some other string" STRLESS_EQUAL "some string"
+      MESSAGE "expected string:\n  some other string\n"
+        "not to be less than or equal to:\n  some string")
 
-      assert_fatal_error(
-        CALL assert OTHER_STRING_VAR STRGREATER STRING_VAR
-        MESSAGE "expected string:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR\n"
-          "to be greater than:\n  some string\n"
-          "of variable:\n  STRING_VAR")
+    assert_fatal_error(
+      CALL assert NOT "some other string" STRLESS_EQUAL "some other string"
+      MESSAGE "expected string:\n  some other string\n"
+        "not to be less than or equal to:\n  some other string")
 
-      assert_fatal_error(
-        CALL assert OTHER_STRING_VAR STRGREATER OTHER_STRING_VAR
-        MESSAGE "expected string:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR\n"
-          "to be greater than:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR")
+    assert_fatal_error(
+      CALL assert "some string" STRLESS_EQUAL "some other string"
+      MESSAGE "expected string:\n  some string\n"
+        "to be less than or equal to:\n  some other string")
 
-      assert_fatal_error(
-        CALL assert NOT STRING_VAR STREQUAL STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "not to be equal to:\n  some string\n"
-          "of variable:\n  STRING_VAR")
+    assert_fatal_error(
+      CALL assert NOT "some string" STRGREATER_EQUAL "some other string"
+      MESSAGE "expected string:\n  some string\n"
+        "not to be greater than or equal to:\n  some other string")
 
-      assert_fatal_error(
-        CALL assert STRING_VAR STREQUAL OTHER_STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "to be equal to:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR")
+    assert_fatal_error(
+      CALL assert NOT "some string" STRGREATER_EQUAL "some string"
+      MESSAGE "expected string:\n  some string\n"
+        "not to be greater than or equal to:\n  some string")
 
-      assert_fatal_error(
-        CALL assert NOT OTHER_STRING_VAR STRLESS_EQUAL STRING_VAR
-        MESSAGE "expected string:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR\n"
-          "not to be less than or equal to:\n  some string\n"
-          "of variable:\n  STRING_VAR")
-
-      assert_fatal_error(
-        CALL assert NOT OTHER_STRING_VAR STRLESS_EQUAL OTHER_STRING_VAR
-        MESSAGE "expected string:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR\n"
-          "not to be less than or equal to:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR")
-
-      assert_fatal_error(
-        CALL assert STRING_VAR STRLESS_EQUAL OTHER_STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "to be less than or equal to:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR")
-
-      assert_fatal_error(
-        CALL assert NOT STRING_VAR STRGREATER_EQUAL OTHER_STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "not to be greater than or equal to:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR")
-
-      assert_fatal_error(
-        CALL assert NOT STRING_VAR STRGREATER_EQUAL STRING_VAR
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "not to be greater than or equal to:\n  some string\n"
-          "of variable:\n  STRING_VAR")
-
-      assert_fatal_error(
-        CALL assert OTHER_STRING_VAR STRGREATER_EQUAL STRING_VAR
-        MESSAGE "expected string:\n  some other string\n"
-          "of variable:\n  OTHER_STRING_VAR\n"
-          "to be greater than or equal to:\n  some string\n"
-          "of variable:\n  STRING_VAR")
-    endsection()
+    assert_fatal_error(
+      CALL assert "some other string" STRGREATER_EQUAL "some string"
+      MESSAGE "expected string:\n  some other string\n"
+        "to be greater than or equal to:\n  some string")
   endsection()
 endsection()
 
