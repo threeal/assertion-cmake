@@ -438,6 +438,10 @@ section("string equality condition assertions")
       assert("some other string" STRLESS_EQUAL "some string")
       assert("some other string" STRLESS_EQUAL "some other string")
       assert(NOT "some string" STRLESS_EQUAL "some other string")
+
+      assert("some string" STRGREATER_EQUAL "some other string")
+      assert("some string" STRGREATER_EQUAL "some string")
+      assert(NOT "some other string" STRGREATER_EQUAL "some string")
     endsection()
 
     section("it should fail to assert string equality conditions")
@@ -495,6 +499,21 @@ section("string equality condition assertions")
         CALL assert "some string" STRLESS_EQUAL "some other string"
         MESSAGE "expected string:\n  some string\n"
           "to be less than or equal to:\n  some other string")
+
+      assert_fatal_error(
+        CALL assert NOT "some string" STRGREATER_EQUAL "some other string"
+        MESSAGE "expected string:\n  some string\n"
+          "not to be greater than or equal to:\n  some other string")
+
+      assert_fatal_error(
+        CALL assert NOT "some string" STRGREATER_EQUAL "some string"
+        MESSAGE "expected string:\n  some string\n"
+          "not to be greater than or equal to:\n  some string")
+
+      assert_fatal_error(
+        CALL assert "some other string" STRGREATER_EQUAL "some string"
+        MESSAGE "expected string:\n  some other string\n"
+          "to be greater than or equal to:\n  some string")
     endsection()
   endsection()
 
@@ -514,6 +533,10 @@ section("string equality condition assertions")
       assert(OTHER_STRING_VAR STRLESS_EQUAL STRING_VAR)
       assert(OTHER_STRING_VAR STRLESS_EQUAL OTHER_STRING_VAR)
       assert(NOT STRING_VAR STRLESS_EQUAL OTHER_STRING_VAR)
+
+      assert(STRING_VAR STRGREATER_EQUAL OTHER_STRING_VAR)
+      assert(STRING_VAR STRGREATER_EQUAL STRING_VAR)
+      assert(NOT OTHER_STRING_VAR STRGREATER_EQUAL STRING_VAR)
     endsection()
 
     section("it should fail to assert string equality conditions")
@@ -593,6 +616,27 @@ section("string equality condition assertions")
           "of variable:\n  STRING_VAR\n"
           "to be less than or equal to:\n  some other string\n"
           "of variable:\n  OTHER_STRING_VAR")
+
+      assert_fatal_error(
+        CALL assert NOT STRING_VAR STRGREATER_EQUAL OTHER_STRING_VAR
+        MESSAGE "expected string:\n  some string\n"
+          "of variable:\n  STRING_VAR\n"
+          "not to be greater than or equal to:\n  some other string\n"
+          "of variable:\n  OTHER_STRING_VAR")
+
+      assert_fatal_error(
+        CALL assert NOT STRING_VAR STRGREATER_EQUAL STRING_VAR
+        MESSAGE "expected string:\n  some string\n"
+          "of variable:\n  STRING_VAR\n"
+          "not to be greater than or equal to:\n  some string\n"
+          "of variable:\n  STRING_VAR")
+
+      assert_fatal_error(
+        CALL assert OTHER_STRING_VAR STRGREATER_EQUAL STRING_VAR
+        MESSAGE "expected string:\n  some other string\n"
+          "of variable:\n  OTHER_STRING_VAR\n"
+          "to be greater than or equal to:\n  some string\n"
+          "of variable:\n  STRING_VAR")
     endsection()
   endsection()
 endsection()
