@@ -392,6 +392,10 @@ section("number equality condition assertions")
     assert(NOT 11 GREATER 11)
     assert(NOT 11 GREATER "some string")
 
+    assert(11 EQUAL 11)
+    assert(NOT 11 EQUAL 13)
+    assert(NOT 11 EQUAL "some string")
+
     assert(NUMBER_VAR LESS OTHER_NUMBER_VAR)
     assert(NOT OTHER_NUMBER_VAR LESS NUMBER_VAR)
     assert(NOT OTHER_NUMBER_VAR LESS OTHER_NUMBER_VAR)
@@ -401,6 +405,10 @@ section("number equality condition assertions")
     assert(NOT NUMBER_VAR GREATER OTHER_NUMBER_VAR)
     assert(NOT NUMBER_VAR GREATER NUMBER_VAR)
     assert(NOT NUMBER_VAR GREATER STRING_VAR)
+
+    assert(NUMBER_VAR EQUAL NUMBER_VAR)
+    assert(NOT NUMBER_VAR EQUAL OTHER_NUMBER_VAR)
+    assert(NOT NUMBER_VAR EQUAL STRING_VAR)
   endsection()
 
   section("it should fail to assert number equality conditions")
@@ -443,6 +451,21 @@ section("number equality condition assertions")
       CALL assert 11 GREATER "some string"
       MESSAGE "expected number:\n  11\n"
         "to be greater than:\n  some string")
+
+    assert_fatal_error(
+      CALL assert NOT 11 EQUAL 11
+      MESSAGE "expected number:\n  11\n"
+        "not to be equal than:\n  11")
+
+    assert_fatal_error(
+      CALL assert 11 EQUAL 13
+      MESSAGE "expected number:\n  11\n"
+        "to be equal than:\n  13")
+
+    assert_fatal_error(
+      CALL assert 11 EQUAL "some string"
+      MESSAGE "expected number:\n  11\n"
+        "to be equal than:\n  some string")
   endsection()
 endsection()
 
