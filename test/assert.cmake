@@ -355,44 +355,24 @@ section("absolute path condition assertions")
 endsection()
 
 section("regular expression match condition assertions")
-  section("given a string")
-    section("it should assert regular expression match conditions")
-      assert("some string" MATCHES "so.*ing")
-      assert(NOT "some string" MATCHES "so.*other.*ing")
-    endsection()
-
-    section("it should fail to assert regular expression match conditions")
-      assert_fatal_error(
-        CALL assert NOT "some string" MATCHES "so.*ing"
-        MESSAGE "expected string:\n  some string\nnot to match:\n  so.*ing")
-
-      assert_fatal_error(
-        CALL assert "some string" MATCHES "so.*other.*ing"
-        MESSAGE "expected string:\n  some string\nto match:\n  so.*other.*ing")
-    endsection()
-  endsection()
-
-  section("given a variable")
+  section("it should assert regular expression match conditions")
     set(STRING_VAR "some string")
 
-    section("it should assert regular expression match conditions")
-      assert(STRING_VAR MATCHES "so.*ing")
-      assert(NOT STRING_VAR MATCHES "so.*other.*ing")
-    endsection()
+    assert("some string" MATCHES "so.*ing")
+    assert(NOT "some string" MATCHES "so.*other.*ing")
 
-    section("it should fail to assert regular expression match conditions")
-      assert_fatal_error(
-        CALL assert NOT STRING_VAR MATCHES "so.*ing"
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "not to match:\n  so.*ing")
+    assert(STRING_VAR MATCHES "so.*ing")
+    assert(NOT STRING_VAR MATCHES "so.*other.*ing")
+  endsection()
 
-      assert_fatal_error(
-        CALL assert STRING_VAR MATCHES "so.*other.*ing"
-        MESSAGE "expected string:\n  some string\n"
-          "of variable:\n  STRING_VAR\n"
-          "to match:\n  so.*other.*ing")
-    endsection()
+  section("it should fail to assert regular expression match conditions")
+    assert_fatal_error(
+      CALL assert "some string" MATCHES "so.*other.*ing"
+      MESSAGE "expected string:\n  some string\nto match:\n  so.*other.*ing")
+
+    assert_fatal_error(
+      CALL assert NOT "some string" MATCHES "so.*ing"
+      MESSAGE "expected string:\n  some string\nnot to match:\n  so.*ing")
   endsection()
 endsection()
 
