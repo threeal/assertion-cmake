@@ -295,6 +295,30 @@ section("executable path condition assertions")
   endsection()
 endsection()
 
+section("file recency condition assertions")
+  if(NOT EXISTS old_file)
+    file(WRITE old_file "something")
+    execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep 1)
+  endif()
+
+  file(WRITE new_file "something")
+
+  section("it should assert file recency conditions")
+    assert(new_file IS_NEWER_THAN old_file)
+    assert(NOT old_file IS_NEWER_THAN new_file)
+  endsection()
+
+  section("it should fail to assert file recency conditions")
+    assert_fatal_error(
+      CALL assert old_file IS_NEWER_THAN new_file
+      MESSAGE "expected file:\n  old_file\nto be newer than:\n  new_file")
+
+    assert_fatal_error(
+      CALL assert NOT new_file IS_NEWER_THAN old_file
+      MESSAGE "expected file:\n  new_file\nnot to be newer than:\n  old_file")
+  endsection()
+endsection()
+
 section("directory path condition assertions")
   file(MAKE_DIRECTORY some_directory)
   file(TOUCH some_file)
