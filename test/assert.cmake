@@ -428,6 +428,10 @@ section("string equality condition assertions")
       assert(NOT "some string" STRLESS "some other string")
       assert(NOT "some string" STRLESS "some string")
 
+      assert("some string" STRGREATER "some other string")
+      assert(NOT "some other string" STRGREATER "some string")
+      assert(NOT "some other string" STRGREATER "some other string")
+
       assert("some string" STREQUAL "some string")
       assert(NOT "some string" STREQUAL "some other string")
     endsection()
@@ -449,6 +453,21 @@ section("string equality condition assertions")
           "to be less than:\n  some string")
 
       assert_fatal_error(
+        CALL assert NOT "some string" STRGREATER "some other string"
+        MESSAGE "expected string:\n  some string\n"
+          "not to be greater than:\n  some other string")
+
+      assert_fatal_error(
+        CALL assert "some other string" STRGREATER "some string"
+        MESSAGE "expected string:\n  some other string\n"
+          "to be greater than:\n  some string")
+
+      assert_fatal_error(
+        CALL assert "some other string" STRGREATER "some other string"
+        MESSAGE "expected string:\n  some other string\n"
+          "to be greater than:\n  some other string")
+
+      assert_fatal_error(
         CALL assert NOT "some string" STREQUAL "some string"
         MESSAGE "expected string:\n  some string\n"
           "not to be equal to:\n  some string")
@@ -465,6 +484,10 @@ section("string equality condition assertions")
       assert(OTHER_STRING_VAR STRLESS STRING_VAR)
       assert(NOT STRING_VAR STRLESS OTHER_STRING_VAR)
       assert(NOT STRING_VAR STRLESS STRING_VAR)
+
+      assert(STRING_VAR STRGREATER OTHER_STRING_VAR)
+      assert(NOT OTHER_STRING_VAR STRGREATER STRING_VAR)
+      assert(NOT OTHER_STRING_VAR STRGREATER OTHER_STRING_VAR)
 
       assert(STRING_VAR STREQUAL STRING_VAR)
       assert(NOT STRING_VAR STREQUAL OTHER_STRING_VAR)
@@ -491,6 +514,27 @@ section("string equality condition assertions")
           "of variable:\n  STRING_VAR\n"
           "to be less than:\n  some string\n"
           "of variable:\n  STRING_VAR")
+
+      assert_fatal_error(
+        CALL assert NOT STRING_VAR STRGREATER OTHER_STRING_VAR
+        MESSAGE "expected string:\n  some string\n"
+          "of variable:\n  STRING_VAR\n"
+          "not to be greater than:\n  some other string\n"
+          "of variable:\n  OTHER_STRING_VAR")
+
+      assert_fatal_error(
+        CALL assert OTHER_STRING_VAR STRGREATER STRING_VAR
+        MESSAGE "expected string:\n  some other string\n"
+          "of variable:\n  OTHER_STRING_VAR\n"
+          "to be greater than:\n  some string\n"
+          "of variable:\n  STRING_VAR")
+
+      assert_fatal_error(
+        CALL assert OTHER_STRING_VAR STRGREATER OTHER_STRING_VAR
+        MESSAGE "expected string:\n  some other string\n"
+          "of variable:\n  OTHER_STRING_VAR\n"
+          "to be greater than:\n  some other string\n"
+          "of variable:\n  OTHER_STRING_VAR")
 
       assert_fatal_error(
         CALL assert NOT STRING_VAR STREQUAL STRING_VAR
