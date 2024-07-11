@@ -681,42 +681,60 @@ section("version equality condition assertions")
   section("given equal versions")
     section("it should assert version equality conditions")
       assert(NOT 1.2.3 VERSION_LESS 1.02.3)
+      assert(NOT 1.2.3 VERSION_GREATER 1.02.3)
 
       assert(NOT VERSION_VAR VERSION_LESS VERSIONN_VAR)
+      assert(NOT VERSION_VAR VERSION_GREATER VERSIONN_VAR)
     endsection()
 
     section("it should fail to assert version equality conditions")
       assert_fatal_error(
         CALL assert 1.2.3 VERSION_LESS 1.02.3
         MESSAGE "expected version:\n  1.2.3\nto be less than:\n  1.02.3")
+
+      assert_fatal_error(
+        CALL assert 1.2.3 VERSION_GREATER 1.02.3
+        MESSAGE "expected version:\n  1.2.3\nto be greater than:\n  1.02.3")
     endsection()
   endsection()
 
   section("given a lesser version")
     section("it should assert version equality conditions")
       assert(1.2.3 VERSION_LESS 1.3.4)
+      assert(NOT 1.2.3 VERSION_GREATER 1.3.4)
 
       assert(VERSION_VAR VERSION_LESS OTHER_VERSION_VAR)
+      assert(NOT VERSION_VAR VERSION_GREATER OTHER_VERSION_VAR)
     endsection()
 
     section("it should fail to assert version equality conditions")
       assert_fatal_error(
         CALL assert NOT 1.2.3 VERSION_LESS 1.3.4
         MESSAGE "expected version:\n  1.2.3\nnot to be less than:\n  1.3.4")
+
+      assert_fatal_error(
+        CALL assert 1.2.3 VERSION_GREATER 1.3.4
+        MESSAGE "expected version:\n  1.2.3\nto be greater than:\n  1.3.4")
     endsection()
   endsection()
 
   section("given a greater version")
     section("it should assert version equality conditions")
       assert(NOT 1.3.4 VERSION_LESS 1.2.3)
+      assert(1.3.4 VERSION_GREATER 1.2.3)
 
       assert(NOT OTHER_VERSION_VAR VERSION_LESS VERSION_VAR)
+      assert(OTHER_VERSION_VAR VERSION_GREATER VERSION_VAR)
     endsection()
 
     section("it should fail to assert version equality conditions")
       assert_fatal_error(
         CALL assert 1.3.4 VERSION_LESS 1.2.3
         MESSAGE "expected version:\n  1.3.4\nto be less than:\n  1.2.3")
+
+      assert_fatal_error(
+        CALL assert NOT 1.3.4 VERSION_GREATER 1.2.3
+        MESSAGE "expected version:\n  1.3.4\nnot to be greater than:\n  1.2.3")
     endsection()
   endsection()
 endsection()
