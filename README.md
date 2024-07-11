@@ -34,7 +34,7 @@ during the project configuration using the
 function:
 
 ```cmake
-file(DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v0.3.0/Assertion.cmake
+file(DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v1.0.0/Assertion.cmake
   ${CMAKE_BINARY_DIR}/Assertion.cmake)
 include(${CMAKE_BINARY_DIR}/Assertion.cmake)
 ```
