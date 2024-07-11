@@ -406,7 +406,7 @@ section("number equality condition assertions")
 
       assert_fatal_error(
         CALL assert NOT 7 EQUAL 7
-        MESSAGE "expected number:\n  7\nnot to be equal than:\n  7")
+        MESSAGE "expected number:\n  7\nnot to be equal to:\n  7")
 
       assert_fatal_error(
         CALL assert NOT 7 LESS_EQUAL 7
@@ -445,7 +445,7 @@ section("number equality condition assertions")
 
       assert_fatal_error(
         CALL assert 7 EQUAL 13
-        MESSAGE "expected number:\n  7\nto be equal than:\n  13")
+        MESSAGE "expected number:\n  7\nto be equal to:\n  13")
 
       assert_fatal_error(
         CALL assert NOT 7 LESS_EQUAL 13
@@ -483,7 +483,7 @@ section("number equality condition assertions")
 
       assert_fatal_error(
         CALL assert 13 EQUAL 7
-        MESSAGE "expected number:\n  13\nto be equal than:\n  7")
+        MESSAGE "expected number:\n  13\nto be equal to:\n  7")
 
       assert_fatal_error(
         CALL assert 13 LESS_EQUAL 7
@@ -524,7 +524,7 @@ section("number equality condition assertions")
 
       assert_fatal_error(
         CALL assert 7 EQUAL "some string"
-        MESSAGE "expected number:\n  7\nto be equal than:\n  some string")
+        MESSAGE "expected number:\n  7\nto be equal to:\n  some string")
 
       assert_fatal_error(
         CALL assert 7 LESS_EQUAL "some string"
