@@ -23,4 +23,7 @@ jobs:
       - name: Upload Project as Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
+          name: Assertion
           path: install
+          if-no-files-found: error
+          overwrite: true
