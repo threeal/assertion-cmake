@@ -38,7 +38,7 @@
 # after `--`.
 
 # This variable contains the version of the included `Assertion.cmake` module.
-set(ASSERTION_VERSION 1.0.0)
+set(ASSERTION_VERSION 1.1.0)
 
 # This variable contains the path to the included `Assertion.cmake` module.
 set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")

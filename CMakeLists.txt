@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project(
   Assertion
-  VERSION 1.0.0
+  VERSION 1.1.0
   DESCRIPTION "A collection of assertion functions and other utilities for testing CMake code"
   HOMEPAGE_URL https://github.com/threeal/assertion-cmake
   LANGUAGES NONE)
