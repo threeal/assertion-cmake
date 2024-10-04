@@ -118,6 +118,10 @@ the `git_checkout_test.cmake` file.
 
 ## API Reference
 
+### `ASSERTION_VERSION`
+
+This variable contains the version of the included `Assertion.cmake` module.
+
 ### `ASSERTION_LIST_FILE`
 
 This variable contains the path to the included `Assertion.cmake` module.
