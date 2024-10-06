@@ -49,9 +49,8 @@ function(add_cmake_script_test FILE)
     set(ARG_NAME "${FILE}")
   endif()
 
-  add_test(
-    NAME "${ARG_NAME}"
-    COMMAND "${CMAKE_COMMAND}" -P ${CMAKE_CURRENT_SOURCE_DIR}/${FILE})
+  cmake_path(ABSOLUTE_PATH FILE)
+  add_test(NAME "${ARG_NAME}" COMMAND "${CMAKE_COMMAND}" -P ${FILE})
 endfunction()
 
 # Throws a formatted fatal error message.
