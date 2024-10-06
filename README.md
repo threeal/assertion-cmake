@@ -14,9 +14,6 @@ This module also supports
 creation using the `add_cmake_script_test` function. This function creates a new
 test that processes the given file in script mode.
 
-If this module is processed in script mode, it can optionally include other
-modules by passing their paths as additional arguments after `--`.
-
 ## Key Features
 
 - Supports condition, fatal error, and process execution assertions.
