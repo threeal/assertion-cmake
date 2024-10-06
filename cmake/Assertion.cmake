@@ -31,10 +31,6 @@
 # This module also supports CMake test creation using the
 # `add_cmake_script_test` function. This function will create a new test that
 # processes the given file in script mode.
-#
-# If this module is processed in script mode, it may optionally include other
-# modules by passing the paths of the other modules as additional arguments
-# after `--`.
 
 # This variable contains the version of the included `Assertion.cmake` module.
 set(ASSERTION_VERSION 2.0.0)
@@ -532,20 +528,3 @@ function(endsection)
   list(POP_BACK CMAKE_MESSAGE_INDENT)
   set(CMAKE_MESSAGE_INDENT "${CMAKE_MESSAGE_INDENT}" PARENT_SCOPE)
 endfunction()
-
-# These lines allow this module to include other modules when processed in
-# script mode by passing the paths of the other modules as additional arguments
-# after `--`.
-if(DEFINED CMAKE_SCRIPT_MODE_FILE AND
-  CMAKE_SCRIPT_MODE_FILE STREQUAL CMAKE_CURRENT_LIST_FILE)
-  math(EXPR END "${CMAKE_ARGC} - 1")
-  foreach(I RANGE 0 "${END}")
-    if(CMAKE_ARGV${I} STREQUAL "--")
-      math(EXPR I "${I} + 1")
-      foreach(I RANGE "${I}" "${END}")
-        include("${CMAKE_ARGV${I}}")
-      endforeach()
-      break()
-    endif()
-  endforeach()
-endif()
