@@ -8,8 +8,7 @@ project(
   LANGUAGES NONE)
 
 option(ASSERTION_ENABLE_TESTS "Enable test targets.")
-option(ASSERTION_ENABLE_INSTALL "Enable install targets."
-  ${PROJECT_IS_TOP_LEVEL})
+option(ASSERTION_ENABLE_INSTALL "Enable install targets." "${PROJECT_IS_TOP_LEVEL}")
 
 include(cmake/Assertion.cmake)
 
