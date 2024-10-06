@@ -12,8 +12,7 @@ context of the asserted condition.
 This module also supports
 [CMake test](https://cmake.org/cmake/help/book/mastering-cmake/chapter/Testing%20With%20CMake%20and%20CTest.html)
 creation using the `assertion_add_test` function. This function creates a new
-test that processes the given file in script mode with variables, functions, and
-macros from this module available in the test file.
+test that processes the given file in script mode.
 
 If this module is processed in script mode, it can optionally include other
 modules by passing their paths as additional arguments after `--`.
@@ -112,9 +111,7 @@ assertion_add_test(git_checkout_test.cmake NAME "Git check out test")
 ```
 
 The above line creates a new test target named "Git check out test" that will
-process the `git_checkout_test.cmake` file in script mode with assertion
-functions already declared, eliminating the need to include this module inside
-the `git_checkout_test.cmake` file.
+process the `git_checkout_test.cmake` file in script mode.
 
 ## API Reference
 
@@ -137,12 +134,6 @@ assertion_add_test(<file> [NAME <name>])
 This function adds a new test that processes the given `<file>` in script mode.
 If `NAME` is specified, it will use `<name>` as the test name; otherwise, it
 will use `<file>`.
-
-Internally, the test will process the `Assertion.cmake` module in script mode
-and include the given `<file>` at the end of the module, allowing variables,
-functions, and macros in the `Assertion.cmake` module to be available in the
-`<file>` without the need to include the `Assertion.cmake` module from the
-`<file>`.
 
 #### Example
 
