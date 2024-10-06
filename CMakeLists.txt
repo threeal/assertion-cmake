@@ -25,8 +25,8 @@ endif()
 
 if(ASSERTION_ENABLE_INSTALL)
   include(CMakePackageConfigHelpers)
-  write_basic_package_version_file(
-    cmake/AssertionConfigVersion.cmake COMPATIBILITY SameMajorVersion)
+  write_basic_package_version_file(cmake/AssertionConfigVersion.cmake
+    COMPATIBILITY SameMajorVersion ARCH_INDEPENDENT)
 
   install(
     FILES cmake/Assertion.cmake
