@@ -9,7 +9,7 @@ jobs:
     name: Build Project
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
+      - name: Checkout Project
         uses: actions/checkout@v4.2.0
 
       - name: Configure Project
@@ -20,7 +20,7 @@ jobs:
       - name: Install Project
         run: cmake --install build --prefix install
 
-      - name: Upload Project as Artifact
+      - name: Upload Project
         uses: actions/upload-artifact@v4.4.0
         with:
           name: Assertion
