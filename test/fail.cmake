@@ -1,3 +1,5 @@
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+
 section("given strings")
   section("it should fail with a formatted fatal error message")
     assert_fatal_error(

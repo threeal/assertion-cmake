@@ -11,9 +11,8 @@ context of the asserted condition.
 
 This module also supports
 [CMake test](https://cmake.org/cmake/help/book/mastering-cmake/chapter/Testing%20With%20CMake%20and%20CTest.html)
-creation using the `assertion_add_test` function. This function creates a new
-test that processes the given file in script mode with variables, functions, and
-macros from this module available in the test file.
+creation using the `add_cmake_script_test` function. This function creates a new
+test that processes the given file in script mode.
 
 If this module is processed in script mode, it can optionally include other
 modules by passing their paths as additional arguments after `--`.
@@ -101,20 +100,18 @@ assert_fatal_error(
 
 In CMake, tests are normally created using the `add_test` function and run
 separately from the project configuration and build processes. To simplify test
-creation, this module provides an `assertion_add_test` function.
+creation, this module provides an `add_cmake_script_test` function.
 
 Given a file named `git_checkout_test.cmake` that contains assertions for a
 `git_clone` function, you can create a new test target that will process that
 file as follows:
 
 ```cmake
-assertion_add_test(git_checkout_test.cmake NAME "Git check out test")
+add_cmake_script_test(git_checkout_test.cmake NAME "Git check out test")
 ```
 
 The above line creates a new test target named "Git check out test" that will
-process the `git_checkout_test.cmake` file in script mode with assertion
-functions already declared, eliminating the need to include this module inside
-the `git_checkout_test.cmake` file.
+process the `git_checkout_test.cmake` file in script mode.
 
 ## API Reference
 
@@ -126,30 +123,24 @@ This variable contains the version of the included `Assertion.cmake` module.
 
 This variable contains the path to the included `Assertion.cmake` module.
 
-### `assertion_add_test`
+### `add_cmake_script_test`
 
 Adds a new test that processes the given CMake file in script mode.
 
 ```cmake
-assertion_add_test(<file> [NAME <name>])
+add_cmake_script_test(<file> [NAME <name>])
 ```
 
 This function adds a new test that processes the given `<file>` in script mode.
 If `NAME` is specified, it will use `<name>` as the test name; otherwise, it
 will use `<file>`.
 
-Internally, the test will process the `Assertion.cmake` module in script mode
-and include the given `<file>` at the end of the module, allowing variables,
-functions, and macros in the `Assertion.cmake` module to be available in the
-`<file>` without the need to include the `Assertion.cmake` module from the
-`<file>`.
-
 #### Example
 
 ```cmake
-assertion_add_test(test/first_test.cmake)
+add_cmake_script_test(test/first_test.cmake)
 
-assertion_add_test(test/second_test.cmake NAME "Second Test")
+add_cmake_script_test(test/second_test.cmake NAME "Second Test")
 ```
 
 The above example adds two new tests. The first one is named

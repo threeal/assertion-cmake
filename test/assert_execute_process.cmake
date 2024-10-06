@@ -1,3 +1,5 @@
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+
 section("process execution assertions")
   section("it should assert a process execution")
     assert_execute_process("${CMAKE_COMMAND}" -E true)

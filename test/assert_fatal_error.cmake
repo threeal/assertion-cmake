@@ -1,3 +1,5 @@
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+
 section("it should assert a fatal error message")
   assert_fatal_error(
     CALL message FATAL_ERROR "some fatal error message"

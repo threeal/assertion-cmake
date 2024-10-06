@@ -1,3 +1,5 @@
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+
 section("it should include modules")
   file(WRITE foo.cmake "message(STATUS \"foo\")\n")
   file(WRITE goo.cmake "message(STATUS \"goo\")\n")
