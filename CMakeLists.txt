@@ -8,8 +8,7 @@ project(
   LANGUAGES NONE)
 
 option(ASSERTION_ENABLE_TESTS "Enable test targets.")
-option(ASSERTION_ENABLE_INSTALL "Enable install targets."
-  ${PROJECT_IS_TOP_LEVEL})
+option(ASSERTION_ENABLE_INSTALL "Enable install targets." "${PROJECT_IS_TOP_LEVEL}")
 
 include(cmake/Assertion.cmake)
 
@@ -25,12 +24,12 @@ endif()
 
 if(ASSERTION_ENABLE_INSTALL)
   include(CMakePackageConfigHelpers)
-  write_basic_package_version_file(
-    AssertionConfigVersion.cmake COMPATIBILITY SameMajorVersion)
+  write_basic_package_version_file(cmake/AssertionConfigVersion.cmake
+    COMPATIBILITY SameMajorVersion ARCH_INDEPENDENT)
 
   install(
     FILES cmake/Assertion.cmake
       cmake/AssertionConfig.cmake
-      ${CMAKE_CURRENT_BINARY_DIR}/AssertionConfigVersion.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake/AssertionConfigVersion.cmake
     DESTINATION lib/cmake/Assertion)
 endif()

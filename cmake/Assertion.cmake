@@ -20,18 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# This module contains a collection of assertion functions and other utilities
-# for testing CMake code.
-#
-# The main feature of this module is the `assert` function for asserting the
-# given condition in the style of CMake's `if` function. If the assertion fails,
-# it will throw a fatal error message with information about the context of the
-# asserted condition.
-#
-# This module also supports CMake test creation using the
-# `add_cmake_script_test` function. This function will create a new test that
-# processes the given file in script mode.
-
 # This variable contains the version of the included `Assertion.cmake` module.
 set(ASSERTION_VERSION 2.0.0)
 
