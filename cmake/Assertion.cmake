@@ -28,9 +28,9 @@
 # it will throw a fatal error message with information about the context of the
 # asserted condition.
 #
-# This module also supports CMake test creation using the `assertion_add_test`
-# function. This function will create a new test that processes the given file
-# in script mode.
+# This module also supports CMake test creation using the
+# `add_cmake_script_test` function. This function will create a new test that
+# processes the given file in script mode.
 #
 # If this module is processed in script mode, it may optionally include other
 # modules by passing the paths of the other modules as additional arguments
@@ -44,12 +44,12 @@ set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
 
 # Adds a new test that processes the given CMake file in script mode.
 #
-# assertion_add_test(<file> [NAME <name>])
+# add_cmake_script_test(<file> [NAME <name>])
 #
 # This function adds a new test that processes the given `<file>` in script
 # mode. If `NAME` is specified, it will use `<name>` as the test name;
 # otherwise, it will use `<file>`.
-function(assertion_add_test FILE)
+function(add_cmake_script_test FILE)
   cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME "")
 
   if(NOT DEFINED ARG_NAME)

@@ -9,7 +9,7 @@ section("it should correctly create a new test")
     assert(ARG_COMMAND STREQUAL EXPECTED_COMMAND)
   endfunction()
 
-  assertion_add_test(some_test.cmake)
+  add_cmake_script_test(some_test.cmake)
 endsection()
 
 section("it should correctly create a new test with the name specified")
@@ -22,5 +22,5 @@ section("it should correctly create a new test with the name specified")
     assert(ARG_COMMAND STREQUAL EXPECTED_COMMAND)
   endfunction()
 
-  assertion_add_test(some_test.cmake NAME "some test")
+  add_cmake_script_test(some_test.cmake NAME "some test")
 endsection()
