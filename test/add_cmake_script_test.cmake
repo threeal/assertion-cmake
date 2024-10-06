@@ -50,4 +50,19 @@ section("it should create a new test with the specified name")
     ctest --test-dir project/build -R "^a test$" --no-tests=error)
 endsection()
 
+section("it should fail to create a new test due to a non-existing file")
+  file(WRITE project/CMakeLists.txt
+    "cmake_minimum_required(VERSION 3.21)\n"
+    "project(Sample LANGUAGES NONE)\n"
+    "\n"
+    "include(${ASSERTION_LIST_FILE})\n"
+    "\n"
+    "enable_testing()\n"
+    "add_cmake_script_test(invalid.cmake)\n")
+
+  assert_execute_process(
+    COMMAND "${CMAKE_COMMAND}" --fresh -S project -B project/build
+    ERROR "Cannot find test file:.*invalid.cmake")
+endsection()
+
 file(REMOVE_RECURSE project)
