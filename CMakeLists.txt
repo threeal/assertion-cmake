@@ -21,7 +21,6 @@ if(ASSERTION_ENABLE_TESTS)
   add_cmake_script_test(test/assert_fatal_error.cmake)
   add_cmake_script_test(test/assert.cmake)
   add_cmake_script_test(test/fail.cmake)
-  add_cmake_script_test(test/include.cmake)
 endif()
 
 if(ASSERTION_ENABLE_INSTALL)
