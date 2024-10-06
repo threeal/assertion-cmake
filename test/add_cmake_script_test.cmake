@@ -1,39 +1,53 @@
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake
+  RESULT_VARIABLE ASSERTION_LIST_FILE)
+
+file(REMOVE_RECURSE project)
+file(WRITE project/test.cmake "message(\"all ok\")\n")
 
 section("it should create a new test")
-  function(add_test)
-    cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" COMMAND)
+  file(WRITE project/CMakeLists.txt
+    "cmake_minimum_required(VERSION 3.21)\n"
+    "project(Sample LANGUAGES NONE)\n"
+    "\n"
+    "include(${ASSERTION_LIST_FILE})\n"
+    "\n"
+    "enable_testing()\n"
+    "add_cmake_script_test(test.cmake)\n")
 
-    set(EXPECTED_COMMAND "${CMAKE_COMMAND}" -P
-      ${CMAKE_CURRENT_BINARY_DIR}/some_test.cmake)
-    assert(ARG_COMMAND STREQUAL EXPECTED_COMMAND)
-  endfunction()
-
-  add_cmake_script_test(some_test.cmake)
+  assert_execute_process("${CMAKE_COMMAND}" --fresh -S project -B project/build)
+  assert_execute_process(
+    ctest --test-dir project/build -R ^test.cmake$ --no-tests=error)
 endsection()
 
 section("it should create a new test "
   "with the file specified using an absolute path")
-  function(add_test)
-    cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" COMMAND)
+  file(WRITE project/CMakeLists.txt
+    "cmake_minimum_required(VERSION 3.21)\n"
+    "project(Sample LANGUAGES NONE)\n"
+    "\n"
+    "include(${ASSERTION_LIST_FILE})\n"
+    "\n"
+    "enable_testing()\n"
+    "add_cmake_script_test(\${CMAKE_CURRENT_SOURCE_DIR}/test.cmake)\n")
 
-    set(EXPECTED_COMMAND "${CMAKE_COMMAND}" -P
-      ${CMAKE_CURRENT_BINARY_DIR}/some_test.cmake)
-    assert(ARG_COMMAND STREQUAL EXPECTED_COMMAND)
-  endfunction()
-
-  add_cmake_script_test(${CMAKE_CURRENT_BINARY_DIR}/some_test.cmake)
+  assert_execute_process("${CMAKE_COMMAND}" --fresh -S project -B project/build)
+  assert_execute_process(
+    ctest --test-dir project/build -R project/test.cmake$ --no-tests=error)
 endsection()
 
 section("it should create a new test with the specified name")
-  function(add_test)
-    cmake_parse_arguments(PARSE_ARGV 0 ARG "" NAME COMMAND)
-    assert(ARG_NAME STREQUAL "some test")
+  file(WRITE project/CMakeLists.txt
+    "cmake_minimum_required(VERSION 3.21)\n"
+    "project(Sample LANGUAGES NONE)\n"
+    "\n"
+    "include(${ASSERTION_LIST_FILE})\n"
+    "\n"
+    "enable_testing()\n"
+    "add_cmake_script_test(test.cmake NAME \"a test\")\n")
 
-    set(EXPECTED_COMMAND "${CMAKE_COMMAND}" -P
-      ${CMAKE_CURRENT_BINARY_DIR}/some_test.cmake)
-    assert(ARG_COMMAND STREQUAL EXPECTED_COMMAND)
-  endfunction()
-
-  add_cmake_script_test(some_test.cmake NAME "some test")
+  assert_execute_process("${CMAKE_COMMAND}" --fresh -S project -B project/build)
+  assert_execute_process(
+    ctest --test-dir project/build -R "^a test$" --no-tests=error)
 endsection()
+
+file(REMOVE_RECURSE project)
