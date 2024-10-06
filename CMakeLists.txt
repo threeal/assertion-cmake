@@ -26,11 +26,11 @@ endif()
 if(ASSERTION_ENABLE_INSTALL)
   include(CMakePackageConfigHelpers)
   write_basic_package_version_file(
-    AssertionConfigVersion.cmake COMPATIBILITY SameMajorVersion)
+    cmake/AssertionConfigVersion.cmake COMPATIBILITY SameMajorVersion)
 
   install(
     FILES cmake/Assertion.cmake
       cmake/AssertionConfig.cmake
-      ${CMAKE_CURRENT_BINARY_DIR}/AssertionConfigVersion.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake/AssertionConfigVersion.cmake
     DESTINATION lib/cmake/Assertion)
 endif()
