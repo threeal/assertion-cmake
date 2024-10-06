@@ -50,6 +50,10 @@ function(add_cmake_script_test FILE)
   endif()
 
   cmake_path(ABSOLUTE_PATH FILE)
+  if(NOT EXISTS ${FILE})
+    message(SEND_ERROR "Cannot find test file:\n  ${FILE}")
+  endif()
+
   add_test(NAME "${ARG_NAME}" COMMAND "${CMAKE_COMMAND}" -P ${FILE})
 endfunction()
 
