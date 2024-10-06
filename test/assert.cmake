@@ -1,4 +1,5 @@
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake
+  RESULT_VARIABLE ASSERTION_LIST_FILE)
 
 # Asserts whether the given code of a sample project can be configured
 # successfully.

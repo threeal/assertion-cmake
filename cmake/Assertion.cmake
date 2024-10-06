@@ -39,9 +39,6 @@
 # This variable contains the version of the included `Assertion.cmake` module.
 set(ASSERTION_VERSION 2.0.0)
 
-# This variable contains the path to the included `Assertion.cmake` module.
-set(ASSERTION_LIST_FILE "${CMAKE_CURRENT_LIST_FILE}")
-
 # Adds a new test that processes the given CMake file in script mode.
 #
 # add_cmake_script_test(<file> [NAME <name>])

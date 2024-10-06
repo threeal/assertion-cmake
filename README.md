@@ -119,10 +119,6 @@ process the `git_checkout_test.cmake` file in script mode.
 
 This variable contains the version of the included `Assertion.cmake` module.
 
-### `ASSERTION_LIST_FILE`
-
-This variable contains the path to the included `Assertion.cmake` module.
-
 ### `add_cmake_script_test`
 
 Adds a new test that processes the given CMake file in script mode.
