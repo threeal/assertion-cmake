@@ -31,7 +31,7 @@ set(ASSERTION_VERSION 2.0.0)
 # mode. If `NAME` is specified, it will use `<name>` as the test name;
 # otherwise, it will use `<file>`.
 function(add_cmake_script_test FILE)
-  cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME "")
+  cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME DEFINES)
 
   if(NOT DEFINED ARG_NAME)
     set(ARG_NAME "${FILE}")
