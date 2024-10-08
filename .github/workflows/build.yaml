@@ -21,7 +21,7 @@ jobs:
         run: cmake --install build --prefix install
 
       - name: Upload Project
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4.4.1
         with:
           name: Assertion
           path: install
