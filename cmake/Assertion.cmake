@@ -430,23 +430,24 @@ endfunction()
 # assert_execute_process(
 #   [COMMAND] <command> [<arguments>...]
 #   [EXPECT_OUTPUT <output>...]
-#   [ERROR <error>...])
+#   [EXPECT_ERROR <error>...])
 #
 # This function asserts whether the given `<command>` and `<arguments>`
-# successfully execute a process. If `ERROR` is specified, it instead asserts
-# whether it fails to execute the process.
+# successfully execute a process. If `EXPECT_ERROR` is specified, it instead
+# asserts whether it fails to execute the process.
 #
 # If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the
 # executed process matches the expected `<output>`. If more than one `<output>`
 # string is given, they are concatenated into a single output with no separator
 # between the strings.
 #
-# If `ERROR` is specified, it also asserts whether the error of the executed
-# process matches the expected `<error>`. If more than one `<error>` string
-# is given, they are concatenated into a single error with no separator between
-# the strings.
+# If `EXPECT_ERROR` is specified, it also asserts whether the error of the
+# executed process matches the expected `<error>`. If more than one `<error>`
+# string is given, they are concatenated into a single error with no separator
+# between the strings.
 function(assert_execute_process)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "COMMAND;EXPECT_OUTPUT;ERROR")
+  cmake_parse_arguments(
+    PARSE_ARGV 0 ARG "" "" "COMMAND;EXPECT_OUTPUT;EXPECT_ERROR")
 
   if(NOT DEFINED ARG_COMMAND)
     set(ARG_COMMAND ${ARG_UNPARSED_ARGUMENTS})
@@ -458,7 +459,7 @@ function(assert_execute_process)
     OUTPUT_VARIABLE OUT
     ERROR_VARIABLE ERR)
 
-  if(DEFINED ARG_ERROR)
+  if(DEFINED ARG_EXPECT_ERROR)
     if(RES EQUAL 0)
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
       fail("expected command" COMMAND "to fail")
@@ -482,8 +483,8 @@ function(assert_execute_process)
     endif()
   endif()
 
-  if(DEFINED ARG_ERROR)
-    string(JOIN "" EXPECTED_ERROR ${ARG_ERROR})
+  if(DEFINED ARG_EXPECT_ERROR)
+    string(JOIN "" EXPECTED_ERROR ${ARG_EXPECT_ERROR})
     if(NOT "${ERR}" MATCHES "${EXPECTED_ERROR}")
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
       fail("expected the error" ERR "of command" COMMAND

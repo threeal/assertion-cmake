@@ -209,14 +209,14 @@ Asserts whether the given command correctly executes a process.
 assert_execute_process(
   [COMMAND] <command> [<arguments>...]
   [EXPECT_OUTPUT <output>...]
-  [ERROR <error>...])
+  [EXPECT_ERROR <error>...])
 ```
 
-This function asserts whether the given `<command>` and `<arguments>` successfully execute a process. If `ERROR` is specified, it instead asserts whether it fails to execute the process.
+This function asserts whether the given `<command>` and `<arguments>` successfully execute a process. If `EXPECT_ERROR` is specified, it instead asserts whether it fails to execute the process.
 
 If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the executed process matches the expected `<output>`. If more than one `<output>` string is given, they are concatenated into a single output with no separator between the strings.
 
-If `ERROR` is specified, it also asserts whether the error of the executed process matches the expected `<error>`. If more than one `<error>` string is given, they are concatenated into a single error with no separator between the strings.
+If `EXPECT_ERROR` is specified, it also asserts whether the error of the executed process matches the expected `<error>`. If more than one `<error>` string is given, they are concatenated into a single error with no separator between the strings.
 
 #### Example
 
