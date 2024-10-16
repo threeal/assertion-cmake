@@ -71,7 +71,7 @@ assert_execute_process(
 
 assert_fatal_error(
   CALL git_clone https://github.com GITHUB_DIR
-  MESSAGE "failed to clone 'https://github.com'")
+  EXPECT_MESSAGE "failed to clone 'https://github.com'")
 ```
 
 ### Test Creation
@@ -174,7 +174,8 @@ to be defined
 Asserts whether a command call throws a fatal error message.
 
 ```cmake
-assert_fatal_error(CALL <command> [<arguments>...] MESSAGE <message>...)
+assert_fatal_error(
+  CALL <command> [<arguments>...] EXPECT_MESSAGE <message>...)
 ```
 
 This function asserts whether a function or macro named `<command>`, called with the specified `<arguments>`, throws a fatal error message that matches the expected `<message>`.
@@ -190,7 +191,7 @@ endfunction()
 
 assert_fatal_error(
   CALL throw_fatal_error "some message"
-  MESSAGE "some message")
+  EXPECT_MESSAGE "some message")
 ```
 
 The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message that matches `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:
@@ -207,22 +208,22 @@ Asserts whether the given command correctly executes a process.
 ```cmake
 assert_execute_process(
   [COMMAND] <command> [<arguments>...]
-  [OUTPUT <output>...]
-  [ERROR <error>...])
+  [EXPECT_OUTPUT <output>...]
+  [EXPECT_ERROR <error>...])
 ```
 
-This function asserts whether the given `<command>` and `<arguments>` successfully execute a process. If `ERROR` is specified, it instead asserts whether it fails to execute the process.
+This function asserts whether the given `<command>` and `<arguments>` successfully execute a process. If `EXPECT_ERROR` is specified, it instead asserts whether it fails to execute the process.
 
-If `OUTPUT` is specified, it also asserts whether the output of the executed process matches the expected `<output>`. If more than one `<output>` string is given, they are concatenated into a single output with no separator between the strings.
+If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the executed process matches the expected `<output>`. If more than one `<output>` string is given, they are concatenated into a single output with no separator between the strings.
 
-If `ERROR` is specified, it also asserts whether the error of the executed process matches the expected `<error>`. If more than one `<error>` string is given, they are concatenated into a single error with no separator between the strings.
+If `EXPECT_ERROR` is specified, it also asserts whether the error of the executed process matches the expected `<error>`. If more than one `<error>` string is given, they are concatenated into a single error with no separator between the strings.
 
 #### Example
 
 ```cmake
 assert_execute_process(
   COMMAND ${CMAKE_COMMAND} -E echo hello
-  OUTPUT hello)
+  EXPECT_OUTPUT hello)
 ```
 
 The above example asserts whether the call to `${CMAKE_COMMAND} -E echo hello` successfully executes a process whose output matches `hello`. If it somehow fails to execute the process, it will throw the following fatal error message:

@@ -60,7 +60,7 @@ file(REMOVE project/test.cmake)
 section("it should fail to create a new test due to a non-existent file")
   assert_execute_process(
     COMMAND "${CMAKE_COMMAND}" --fresh -S project -B project/build
-    ERROR "Cannot find test file:.*test.cmake")
+    EXPECT_ERROR "Cannot find test file:.*test.cmake")
 endsection()
 
 file(REMOVE_RECURSE project)
