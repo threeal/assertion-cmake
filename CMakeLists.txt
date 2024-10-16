@@ -23,13 +23,16 @@ if(ASSERTION_ENABLE_TESTS)
 endif()
 
 if(ASSERTION_ENABLE_INSTALL)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/cmake/AssertionConfig.cmake
+    "include(\${CMAKE_CURRENT_LIST_DIR}/Assertion.cmake)\n")
+
   include(CMakePackageConfigHelpers)
   write_basic_package_version_file(cmake/AssertionConfigVersion.cmake
     COMPATIBILITY SameMajorVersion ARCH_INDEPENDENT)
 
   install(
     FILES cmake/Assertion.cmake
-      cmake/AssertionConfig.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake/AssertionConfig.cmake
       ${CMAKE_CURRENT_BINARY_DIR}/cmake/AssertionConfigVersion.cmake
     DESTINATION lib/cmake/Assertion)
 endif()
