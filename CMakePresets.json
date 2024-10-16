@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "binaryDir": "${sourceDir}/build"
+    },
+    {
+      "name": "development",
+      "inherits": ["default"],
+      "cacheVariables": {
+        "ASSERTION_ENABLE_TESTS": "ON"
+      }
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "development",
+      "configurePreset": "development",
+      "output": {
+        "verbosity": "verbose"
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    }
+  ]
+}
