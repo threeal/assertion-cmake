@@ -32,4 +32,7 @@ if(ASSERTION_ENABLE_INSTALL)
       cmake/AssertionConfig.cmake
       ${CMAKE_CURRENT_BINARY_DIR}/cmake/AssertionConfigVersion.cmake
     DESTINATION lib/cmake/Assertion)
+
+  set(CPACK_SYSTEM_NAME any)
+  include(CPack)
 endif()
