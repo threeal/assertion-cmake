@@ -25,13 +25,18 @@ set(ASSERTION_VERSION 2.0.0)
 
 # Adds a new test that processes the given CMake file in script mode.
 #
-# add_cmake_script_test(<file> [NAME <name>])
+# add_cmake_script_test(<file> [NAME <name>] [DEFINES <variables>...])
 #
 # This function adds a new test that processes the given `<file>` in script
 # mode. If `NAME` is specified, it will use `<name>` as the test name;
 # otherwise, it will use `<file>`.
+#
+# If `DEFINES` is specified, the script is processed with predefined variables
+# listed in `<variables>...`. Each entry in `<variables>...` should be in the
+# format `<name>=<value>`, where `<name>` is the variable name and `<value>` is
+# the variable value.
 function(add_cmake_script_test FILE)
-  cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME "")
+  cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME DEFINES)
 
   if(NOT DEFINED ARG_NAME)
     set(ARG_NAME "${FILE}")
@@ -42,7 +47,13 @@ function(add_cmake_script_test FILE)
     message(SEND_ERROR "Cannot find test file:\n  ${FILE}")
   endif()
 
-  add_test(NAME "${ARG_NAME}" COMMAND "${CMAKE_COMMAND}" -P ${FILE})
+  set(TEST_COMMAND "${CMAKE_COMMAND}")
+  foreach(DEFINE IN LISTS ARG_DEFINES)
+    list(APPEND TEST_COMMAND -D "${DEFINE}")
+  endforeach()
+  list(APPEND TEST_COMMAND -P "${FILE}")
+
+  add_test(NAME "${ARG_NAME}" COMMAND ${TEST_COMMAND})
 endfunction()
 
 # Throws a formatted fatal error message.
