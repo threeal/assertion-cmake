@@ -15,13 +15,12 @@ jobs:
       - name: Configure Project
         run: cmake --preset default
 
-      - name: Install Project
-        run: cmake --install build --prefix install
+      - name: Package Project
+        run: cpack --preset default
 
       - name: Upload Project
         uses: actions/upload-artifact@v4.4.0
         with:
-          name: Assertion
-          path: install
+          path: build/*.tar.gz
           if-no-files-found: error
           overwrite: true
