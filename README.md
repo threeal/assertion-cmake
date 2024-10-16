@@ -71,7 +71,7 @@ assert_execute_process(
 
 assert_fatal_error(
   CALL git_clone https://github.com GITHUB_DIR
-  MESSAGE "failed to clone 'https://github.com'")
+  EXPECT_MESSAGE "failed to clone 'https://github.com'")
 ```
 
 ### Test Creation
@@ -174,7 +174,8 @@ to be defined
 Asserts whether a command call throws a fatal error message.
 
 ```cmake
-assert_fatal_error(CALL <command> [<arguments>...] MESSAGE <message>...)
+assert_fatal_error(
+  CALL <command> [<arguments>...] EXPECT_MESSAGE <message>...)
 ```
 
 This function asserts whether a function or macro named `<command>`, called with the specified `<arguments>`, throws a fatal error message that matches the expected `<message>`.
@@ -190,7 +191,7 @@ endfunction()
 
 assert_fatal_error(
   CALL throw_fatal_error "some message"
-  MESSAGE "some message")
+  EXPECT_MESSAGE "some message")
 ```
 
 The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message that matches `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:

@@ -349,7 +349,8 @@ endfunction()
 
 # Asserts whether a command call throws a fatal error message.
 #
-# assert_fatal_error(CALL <command> [<arguments>...] MESSAGE <message>...)
+# assert_fatal_error(
+#   CALL <command> [<arguments>...] EXPECT_MESSAGE <message>...)
 #
 # This function asserts whether a function or macro named `<command>`, called
 # with the specified `<arguments>`, throws a fatal error message that matches
@@ -358,8 +359,8 @@ endfunction()
 # If more than one `<message>` string is given, they are concatenated into a
 # single message with no separator between the strings.
 function(assert_fatal_error)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;MESSAGE")
-  string(JOIN "" EXPECTED_MESSAGE ${ARG_MESSAGE})
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_MESSAGE")
+  string(JOIN "" EXPECTED_MESSAGE ${ARG_EXPECT_MESSAGE})
 
   # Override the `message` function if it has not been overridden.
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
