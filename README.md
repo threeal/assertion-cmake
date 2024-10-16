@@ -136,15 +136,11 @@ the variable value.
 #### Example
 
 ```cmake
-add_cmake_script_test(test/first_test.cmake)
-
-add_cmake_script_test(test/second_test.cmake NAME "Second Test")
+add_cmake_script_test(test_foo.cmake NAME "Test Foo" DEFINES FOO=foo BAR=bar)
 ```
 
-The above example adds two new tests. The first one is named
-`test/first_test.cmake`, which will process the file with the same name as the
-test. The second one is named `Second Test`, which will process the
-`test/second_test.cmake` file.
+The example above adds a new test named `Test Foo`, which processes the
+`test_foo.cmake` file in script mode with predefined `FOO` and `BAR` variables.
 
 ### `fail`
 
