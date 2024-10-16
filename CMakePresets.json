@@ -1,8 +1,8 @@
 {
-  "version": 3,
+  "version": 6,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 21
+    "minor": 25
   },
   "configurePresets": [
     {
@@ -27,6 +27,13 @@
       "execution": {
         "noTestsAction": "error"
       }
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "generators": ["TGZ"]
     }
   ]
 }
