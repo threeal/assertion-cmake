@@ -36,14 +36,14 @@ section("process execution output assertions")
   section("it should assert a process execution output")
     assert_execute_process(
       COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-      OUTPUT "Hello" ".*!")
+      EXPECT_OUTPUT "Hello" ".*!")
   endsection()
 
   section("it should fail to assert a process execution output")
     assert_fatal_error(
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-        OUTPUT "Hello" ".*earth!"
+        EXPECT_OUTPUT "Hello" ".*earth!"
       EXPECT_MESSAGE "expected the output:\n"
         ".*\n"
         "of command:\n"

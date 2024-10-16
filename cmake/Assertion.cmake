@@ -429,24 +429,24 @@ endfunction()
 #
 # assert_execute_process(
 #   [COMMAND] <command> [<arguments>...]
-#   [OUTPUT <output>...]
+#   [EXPECT_OUTPUT <output>...]
 #   [ERROR <error>...])
 #
 # This function asserts whether the given `<command>` and `<arguments>`
 # successfully execute a process. If `ERROR` is specified, it instead asserts
 # whether it fails to execute the process.
 #
-# If `OUTPUT` is specified, it also asserts whether the output of the executed
-# process matches the expected `<output>`. If more than one `<output>` string
-# is given, they are concatenated into a single output with no separator between
-# the strings.
+# If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the
+# executed process matches the expected `<output>`. If more than one `<output>`
+# string is given, they are concatenated into a single output with no separator
+# between the strings.
 #
 # If `ERROR` is specified, it also asserts whether the error of the executed
 # process matches the expected `<error>`. If more than one `<error>` string
 # is given, they are concatenated into a single error with no separator between
 # the strings.
 function(assert_execute_process)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "COMMAND;OUTPUT;ERROR")
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "COMMAND;EXPECT_OUTPUT;ERROR")
 
   if(NOT DEFINED ARG_COMMAND)
     set(ARG_COMMAND ${ARG_UNPARSED_ARGUMENTS})
@@ -472,8 +472,8 @@ function(assert_execute_process)
     endif()
   endif()
 
-  if(DEFINED ARG_OUTPUT)
-    string(JOIN "" EXPECTED_OUTPUT ${ARG_OUTPUT})
+  if(DEFINED ARG_EXPECT_OUTPUT)
+    string(JOIN "" EXPECTED_OUTPUT ${ARG_EXPECT_OUTPUT})
     if(NOT "${OUT}" MATCHES "${EXPECTED_OUTPUT}")
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
       fail("expected the output" OUT "of command" COMMAND

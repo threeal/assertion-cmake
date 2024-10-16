@@ -208,13 +208,13 @@ Asserts whether the given command correctly executes a process.
 ```cmake
 assert_execute_process(
   [COMMAND] <command> [<arguments>...]
-  [OUTPUT <output>...]
+  [EXPECT_OUTPUT <output>...]
   [ERROR <error>...])
 ```
 
 This function asserts whether the given `<command>` and `<arguments>` successfully execute a process. If `ERROR` is specified, it instead asserts whether it fails to execute the process.
 
-If `OUTPUT` is specified, it also asserts whether the output of the executed process matches the expected `<output>`. If more than one `<output>` string is given, they are concatenated into a single output with no separator between the strings.
+If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the executed process matches the expected `<output>`. If more than one `<output>` string is given, they are concatenated into a single output with no separator between the strings.
 
 If `ERROR` is specified, it also asserts whether the error of the executed process matches the expected `<error>`. If more than one `<error>` string is given, they are concatenated into a single error with no separator between the strings.
 
@@ -223,7 +223,7 @@ If `ERROR` is specified, it also asserts whether the error of the executed proce
 ```cmake
 assert_execute_process(
   COMMAND ${CMAKE_COMMAND} -E echo hello
-  OUTPUT hello)
+  EXPECT_OUTPUT hello)
 ```
 
 The above example asserts whether the call to `${CMAKE_COMMAND} -E echo hello` successfully executes a process whose output matches `hello`. If it somehow fails to execute the process, it will throw the following fatal error message:
