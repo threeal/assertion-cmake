@@ -447,22 +447,24 @@ endfunction()
 # assert_execute_process(
 #   [COMMAND] <command> [<arguments>...]
 #   [EXPECT_FAIL]
-#   [EXPECT_OUTPUT <output>...]
-#   [EXPECT_ERROR <error>...])
+#   [EXPECT_OUTPUT [MATCHES|STREQUAL] <output>...]
+#   [EXPECT_ERROR [MATCHES|STREQUAL] <error>...])
 #
 # This function asserts whether the given `<command>` and `<arguments>`
 # successfully execute a process. If `EXPECT_FAIL` or `EXPECT_ERROR` is
-# specified, it instead asserts whether it fails to execute the process.
+# specified, it asserts that the process fails to execute.
 #
-# If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the
-# executed process matches the expected `<output>`. If more than one `<output>`
-# string is given, they are concatenated into a single output with no separator
-# between the strings.
+# If `EXPECT_OUTPUT` or `EXPECT_ERROR` is specified, it also asserts whether the
+# output or error of the executed process matches the expected output or error.
 #
-# If `EXPECT_ERROR` is specified, it also asserts whether the error of the
-# executed process matches the expected `<error>`. If more than one `<error>`
-# string is given, they are concatenated into a single error with no separator
-# between the strings.
+# If `MATCHES` is specified, it asserts whether the output or error matches the
+# `<output>` or `<error>`. If `STREQUAL` is specified, it asserts whether the
+# output or error is equal to `<output>` or `<error>`. If neither is specified,
+# it defaults to `MATCHES`.
+#
+# If more than one `<output>` or `<error>` string is given, they are
+# concatenated into a single output or error with no separator between the
+# strings.
 function(assert_execute_process)
   cmake_parse_arguments(
     PARSE_ARGV 0 ARG EXPECT_FAIL "" "COMMAND;EXPECT_OUTPUT;EXPECT_ERROR")
@@ -492,21 +494,43 @@ function(assert_execute_process)
   endif()
 
   if(DEFINED ARG_EXPECT_OUTPUT)
+    list(GET ARG_EXPECT_OUTPUT 0 OPERATOR)
+    if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
+      list(REMOVE_AT ARG_EXPECT_OUTPUT 0)
+    else()
+      set(OPERATOR "MATCHES")
+    endif()
     string(JOIN "" EXPECTED_OUTPUT ${ARG_EXPECT_OUTPUT})
-    if(NOT "${OUT}" MATCHES "${EXPECTED_OUTPUT}")
+    if(NOT "${OUT}" ${OPERATOR} "${EXPECTED_OUTPUT}")
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
-      fail("expected the output" OUT "of command" COMMAND
-        "to match" EXPECTED_OUTPUT)
+      if(OPERATOR STREQUAL "MATCHES")
+        fail("expected the output" OUT "of command" COMMAND
+          "to match" EXPECTED_OUTPUT)
+      else()
+        fail("expected the output" OUT "of command" COMMAND
+          "to be equal to" EXPECTED_OUTPUT)
+      endif()
       return()
     endif()
   endif()
 
   if(DEFINED ARG_EXPECT_ERROR)
+    list(GET ARG_EXPECT_ERROR 0 OPERATOR)
+    if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
+      list(REMOVE_AT ARG_EXPECT_ERROR 0)
+    else()
+      set(OPERATOR "MATCHES")
+    endif()
     string(JOIN "" EXPECTED_ERROR ${ARG_EXPECT_ERROR})
-    if(NOT "${ERR}" MATCHES "${EXPECTED_ERROR}")
+    if(NOT "${ERR}" ${OPERATOR} "${EXPECTED_ERROR}")
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
-      fail("expected the error" ERR "of command" COMMAND
-        "to match" EXPECTED_ERROR)
+      if(OPERATOR STREQUAL "MATCHES")
+        fail("expected the error" ERR "of command" COMMAND
+          "to match" EXPECTED_ERROR)
+      else()
+        fail("expected the error" ERR "of command" COMMAND
+          "to be equal to" EXPECTED_ERROR)
+      endif()
     endif()
   endif()
 endfunction()
