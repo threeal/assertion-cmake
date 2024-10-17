@@ -97,17 +97,17 @@ This variable contains the version of the included `Assertion.cmake` module.
 Adds a new test that processes the given CMake file in script mode.
 
 ```cmake
-add_cmake_script_test(<file> [NAME <name>] [DEFINES <variables>...])
+add_cmake_script_test(<file> [NAME <name>] [DEFINITIONS <variables>...])
 ```
 
 This function adds a new test that processes the given `<file>` in script mode. If `NAME` is specified, it will use `<name>` as the test name; otherwise, it will use `<file>`.
 
-If `DEFINES` is specified, the script is processed with predefined variables listed in `<variables>...`. Each entry in `<variables>...` should be in the format `<name>=<value>`, where `<name>` is the variable name and `<value>` is the variable value.
+If `DEFINITIONS` is specified, the script is processed with predefined variables listed in `<variables>`. Each entry in `<variables>` should be in the format `<name>=<value>`, where `<name>` is the variable name and `<value>` is the variable value.
 
 #### Example
 
 ```cmake
-add_cmake_script_test(test_foo.cmake NAME "Test Foo" DEFINES FOO=foo BAR=bar)
+add_cmake_script_test(test_foo.cmake NAME "Test Foo" DEFINITIONS FOO=foo BAR=bar)
 ```
 
 The example above adds a new test named `Test Foo`, which processes the `test_foo.cmake` file in script mode with predefined `FOO` and `BAR` variables.
