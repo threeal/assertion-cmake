@@ -350,16 +350,29 @@ endfunction()
 # Asserts whether a command call throws a fatal error message.
 #
 # assert_fatal_error(
-#   CALL <command> [<arguments>...] EXPECT_MESSAGE <message>...)
+#   CALL <command> [<arguments>...]
+#   EXPECT_MESSAGE [MATCHES|STREQUAL] <message>...)
 #
 # This function asserts whether a function or macro named `<command>`, called
-# with the specified `<arguments>`, throws a fatal error message that matches
-# the expected `<message>`.
+# with the specified `<arguments>`, throws a fatal error message that satisfies
+# the expected message.
+#
+# If `MATCHES` is specified, it asserts whether the received message matches the
+# `<message>`. If `STREQUAL` is specified, it asserts whether the received
+# message is equal to `<message>`. If nothing is specified, it defaults to the
+# `MATCHES` parameter.
 #
 # If more than one `<message>` string is given, they are concatenated into a
-# single message with no separator between the strings.
+# single message with no separators.
 function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_MESSAGE")
+
+  list(GET ARG_EXPECT_MESSAGE 0 OPERATOR)
+  if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
+    list(REMOVE_AT ARG_EXPECT_MESSAGE 0)
+  else()
+    set(OPERATOR "MATCHES")
+  endif()
   string(JOIN "" EXPECTED_MESSAGE ${ARG_EXPECT_MESSAGE})
 
   # Override the `message` function if it has not been overridden.
@@ -412,16 +425,20 @@ function(assert_fatal_error)
     math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} - 1")
     set_property(GLOBAL PROPERTY fatal_error_capture_level "${CAPTURE_LEVEL}")
 
-    fail("expected to receive a fatal error message that matches"
-      EXPECTED_MESSAGE)
+    fail("expected to receive a fatal error message")
     return()
   endif()
 
   # Assert the captured fatal error message with the expected message.
   get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_fatal_error)
-  if(NOT "${ACTUAL_MESSAGE}" MATCHES "${EXPECTED_MESSAGE}")
-    fail("expected fatal error message" ACTUAL_MESSAGE
-      "to match" EXPECTED_MESSAGE)
+  if(NOT "${ACTUAL_MESSAGE}" ${OPERATOR} "${EXPECTED_MESSAGE}")
+    if(OPERATOR STREQUAL "MATCHES")
+      fail("expected fatal error message" ACTUAL_MESSAGE
+        "to match" EXPECTED_MESSAGE)
+    else()
+      fail("expected fatal error message" ACTUAL_MESSAGE
+        "to be equal to" EXPECTED_MESSAGE)
+    endif()
   endif()
 endfunction()
 
@@ -430,22 +447,24 @@ endfunction()
 # assert_execute_process(
 #   [COMMAND] <command> [<arguments>...]
 #   [EXPECT_FAIL]
-#   [EXPECT_OUTPUT <output>...]
-#   [EXPECT_ERROR <error>...])
+#   [EXPECT_OUTPUT [MATCHES|STREQUAL] <output>...]
+#   [EXPECT_ERROR [MATCHES|STREQUAL] <error>...])
 #
 # This function asserts whether the given `<command>` and `<arguments>`
 # successfully execute a process. If `EXPECT_FAIL` or `EXPECT_ERROR` is
-# specified, it instead asserts whether it fails to execute the process.
+# specified, it asserts that the process fails to execute.
 #
-# If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the
-# executed process matches the expected `<output>`. If more than one `<output>`
-# string is given, they are concatenated into a single output with no separator
-# between the strings.
+# If `EXPECT_OUTPUT` or `EXPECT_ERROR` is specified, it also asserts whether the
+# output or error of the executed process matches the expected output or error.
 #
-# If `EXPECT_ERROR` is specified, it also asserts whether the error of the
-# executed process matches the expected `<error>`. If more than one `<error>`
-# string is given, they are concatenated into a single error with no separator
-# between the strings.
+# If `MATCHES` is specified, it asserts whether the output or error matches the
+# `<output>` or `<error>`. If `STREQUAL` is specified, it asserts whether the
+# output or error is equal to `<output>` or `<error>`. If neither is specified,
+# it defaults to `MATCHES`.
+#
+# If more than one `<output>` or `<error>` string is given, they are
+# concatenated into a single output or error with no separator between the
+# strings.
 function(assert_execute_process)
   cmake_parse_arguments(
     PARSE_ARGV 0 ARG EXPECT_FAIL "" "COMMAND;EXPECT_OUTPUT;EXPECT_ERROR")
@@ -475,21 +494,43 @@ function(assert_execute_process)
   endif()
 
   if(DEFINED ARG_EXPECT_OUTPUT)
+    list(GET ARG_EXPECT_OUTPUT 0 OPERATOR)
+    if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
+      list(REMOVE_AT ARG_EXPECT_OUTPUT 0)
+    else()
+      set(OPERATOR "MATCHES")
+    endif()
     string(JOIN "" EXPECTED_OUTPUT ${ARG_EXPECT_OUTPUT})
-    if(NOT "${OUT}" MATCHES "${EXPECTED_OUTPUT}")
+    if(NOT "${OUT}" ${OPERATOR} "${EXPECTED_OUTPUT}")
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
-      fail("expected the output" OUT "of command" COMMAND
-        "to match" EXPECTED_OUTPUT)
+      if(OPERATOR STREQUAL "MATCHES")
+        fail("expected the output" OUT "of command" COMMAND
+          "to match" EXPECTED_OUTPUT)
+      else()
+        fail("expected the output" OUT "of command" COMMAND
+          "to be equal to" EXPECTED_OUTPUT)
+      endif()
       return()
     endif()
   endif()
 
   if(DEFINED ARG_EXPECT_ERROR)
+    list(GET ARG_EXPECT_ERROR 0 OPERATOR)
+    if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
+      list(REMOVE_AT ARG_EXPECT_ERROR 0)
+    else()
+      set(OPERATOR "MATCHES")
+    endif()
     string(JOIN "" EXPECTED_ERROR ${ARG_EXPECT_ERROR})
-    if(NOT "${ERR}" MATCHES "${EXPECTED_ERROR}")
+    if(NOT "${ERR}" ${OPERATOR} "${EXPECTED_ERROR}")
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
-      fail("expected the error" ERR "of command" COMMAND
-        "to match" EXPECTED_ERROR)
+      if(OPERATOR STREQUAL "MATCHES")
+        fail("expected the error" ERR "of command" COMMAND
+          "to match" EXPECTED_ERROR)
+      else()
+        fail("expected the error" ERR "of command" COMMAND
+          "to be equal to" EXPECTED_ERROR)
+      endif()
     endif()
   endif()
 endfunction()

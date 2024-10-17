@@ -175,12 +175,15 @@ Asserts whether a command call throws a fatal error message.
 
 ```cmake
 assert_fatal_error(
-  CALL <command> [<arguments>...] EXPECT_MESSAGE <message>...)
+  CALL <command> [<arguments>...]
+  EXPECT_MESSAGE [MATCHES|STREQUAL] <message>...)
 ```
 
-This function asserts whether a function or macro named `<command>`, called with the specified `<arguments>`, throws a fatal error message that matches the expected `<message>`.
+This function asserts whether a function or macro named `<command>`, called with the specified `<arguments>`, throws a fatal error message that satisfies the expected message.
 
-If more than one `<message>` string is given, they are concatenated into a single message with no separator between the strings.
+If `MATCHES` is specified, it asserts whether the received message matches the `<message>`. If `STREQUAL` is specified, it asserts whether the received message is equal to `<message>`. If nothing is specified, it defaults to the `MATCHES` parameter.
+
+If more than one `<message>` string is given, they are concatenated into a single message with no separators.
 
 #### Example
 
@@ -191,14 +194,13 @@ endfunction()
 
 assert_fatal_error(
   CALL throw_fatal_error "some message"
-  EXPECT_MESSAGE "some message")
+  EXPECT_MESSAGE STREQUAL "some message")
 ```
 
-The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message that matches `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:
+The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message equal to `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:
 
 ```
-expected to receive a fatal error message that matches:
-  some message
+expected to receive a fatal error message
 ```
 
 ### `assert_execute_process`
@@ -209,15 +211,17 @@ Asserts whether the given command correctly executes a process.
 assert_execute_process(
   [COMMAND] <command> [<arguments>...]
   [EXPECT_FAIL]
-  [EXPECT_OUTPUT <output>...]
-  [EXPECT_ERROR <error>...])
+  [EXPECT_OUTPUT [MATCHES|STREQUAL] <output>...]
+  [EXPECT_ERROR [MATCHES|STREQUAL] <error>...])
 ```
 
-This function asserts whether the given `<command>` and `<arguments>` successfully execute a process. If `EXPECT_FAIL` or `EXPECT_ERROR` is specified, it instead asserts whether it fails to execute the process.
+This function asserts whether the given `<command>` and `<arguments>` successfully execute a process. If `EXPECT_FAIL` or `EXPECT_ERROR` is specified, it asserts that the process fails to execute.
 
-If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the executed process matches the expected `<output>`. If more than one `<output>` string is given, they are concatenated into a single output with no separator between the strings.
+If `EXPECT_OUTPUT` or `EXPECT_ERROR` is specified, it also asserts whether the output or error of the executed process matches the expected output or error.
 
-If `EXPECT_ERROR` is specified, it also asserts whether the error of the executed process matches the expected `<error>`. If more than one `<error>` string is given, they are concatenated into a single error with no separator between the strings.
+If `MATCHES` is specified, it asserts whether the output or error matches the `<output>` or `<error>`. If `STREQUAL` is specified, it asserts whether the output or error is equal to `<output>` or `<error>`. If neither is specified, it defaults to `MATCHES`.
+
+If more than one `<output>` or `<error>` string is given, they are concatenated into a single output or error with no separator between the strings.
 
 #### Example
 
@@ -227,7 +231,7 @@ assert_execute_process(
   EXPECT_OUTPUT hello)
 ```
 
-The above example asserts whether the call to `${CMAKE_COMMAND} -E echo hello` successfully executes a process whose output matches `hello`. If it somehow fails to execute the process, it will throw the following fatal error message:
+The above example asserts that the call to `${CMAKE_COMMAND} -E echo hello` successfully executes a process whose output is equal to `hello`. If the process fails to execute, it will throw the following fatal error message:
 
 ```
 expected command:
