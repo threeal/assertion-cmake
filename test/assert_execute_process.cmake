@@ -10,7 +10,8 @@ section("process execution assertions")
   section("it should fail to assert a process execution")
     assert_fatal_error(
       CALL assert_execute_process "${CMAKE_COMMAND}" -E true EXPECT_FAIL
-      EXPECT_MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E true\nto fail")
+      EXPECT_MESSAGE STREQUAL "expected command:\n"
+        "  ${CMAKE_COMMAND} -E true\nto fail")
   endsection()
 endsection()
 
@@ -25,7 +26,7 @@ section("failed process execution assertions")
   section("it should fail to assert a failed process execution")
     assert_fatal_error(
       CALL assert_execute_process "${CMAKE_COMMAND}" -E make_directory some-file
-      EXPECT_MESSAGE "expected command:\n"
+      EXPECT_MESSAGE STREQUAL "expected command:\n"
         "  ${CMAKE_COMMAND} -E make_directory some-file\n"
         "not to fail with error:\n"
         "  Error creating directory \"some-file\".")
@@ -44,7 +45,7 @@ section("process execution output assertions")
 
     assert_execute_process(
       COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
-      EXPECT_OUTPUT STREQUAL "Hello world!\n")
+      EXPECT_OUTPUT STREQUAL "Hello world!")
   endsection()
 
   section("it should fail to assert a process execution output")
@@ -52,8 +53,8 @@ section("process execution output assertions")
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
         EXPECT_OUTPUT "Hello" ".*earth!"
-      EXPECT_MESSAGE "expected the output:\n"
-        ".*\n"
+      EXPECT_MESSAGE STREQUAL "expected the output:\n"
+        "  Hello world!\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E echo Hello world!\n"
         "to match:\n"
@@ -63,8 +64,8 @@ section("process execution output assertions")
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
         EXPECT_OUTPUT MATCHES "Hello" ".*earth!"
-      EXPECT_MESSAGE "expected the output:\n"
-        ".*\n"
+      EXPECT_MESSAGE STREQUAL "expected the output:\n"
+        "  Hello world!\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E echo Hello world!\n"
         "to match:\n"
@@ -74,12 +75,12 @@ section("process execution output assertions")
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
         EXPECT_OUTPUT STREQUAL "Hello earth!\n"
-      EXPECT_MESSAGE "expected the output:\n"
-        ".*\n"
+      EXPECT_MESSAGE STREQUAL "expected the output:\n"
+        "  Hello world!\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E echo Hello world!\n"
         "to be equal to:\n"
-        "  Hello earth!\n")
+        "  Hello earth!")
   endsection()
 endsection()
 
@@ -97,7 +98,7 @@ section("process execution error assertions")
 
     assert_execute_process(
       COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-      EXPECT_ERROR STREQUAL "Error creating directory \"some-file\".\n")
+      EXPECT_ERROR STREQUAL "Error creating directory \"some-file\".")
   endsection()
 
   section("it should fail to assert a process execution error")
@@ -105,8 +106,8 @@ section("process execution error assertions")
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
         EXPECT_ERROR "Error creating directory" ".*some-other-file"
-      EXPECT_MESSAGE "expected the error:\n"
-        ".*\n"
+      EXPECT_MESSAGE STREQUAL "expected the error:\n"
+        "  Error creating directory \"some-file\".\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E make_directory some-file\n"
         "to match:\n"
@@ -116,8 +117,8 @@ section("process execution error assertions")
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
         EXPECT_ERROR MATCHES "Error creating directory" ".*some-other-file"
-      EXPECT_MESSAGE "expected the error:\n"
-        ".*\n"
+      EXPECT_MESSAGE STREQUAL "expected the error:\n"
+        "  Error creating directory \"some-file\".\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E make_directory some-file\n"
         "to match:\n"
@@ -126,12 +127,12 @@ section("process execution error assertions")
     assert_fatal_error(
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-        EXPECT_ERROR STREQUAL "Error creating directory \"some-other-file\".\n"
-      EXPECT_MESSAGE "expected the error:\n"
-        ".*\n"
+        EXPECT_ERROR STREQUAL "Error creating directory \"some-other-file\"."
+      EXPECT_MESSAGE STREQUAL "expected the error:\n"
+        "  Error creating directory \"some-file\".\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E make_directory some-file\n"
         "to be equal to:\n"
-        "  Error creating directory \"some-other-file\".\n")
+        "  Error creating directory \"some-other-file\".")
   endsection()
 endsection()

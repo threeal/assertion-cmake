@@ -431,6 +431,7 @@ function(assert_fatal_error)
 
   # Assert the captured fatal error message with the expected message.
   get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_fatal_error)
+  string(STRIP "${ACTUAL_MESSAGE}" ACTUAL_MESSAGE)
   if(NOT "${ACTUAL_MESSAGE}" ${OPERATOR} "${EXPECTED_MESSAGE}")
     if(OPERATOR STREQUAL "MATCHES")
       fail("expected fatal error message" ACTUAL_MESSAGE
@@ -501,6 +502,8 @@ function(assert_execute_process)
       set(OPERATOR "MATCHES")
     endif()
     string(JOIN "" EXPECTED_OUTPUT ${ARG_EXPECT_OUTPUT})
+
+    string(STRIP "${OUT}" OUT)
     if(NOT "${OUT}" ${OPERATOR} "${EXPECTED_OUTPUT}")
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
       if(OPERATOR STREQUAL "MATCHES")
@@ -522,6 +525,8 @@ function(assert_execute_process)
       set(OPERATOR "MATCHES")
     endif()
     string(JOIN "" EXPECTED_ERROR ${ARG_EXPECT_ERROR})
+
+    string(STRIP "${ERR}" ERR)
     if(NOT "${ERR}" ${OPERATOR} "${EXPECTED_ERROR}")
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
       if(OPERATOR STREQUAL "MATCHES")
