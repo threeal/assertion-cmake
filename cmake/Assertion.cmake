@@ -350,16 +350,29 @@ endfunction()
 # Asserts whether a command call throws a fatal error message.
 #
 # assert_fatal_error(
-#   CALL <command> [<arguments>...] EXPECT_MESSAGE <message>...)
+#   CALL <command> [<arguments>...]
+#   EXPECT_MESSAGE [MATCHES|STREQUAL] <message>...)
 #
 # This function asserts whether a function or macro named `<command>`, called
-# with the specified `<arguments>`, throws a fatal error message that matches
-# the expected `<message>`.
+# with the specified `<arguments>`, throws a fatal error message that satisfies
+# the expected message.
+#
+# If `MATCHES` is specified, it asserts whether the received message matches the
+# `<message>`. If `STREQUAL` is specified, it asserts whether the received
+# message is equal to `<message>`. If nothing is specified, it defaults to the
+# `MATCHES` parameter.
 #
 # If more than one `<message>` string is given, they are concatenated into a
-# single message with no separator between the strings.
+# single message with no separators.
 function(assert_fatal_error)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_MESSAGE")
+
+  list(GET ARG_EXPECT_MESSAGE 0 OPERATOR)
+  if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
+    list(REMOVE_AT ARG_EXPECT_MESSAGE 0)
+  else()
+    set(OPERATOR "MATCHES")
+  endif()
   string(JOIN "" EXPECTED_MESSAGE ${ARG_EXPECT_MESSAGE})
 
   # Override the `message` function if it has not been overridden.
@@ -412,16 +425,20 @@ function(assert_fatal_error)
     math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} - 1")
     set_property(GLOBAL PROPERTY fatal_error_capture_level "${CAPTURE_LEVEL}")
 
-    fail("expected to receive a fatal error message that matches"
-      EXPECTED_MESSAGE)
+    fail("expected to receive a fatal error message")
     return()
   endif()
 
   # Assert the captured fatal error message with the expected message.
   get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_fatal_error)
-  if(NOT "${ACTUAL_MESSAGE}" MATCHES "${EXPECTED_MESSAGE}")
-    fail("expected fatal error message" ACTUAL_MESSAGE
-      "to match" EXPECTED_MESSAGE)
+  if(NOT "${ACTUAL_MESSAGE}" ${OPERATOR} "${EXPECTED_MESSAGE}")
+    if(OPERATOR STREQUAL "MATCHES")
+      fail("expected fatal error message" ACTUAL_MESSAGE
+        "to match" EXPECTED_MESSAGE)
+    else()
+      fail("expected fatal error message" ACTUAL_MESSAGE
+        "to be equal to" EXPECTED_MESSAGE)
+    endif()
   endif()
 endfunction()
 

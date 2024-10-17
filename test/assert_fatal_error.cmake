@@ -8,9 +8,12 @@ section("it should assert a fatal error message")
     EXPECT_MESSAGE "some fa.*ror message")
 
   assert_fatal_error(
-    CALL message FATAL_ERROR "some fatal error message "
-      "with additional message"
-    EXPECT_MESSAGE "some fa.*ror message with additional message")
+    CALL message FATAL_ERROR "some fatal error message"
+    EXPECT_MESSAGE MATCHES "some fa.*ror message")
+
+  assert_fatal_error(
+    CALL message FATAL_ERROR "some fatal error message"
+    EXPECT_MESSAGE STREQUAL "some fatal error message")
 endsection()
 
 section("it should fail to assert a fatal error message")
@@ -22,10 +25,36 @@ section("it should fail to assert a fatal error message")
 
   assert_fatal_error(
     CALL failed_assertion
-    EXPECT_MESSAGE "expected fatal error message:\n"
+    EXPECT_MESSAGE STREQUAL "expected fatal error message:\n"
       "  some fatal error message\n"
       "to match:\n"
       "  some other fa.*ror message")
+
+  macro(failed_assertion)
+    assert_fatal_error(
+      CALL message FATAL_ERROR "some fatal error message"
+      EXPECT_MESSAGE MATCHES "some other fa.*ror message")
+  endmacro()
+
+  assert_fatal_error(
+    CALL failed_assertion
+    EXPECT_MESSAGE STREQUAL "expected fatal error message:\n"
+      "  some fatal error message\n"
+      "to match:\n"
+      "  some other fa.*ror message")
+
+  macro(failed_assertion)
+    assert_fatal_error(
+      CALL message FATAL_ERROR "some fatal error message"
+      EXPECT_MESSAGE STREQUAL "some other fatal error message")
+  endmacro()
+
+  assert_fatal_error(
+    CALL failed_assertion
+    EXPECT_MESSAGE STREQUAL "expected fatal error message:\n"
+      "  some fatal error message\n"
+      "to be equal to:\n"
+      "  some other fatal error message")
 endsection()
 
 section("it should fail to assert a fatal error message "
@@ -38,6 +67,5 @@ section("it should fail to assert a fatal error message "
 
   assert_fatal_error(
     CALL failed_assertion
-    EXPECT_MESSAGE "expected to receive a fatal error message that matches:\n"
-      "  some message")
+    EXPECT_MESSAGE "expected to receive a fatal error message")
 endsection()

@@ -175,12 +175,15 @@ Asserts whether a command call throws a fatal error message.
 
 ```cmake
 assert_fatal_error(
-  CALL <command> [<arguments>...] EXPECT_MESSAGE <message>...)
+  CALL <command> [<arguments>...]
+  EXPECT_MESSAGE [MATCHES|STREQUAL] <message>...)
 ```
 
-This function asserts whether a function or macro named `<command>`, called with the specified `<arguments>`, throws a fatal error message that matches the expected `<message>`.
+This function asserts whether a function or macro named `<command>`, called with the specified `<arguments>`, throws a fatal error message that satisfies the expected message.
 
-If more than one `<message>` string is given, they are concatenated into a single message with no separator between the strings.
+If `MATCHES` is specified, it asserts whether the received message matches the `<message>`. If `STREQUAL` is specified, it asserts whether the received message is equal to `<message>`. If nothing is specified, it defaults to the `MATCHES` parameter.
+
+If more than one `<message>` string is given, they are concatenated into a single message with no separators.
 
 #### Example
 
@@ -191,14 +194,13 @@ endfunction()
 
 assert_fatal_error(
   CALL throw_fatal_error "some message"
-  EXPECT_MESSAGE "some message")
+  EXPECT_MESSAGE STREQUAL "some message")
 ```
 
-The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message that matches `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:
+The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message equal to `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:
 
 ```
-expected to receive a fatal error message that matches:
-  some message
+expected to receive a fatal error message
 ```
 
 ### `assert_execute_process`
