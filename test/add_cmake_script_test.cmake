@@ -56,9 +56,19 @@ section("it should create a new test with predefined variables")
     ctest --test-dir project/build --no-tests=error)
 endsection()
 
-file(REMOVE project/test.cmake)
+section("it should fail to create a new test due to script mode")
+  file(WRITE project/script.cmake
+    "include(${ASSERTION_LIST_FILE})\n"
+    "add_cmake_script_test(test.cmake)\n")
+
+  assert_execute_process(
+    COMMAND "${CMAKE_COMMAND}" -P project/script.cmake
+    EXPECT_ERROR "Unable to add a new test in script mode")
+endsection()
 
 section("it should fail to create a new test due to a non-existent file")
+  file(REMOVE project/test.cmake)
+
   assert_execute_process(
     COMMAND "${CMAKE_COMMAND}" --fresh -S project -B project/build
     EXPECT_ERROR "Cannot find test file:.*test.cmake")
