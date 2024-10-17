@@ -429,12 +429,13 @@ endfunction()
 #
 # assert_execute_process(
 #   [COMMAND] <command> [<arguments>...]
+#   [EXPECT_FAIL]
 #   [EXPECT_OUTPUT <output>...]
 #   [EXPECT_ERROR <error>...])
 #
 # This function asserts whether the given `<command>` and `<arguments>`
-# successfully execute a process. If `EXPECT_ERROR` is specified, it instead
-# asserts whether it fails to execute the process.
+# successfully execute a process. If `EXPECT_FAIL` or `EXPECT_ERROR` is
+# specified, it instead asserts whether it fails to execute the process.
 #
 # If `EXPECT_OUTPUT` is specified, it also asserts whether the output of the
 # executed process matches the expected `<output>`. If more than one `<output>`
@@ -447,7 +448,7 @@ endfunction()
 # between the strings.
 function(assert_execute_process)
   cmake_parse_arguments(
-    PARSE_ARGV 0 ARG "" "" "COMMAND;EXPECT_OUTPUT;EXPECT_ERROR")
+    PARSE_ARGV 0 ARG EXPECT_FAIL "" "COMMAND;EXPECT_OUTPUT;EXPECT_ERROR")
 
   if(NOT DEFINED ARG_COMMAND)
     set(ARG_COMMAND ${ARG_UNPARSED_ARGUMENTS})
@@ -459,7 +460,7 @@ function(assert_execute_process)
     OUTPUT_VARIABLE OUT
     ERROR_VARIABLE ERR)
 
-  if(DEFINED ARG_EXPECT_ERROR)
+  if(ARG_EXPECT_FAIL OR DEFINED ARG_EXPECT_ERROR)
     if(RES EQUAL 0)
       string(REPLACE ";" " " COMMAND "${ARG_COMMAND}")
       fail("expected command" COMMAND "to fail")

@@ -9,7 +9,7 @@ section("process execution assertions")
 
   section("it should fail to assert a process execution")
     assert_fatal_error(
-      CALL assert_execute_process "${CMAKE_COMMAND}" -E true EXPECT_ERROR .*
+      CALL assert_execute_process "${CMAKE_COMMAND}" -E true EXPECT_FAIL
       EXPECT_MESSAGE "expected command:\n  ${CMAKE_COMMAND} -E true\nto fail")
   endsection()
 endsection()
@@ -19,7 +19,7 @@ section("failed process execution assertions")
 
   section("it should assert a failed process execution")
     assert_execute_process(
-      "${CMAKE_COMMAND}" -E make_directory some-file EXPECT_ERROR .*)
+      "${CMAKE_COMMAND}" -E make_directory some-file EXPECT_FAIL)
   endsection()
 
   section("it should fail to assert a failed process execution")
