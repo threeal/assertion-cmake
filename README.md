@@ -100,9 +100,9 @@ Adds a new test that processes the given CMake file in script mode.
 add_cmake_script_test(<file> [NAME <name>] [DEFINITIONS <variables>...])
 ```
 
-This function adds a new test that processes the given `<file>` in script mode. If `NAME` is specified, it will use `<name>` as the test name; otherwise, it will use `<file>`.
+This function adds a new test that processes the specified `<file>` in script mode. If `NAME` is provided, `<name>` will be used as the test name; otherwise, the test name will default to `<file>`.
 
-If `DEFINITIONS` is specified, the script is processed with predefined variables listed in `<variables>`. Each entry in `<variables>` should be in the format `<name>=<value>`, where `<name>` is the variable name and `<value>` is the variable value.
+If the `CMAKE_SCRIPT_TEST_DEFINITIONS` variable is defined, the script will be processed with the predefined variables listed in that variable. Each entry should be in the format `<name>=<value>`, where `<name>` is the variable name and `<value>` is its value. If `DEFINITIONS` is specified, additional variables will also be defined.
 
 #### Example
 

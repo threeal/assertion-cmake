@@ -9,7 +9,6 @@ set(CMAKELISTS_HEADER
   "include(${ASSERTION_LIST_FILE})\n"
   "enable_testing()\n")
 
-
 file(REMOVE_RECURSE project)
 file(WRITE project/test.cmake "message(\"all ok\")\n")
 
@@ -41,18 +40,20 @@ section("it should create a new test with the specified name")
     ctest --test-dir project/build -R "^a test$" --no-tests=error)
 endsection()
 
-file(WRITE project/test.cmake
-  "include(\"\${ASSERTION_LIST_FILE}\")\n"
-  "assert(FOO STREQUAL foo)\n")
-
 section("it should create a new test with predefined variables")
+  file(WRITE project/test.cmake
+    "include(\"${ASSERTION_LIST_FILE}\")\n"
+    "assert(FOO STREQUAL foo)\n"
+    "assert(BAR STREQUAL barbar)\n"
+    "assert(BAZ STREQUAL baz)\n")
+
   file(WRITE project/CMakeLists.txt ${CMAKELISTS_HEADER}
-    "add_cmake_script_test(test.cmake\n"
-    "  DEFINES ASSERTION_LIST_FILE=\${ASSERTION_LIST_FILE} FOO=foo)\n")
+    "set(CMAKE_SCRIPT_TEST_DEFINITIONS FOO=foo BAR=bar)\n"
+    "add_cmake_script_test(test.cmake DEFINITIONS BAR=barbar BAZ=baz)\n")
 
   assert_execute_process("${CMAKE_COMMAND}" --fresh -S project -B project/build)
   assert_execute_process(
-    ctest --test-dir project/build -R --no-tests=error)
+    ctest --test-dir project/build --no-tests=error)
 endsection()
 
 file(REMOVE project/test.cmake)

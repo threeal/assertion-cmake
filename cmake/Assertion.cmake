@@ -27,14 +27,16 @@ set(ASSERTION_VERSION 2.0.0)
 #
 # add_cmake_script_test(<file> [NAME <name>] [DEFINITIONS <variables>...])
 #
-# This function adds a new test that processes the given `<file>` in script
-# mode. If `NAME` is specified, it will use `<name>` as the test name;
-# otherwise, it will use `<file>`.
 #
-# If `DEFINITIONS` is specified, the script is processed with predefined
-# variables listed in `<variables>`. Each entry in `<variables>` should be in
-# the format `<name>=<value>`, where `<name>` is the variable name and `<value>`
-# is the variable value.
+# This function adds a new test that processes the specified `<file>` in script
+# mode. If `NAME` is provided, `<name>` will be used as the test name;
+# otherwise, the test name will default to `<file>`.
+#
+# If the `CMAKE_SCRIPT_TEST_DEFINITIONS` variable is defined, the script will be
+# processed with the predefined variables listed in that variable. Each entry
+# should be in the format `<name>=<value>`, where `<name>` is the variable name
+# and `<value>` is its value. If `DEFINITIONS` is specified, additional
+# variables will also be defined.
 function(add_cmake_script_test FILE)
   cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME DEFINITIONS)
 
@@ -48,7 +50,7 @@ function(add_cmake_script_test FILE)
   endif()
 
   set(TEST_COMMAND "${CMAKE_COMMAND}")
-  foreach(DEFINITION IN LISTS ARG_DEFINITIONS)
+  foreach(DEFINITION IN LISTS CMAKE_SCRIPT_TEST_DEFINITIONS ARG_DEFINITIONS)
     list(APPEND TEST_COMMAND -D "${DEFINITION}")
   endforeach()
   list(APPEND TEST_COMMAND -P "${FILE}")
