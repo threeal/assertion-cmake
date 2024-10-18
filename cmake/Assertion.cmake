@@ -358,7 +358,7 @@ endfunction()
 #
 # assert_call(
 #   [CALL] <command> [<arguments>...]
-#   EXPECT_FATAL_ERROR [MATCHES|STREQUAL] <message>...)
+#   EXPECT_ERROR [MATCHES|STREQUAL] <message>...)
 #
 # This function performs an assertion on the function or macro named
 # `<command>`, called with the specified `<arguments>`. It currently only allows
