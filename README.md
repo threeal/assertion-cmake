@@ -34,7 +34,7 @@ Alternatively, to support offline mode, this module can also be vendored directl
 There are three functions provided by this module that can be used to perform assertions in CMake code:
 
 - `assert`: Performs an assertion on the given condition.
-- `assert_fatal_error`: Performs an assertion on whether the given call throws a fatal error.
+- `assert_call`: Performs an assertion on the given command call.
 - `assert_execute_process`: Performs an assertion on whether the given command correctly executes a process.
 
 For example, given the following `git_clone` function for cloning a Git repository from the given `URL` and setting the `OUTPUT_VAR` with the path of the cloned Git repository directory:
@@ -69,9 +69,9 @@ assert(IS_DIRECTORY "${CMAKE_STARTER_DIR}")
 assert_execute_process(
   git -C "${CMAKE_STARTER_DIR}" rev-parse --is-inside-work-tree)
 
-assert_fatal_error(
+assert_call(
   CALL git_clone https://github.com GITHUB_DIR
-  EXPECT_MESSAGE "failed to clone 'https://github.com'")
+  EXPECT_FATAL_ERROR "failed to clone 'https://github.com'")
 ```
 
 ### Test Creation
@@ -169,19 +169,19 @@ expected variable:
 to be defined
 ```
 
-### `assert_fatal_error`
+### `assert_call`
 
-Asserts whether a command call throws a fatal error message.
+Performs an assertion on the given command call.
 
 ```cmake
-assert_fatal_error(
+assert_call(
   CALL <command> [<arguments>...]
-  EXPECT_MESSAGE [MATCHES|STREQUAL] <message>...)
+  EXPECT_FATAL_ERROR [MATCHES|STREQUAL] <message>...)
 ```
 
-This function asserts whether a function or macro named `<command>`, called with the specified `<arguments>`, throws a fatal error message that satisfies the expected message.
+This function performs an assertion on the function or macro named `<command>`, called with the specified `<arguments>`. It currently only allows asserting whether the given command throws a fatal error message that satisfies the expected message.
 
-If `MATCHES` is specified, it asserts whether the received message matches the `<message>`. If `STREQUAL` is specified, it asserts whether the received message is equal to `<message>`. If nothing is specified, it defaults to the `MATCHES` parameter.
+If `MATCHES` is specified, it asserts whether the received message matches `<message>`. If `STREQUAL` is specified, it asserts whether the received message is equal to `<message>`. If nothing is specified, it defaults to the `MATCHES` parameter.
 
 If more than one `<message>` string is given, they are concatenated into a single message with no separators.
 
@@ -192,9 +192,9 @@ function(throw_fatal_error MESSAGE)
   message(FATAL_ERROR "${MESSAGE}")
 endfunction()
 
-assert_fatal_error(
+assert_call(
   CALL throw_fatal_error "some message"
-  EXPECT_MESSAGE STREQUAL "some message")
+  EXPECT_FATAL_ERROR STREQUAL "some message")
 ```
 
 The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message equal to `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:
