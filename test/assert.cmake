@@ -41,12 +41,10 @@ section("boolean condition assertions")
   endsection()
 
   section("it should fail to assert boolean conditions")
-    assert_call(
-      CALL assert FALSE
+    assert_call(assert FALSE
       EXPECT_FATAL_ERROR STREQUAL "expected:\n  FALSE\nto resolve to true")
 
-    assert_call(
-      CALL assert NOT TRUE
+    assert_call(assert NOT TRUE
       EXPECT_FATAL_ERROR STREQUAL "expected:\n  NOT TRUE\nto resolve to true")
   endsection()
 endsection()
@@ -61,13 +59,11 @@ section("command existence condition assertions")
   endsection()
 
   section("it should fail to assert command existence conditions")
-    assert_call(
-      CALL assert COMMAND non_existing_command
+    assert_call(assert COMMAND non_existing_command
       EXPECT_FATAL_ERROR STREQUAL
         "expected command:\n  non_existing_command\nto be defined")
 
-    assert_call(
-      CALL assert NOT COMMAND existing_command
+    assert_call(assert NOT COMMAND existing_command
       EXPECT_FATAL_ERROR STREQUAL
         "expected command:\n  existing_command\nnot to be defined")
   endsection()
@@ -80,12 +76,10 @@ section("policy existence condition assertions")
   endsection()
 
   section("it should fail to assert policy existence conditions")
-    assert_call(
-      CALL assert POLICY CMPXXXX
+    assert_call(assert POLICY CMPXXXX
       EXPECT_FATAL_ERROR STREQUAL "expected policy:\n  CMPXXXX\nto exist")
 
-    assert_call(
-      CALL assert NOT POLICY CMP0000
+    assert_call(assert NOT POLICY CMP0000
       EXPECT_FATAL_ERROR STREQUAL "expected policy:\n  CMP0000\nnot to exist")
   endsection()
 endsection()
@@ -105,13 +99,11 @@ section("target existence condition assertions")
     assert_configure_sample_project(
       "add_custom_target(some_target)\n"
       "\n"
-      "assert_call(\n"
-      "  CALL assert TARGET non_existing_target\n"
+      "assert_call(assert TARGET non_existing_target\n"
       "  EXPECT_FATAL_ERROR STREQUAL\n"
       "    \"expected target:\\n  non_existing_target\\nto exist\")\n"
       "\n"
-      "assert_call(\n"
-      "  CALL assert NOT TARGET some_target\n"
+      "assert_call(assert NOT TARGET some_target\n"
       "  EXPECT_FATAL_ERROR STREQUAL\n"
       "    \"expected target:\\n  some_target\\nnot to exist\")\n")
   endsection()
@@ -132,13 +124,11 @@ section("test existence condition assertions")
     assert_configure_sample_project(
       "add_test(NAME some_test COMMAND some_command)\n"
       "\n"
-      "assert_call(\n"
-      "  CALL assert TEST non_existing_test\n"
+      "assert_call(assert TEST non_existing_test\n"
       "  EXPECT_FATAL_ERROR STREQUAL\n"
       "    \"expected test:\\n  non_existing_test\\nto exist\")\n"
       "\n"
-      "assert_call(\n"
-      "  CALL assert NOT TEST some_test\n"
+      "assert_call(assert NOT TEST some_test\n"
       "  EXPECT_FATAL_ERROR STREQUAL\n"
       "    \"expected test:\\n  some_test\\nnot to exist\")\n")
   endsection()
@@ -154,13 +144,11 @@ section("variable existence condition assertions")
   endsection()
 
   section("it should fail to assert variable existence conditions")
-    assert_call(
-      CALL assert DEFINED NON_EXISTING_VARIABLE
+    assert_call(assert DEFINED NON_EXISTING_VARIABLE
       EXPECT_FATAL_ERROR STREQUAL
         "expected variable:\n  NON_EXISTING_VARIABLE\nto be defined")
 
-    assert_call(
-      CALL assert NOT DEFINED EXISTING_VARIABLE
+    assert_call(assert NOT DEFINED EXISTING_VARIABLE
       EXPECT_FATAL_ERROR STREQUAL
         "expected variable:\n  EXISTING_VARIABLE\nnot to be defined")
   endsection()
@@ -181,14 +169,12 @@ section("list element existence condition assertions")
   endsection()
 
   section("it should fail to assert list element existence conditions")
-    assert_call(
-      CALL assert "other element" IN_LIST SOME_LIST
+    assert_call(assert "other element" IN_LIST SOME_LIST
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  other element\n"
         "to exist in:\n  some element\;some other element\n"
         "of variable:\n  SOME_LIST")
 
-    assert_call(
-      CALL assert NOT "some element" IN_LIST SOME_LIST
+    assert_call(assert NOT "some element" IN_LIST SOME_LIST
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some element\n"
         "not to exist in:\n  some element\;some other element\n"
         "of variable:\n  SOME_LIST")
@@ -205,13 +191,11 @@ section("path existence condition assertions")
   endsection()
 
   section("it should fail to assert path existence conditions")
-    assert_call(
-      CALL assert EXISTS non_existing_file
+    assert_call(assert EXISTS non_existing_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  non_existing_file\nto exist")
 
-    assert_call(
-      CALL assert NOT EXISTS some_file
+    assert_call(assert NOT EXISTS some_file
       EXPECT_FATAL_ERROR STREQUAL "expected path:\n  some_file\nnot to exist")
   endsection()
 endsection()
@@ -229,13 +213,11 @@ section("path readability condition assertions")
   endsection()
 
   section("it should fail to assert path readability conditions")
-    assert_call(
-      CALL assert IS_READABLE non_readable_file
+    assert_call(assert IS_READABLE non_readable_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  non_readable_file\nto be readable")
 
-    assert_call(
-      CALL assert NOT IS_READABLE some_file
+    assert_call(assert NOT IS_READABLE some_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_file\nnot to be readable")
   endsection()
@@ -253,13 +235,11 @@ section("path writability condition assertions")
   endsection()
 
   section("it should fail to assert path writability conditions")
-    assert_call(
-      CALL assert IS_WRITABLE non_writable_file
+    assert_call(assert IS_WRITABLE non_writable_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  non_writable_file\nto be writable")
 
-    assert_call(
-      CALL assert NOT IS_WRITABLE some_file
+    assert_call(assert NOT IS_WRITABLE some_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_file\nnot to be writable")
   endsection()
@@ -281,13 +261,11 @@ section("executable path condition assertions")
   endsection()
 
   section("it should fail to assert executable path conditions")
-    assert_call(
-      CALL assert IS_EXECUTABLE some_file
+    assert_call(assert IS_EXECUTABLE some_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_file\nto be an executable")
 
-    assert_call(
-      CALL assert NOT IS_EXECUTABLE some_executable
+    assert_call(assert NOT IS_EXECUTABLE some_executable
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_executable\nnot to be an executable")
   endsection()
@@ -307,13 +285,11 @@ section("file recency condition assertions")
   endsection()
 
   section("it should fail to assert file recency conditions")
-    assert_call(
-      CALL assert old_file IS_NEWER_THAN new_file
+    assert_call(assert old_file IS_NEWER_THAN new_file
       EXPECT_FATAL_ERROR STREQUAL "expected file:\n  old_file\n"
         "to be newer than:\n  new_file")
 
-    assert_call(
-      CALL assert NOT new_file IS_NEWER_THAN old_file
+    assert_call(assert NOT new_file IS_NEWER_THAN old_file
       EXPECT_FATAL_ERROR STREQUAL "expected file:\n  new_file\n"
         "not to be newer than:\n  old_file")
   endsection()
@@ -329,13 +305,11 @@ section("directory path condition assertions")
   endsection()
 
   section("it should fail to assert directory path conditions")
-    assert_call(
-      CALL assert IS_DIRECTORY some_file
+    assert_call(assert IS_DIRECTORY some_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_file\nto be a directory")
 
-    assert_call(
-      CALL assert NOT IS_DIRECTORY some_directory
+    assert_call(assert NOT IS_DIRECTORY some_directory
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_directory\nnot to be a directory")
   endsection()
@@ -351,13 +325,11 @@ section("symbolic link path condition assertions")
   endsection()
 
   section("it should fail to assert symbolic link path conditions")
-    assert_call(
-      CALL assert IS_SYMLINK some_file
+    assert_call(assert IS_SYMLINK some_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_file\nto be a symbolic link")
 
-    assert_call(
-      CALL assert NOT IS_SYMLINK some_symlink
+    assert_call(assert NOT IS_SYMLINK some_symlink
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_symlink\nnot to be a symbolic link")
   endsection()
@@ -370,13 +342,11 @@ section("absolute path condition assertions")
   endsection()
 
   section("it should fail to assert absolute path conditions")
-    assert_call(
-      CALL assert IS_ABSOLUTE some/relative/path
+    assert_call(assert IS_ABSOLUTE some/relative/path
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some/relative/path\nto be absolute")
 
-    assert_call(
-      CALL assert NOT IS_ABSOLUTE /some/absolute/path
+    assert_call(assert NOT IS_ABSOLUTE /some/absolute/path
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  /some/absolute/path\nnot to be absolute")
   endsection()
@@ -394,13 +364,11 @@ section("regular expression match condition assertions")
   endsection()
 
   section("it should fail to assert regular expression match conditions")
-    assert_call(
-      CALL assert "some string" MATCHES "so.*other.*ing"
+    assert_call(assert "some string" MATCHES "so.*other.*ing"
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
         "to match:\n  so.*other.*ing")
 
-    assert_call(
-      CALL assert NOT "some string" MATCHES "so.*ing"
+    assert_call(assert NOT "some string" MATCHES "so.*ing"
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
         "not to match:\n  so.*ing")
   endsection()
@@ -426,28 +394,23 @@ section("number equality condition assertions")
     endsection()
 
     section("it should fail to assert number equality conditions")
-      assert_call(
-        CALL assert 7 LESS 7
+      assert_call(assert 7 LESS 7
         EXPECT_FATAL_ERROR STREQUAL
           "expected number:\n  7\nto be less than:\n  7")
 
-      assert_call(
-        CALL assert 7 GREATER 7
+      assert_call(assert 7 GREATER 7
         EXPECT_FATAL_ERROR STREQUAL
           "expected number:\n  7\nto be greater than:\n  7")
 
-      assert_call(
-        CALL assert NOT 7 EQUAL 7
+      assert_call(assert NOT 7 EQUAL 7
         EXPECT_FATAL_ERROR STREQUAL
           "expected number:\n  7\nnot to be equal to:\n  7")
 
-      assert_call(
-        CALL assert NOT 7 LESS_EQUAL 7
+      assert_call(assert NOT 7 LESS_EQUAL 7
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "not to be less than or equal to:\n  7")
 
-      assert_call(
-        CALL assert NOT 7 GREATER_EQUAL 7
+      assert_call(assert NOT 7 GREATER_EQUAL 7
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "not to be greater than or equal to:\n  7")
     endsection()
@@ -469,28 +432,23 @@ section("number equality condition assertions")
     endsection()
 
     section("it should fail to assert number equality conditions")
-      assert_call(
-        CALL assert NOT 7 LESS 13
+      assert_call(assert NOT 7 LESS 13
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "not to be less than:\n  13")
 
-      assert_call(
-        CALL assert 7 GREATER 13
+      assert_call(assert 7 GREATER 13
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "to be greater than:\n  13")
 
-      assert_call(
-        CALL assert 7 EQUAL 13
+      assert_call(assert 7 EQUAL 13
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "to be equal to:\n  13")
 
-      assert_call(
-        CALL assert NOT 7 LESS_EQUAL 13
+      assert_call(assert NOT 7 LESS_EQUAL 13
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "not to be less than or equal to:\n  13")
 
-      assert_call(
-        CALL assert 7 GREATER_EQUAL 13
+      assert_call(assert 7 GREATER_EQUAL 13
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "to be greater than or equal to:\n  13")
     endsection()
@@ -512,28 +470,23 @@ section("number equality condition assertions")
     endsection()
 
     section("it should fail to assert number equality conditions")
-      assert_call(
-        CALL assert 13 LESS 7
+      assert_call(assert 13 LESS 7
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
           "to be less than:\n  7")
 
-      assert_call(
-        CALL assert NOT 13 GREATER 7
+      assert_call(assert NOT 13 GREATER 7
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
           "not to be greater than:\n  7")
 
-      assert_call(
-        CALL assert 13 EQUAL 7
+      assert_call(assert 13 EQUAL 7
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
           "to be equal to:\n  7")
 
-      assert_call(
-        CALL assert 13 LESS_EQUAL 7
+      assert_call(assert 13 LESS_EQUAL 7
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
           "to be less than or equal to:\n  7")
 
-      assert_call(
-        CALL assert NOT 13 GREATER_EQUAL 7
+      assert_call(assert NOT 13 GREATER_EQUAL 7
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
           "not to be greater than or equal to:\n  7")
     endsection()
@@ -557,28 +510,23 @@ section("number equality condition assertions")
     endsection()
 
     section("it should fail to assert number equality conditions")
-      assert_call(
-        CALL assert 7 LESS  "some string"
+      assert_call(assert 7 LESS  "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "to be less than:\n  some string")
 
-      assert_call(
-        CALL assert 7 GREATER "some string"
+      assert_call(assert 7 GREATER "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "to be greater than:\n  some string")
 
-      assert_call(
-        CALL assert 7 EQUAL "some string"
+      assert_call(assert 7 EQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "to be equal to:\n  some string")
 
-      assert_call(
-        CALL assert 7 LESS_EQUAL "some string"
+      assert_call(assert 7 LESS_EQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "to be less than or equal to:\n  some string")
 
-      assert_call(
-        CALL assert 7 GREATER_EQUAL "some string"
+      assert_call(assert 7 GREATER_EQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
           "to be greater than or equal to:\n  some string")
     endsection()
@@ -605,28 +553,23 @@ section("string equality condition assertions")
     endsection()
 
     section("it should fail to assert string equality conditions")
-      assert_call(
-        CALL assert "some string" STRLESS "some string"
+      assert_call(assert "some string" STRLESS "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "to be less than:\n  some string")
 
-      assert_call(
-        CALL assert "some string" STRGREATER "some string"
+      assert_call(assert "some string" STRGREATER "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "to be greater than:\n  some string")
 
-      assert_call(
-        CALL assert NOT "some string" STREQUAL "some string"
+      assert_call(assert NOT "some string" STREQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "not to be equal to:\n  some string")
 
-      assert_call(
-        CALL assert NOT "some string" STRLESS_EQUAL "some string"
+      assert_call(assert NOT "some string" STRLESS_EQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "not to be less than or equal to:\n  some string")
 
-      assert_call(
-        CALL assert NOT "some string" STRGREATER_EQUAL "some string"
+      assert_call(assert NOT "some string" STRGREATER_EQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "not to be greater than or equal to:\n  some string")
     endsection()
@@ -648,28 +591,23 @@ section("string equality condition assertions")
     endsection()
 
     section("it should fail to assert string equality conditions")
-      assert_call(
-        CALL assert NOT "some other string" STRLESS "some string"
+      assert_call(assert NOT "some other string" STRLESS "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some other string\n"
           "not to be less than:\n  some string")
 
-      assert_call(
-        CALL assert "some other string" STRGREATER "some string"
+      assert_call(assert "some other string" STRGREATER "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some other string\n"
           "to be greater than:\n  some string")
 
-      assert_call(
-        CALL assert "some other string" STREQUAL "some string"
+      assert_call(assert "some other string" STREQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some other string\n"
           "to be equal to:\n  some string")
 
-      assert_call(
-        CALL assert NOT "some other string" STRLESS_EQUAL "some string"
+      assert_call(assert NOT "some other string" STRLESS_EQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some other string\n"
           "not to be less than or equal to:\n  some string")
 
-      assert_call(
-        CALL assert "some other string" STRGREATER_EQUAL "some string"
+      assert_call(assert "some other string" STRGREATER_EQUAL "some string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some other string\n"
           "to be greater than or equal to:\n  some string")
     endsection()
@@ -691,28 +629,23 @@ section("string equality condition assertions")
     endsection()
 
     section("it should fail to assert string equality conditions")
-      assert_call(
-        CALL assert "some string" STRLESS "some other string"
+      assert_call(assert "some string" STRLESS "some other string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "to be less than:\n  some other string")
 
-      assert_call(
-        CALL assert NOT "some string" STRGREATER "some other string"
+      assert_call(assert NOT "some string" STRGREATER "some other string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "not to be greater than:\n  some other string")
 
-      assert_call(
-        CALL assert "some string" STREQUAL "some other string"
+      assert_call(assert "some string" STREQUAL "some other string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "to be equal to:\n  some other string")
 
-      assert_call(
-        CALL assert "some string" STRLESS_EQUAL "some other string"
+      assert_call(assert "some string" STRLESS_EQUAL "some other string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "to be less than or equal to:\n  some other string")
 
-      assert_call(
-        CALL assert NOT "some string" STRGREATER_EQUAL "some other string"
+      assert_call(assert NOT "some string" STRGREATER_EQUAL "some other string"
         EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
           "not to be greater than or equal to:\n  some other string")
     endsection()
@@ -740,28 +673,23 @@ section("version equality condition assertions")
     endsection()
 
     section("it should fail to assert version equality conditions")
-      assert_call(
-        CALL assert 1.2.3 VERSION_LESS 1.02.3
+      assert_call(assert 1.2.3 VERSION_LESS 1.02.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "to be less than:\n  1.02.3")
 
-      assert_call(
-        CALL assert 1.2.3 VERSION_GREATER 1.02.3
+      assert_call(assert 1.2.3 VERSION_GREATER 1.02.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "to be greater than:\n  1.02.3")
 
-      assert_call(
-        CALL assert NOT 1.2.3 VERSION_EQUAL 1.02.3
+      assert_call(assert NOT 1.2.3 VERSION_EQUAL 1.02.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "not to be equal to:\n  1.02.3")
 
-      assert_call(
-        CALL assert NOT 1.2.3 VERSION_LESS_EQUAL 1.02.3
+      assert_call(assert NOT 1.2.3 VERSION_LESS_EQUAL 1.02.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "not to be less than or equal to:\n  1.02.3")
 
-      assert_call(
-        CALL assert NOT 1.2.3 VERSION_GREATER_EQUAL 1.02.3
+      assert_call(assert NOT 1.2.3 VERSION_GREATER_EQUAL 1.02.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "not to be greater than or equal to:\n  1.02.3")
     endsection()
@@ -783,28 +711,23 @@ section("version equality condition assertions")
     endsection()
 
     section("it should fail to assert version equality conditions")
-      assert_call(
-        CALL assert NOT 1.2.3 VERSION_LESS 1.3.4
+      assert_call(assert NOT 1.2.3 VERSION_LESS 1.3.4
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "not to be less than:\n  1.3.4")
 
-      assert_call(
-        CALL assert 1.2.3 VERSION_GREATER 1.3.4
+      assert_call(assert 1.2.3 VERSION_GREATER 1.3.4
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "to be greater than:\n  1.3.4")
 
-      assert_call(
-        CALL assert 1.2.3 VERSION_EQUAL 1.3.4
+      assert_call(assert 1.2.3 VERSION_EQUAL 1.3.4
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "to be equal to:\n  1.3.4")
 
-      assert_call(
-        CALL assert NOT 1.2.3 VERSION_LESS_EQUAL 1.3.4
+      assert_call(assert NOT 1.2.3 VERSION_LESS_EQUAL 1.3.4
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "not to be less than or equal to:\n  1.3.4")
 
-      assert_call(
-        CALL assert 1.2.3 VERSION_GREATER_EQUAL 1.3.4
+      assert_call(assert 1.2.3 VERSION_GREATER_EQUAL 1.3.4
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
           "to be greater than or equal to:\n  1.3.4")
     endsection()
@@ -826,28 +749,23 @@ section("version equality condition assertions")
     endsection()
 
     section("it should fail to assert version equality conditions")
-      assert_call(
-        CALL assert 1.3.4 VERSION_LESS 1.2.3
+      assert_call(assert 1.3.4 VERSION_LESS 1.2.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
           "to be less than:\n  1.2.3")
 
-      assert_call(
-        CALL assert NOT 1.3.4 VERSION_GREATER 1.2.3
+      assert_call(assert NOT 1.3.4 VERSION_GREATER 1.2.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
           "not to be greater than:\n  1.2.3")
 
-      assert_call(
-        CALL assert 1.3.4 VERSION_EQUAL 1.2.3
+      assert_call(assert 1.3.4 VERSION_EQUAL 1.2.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
           "to be equal to:\n  1.2.3")
 
-      assert_call(
-        CALL assert 1.3.4 VERSION_LESS_EQUAL 1.2.3
+      assert_call(assert 1.3.4 VERSION_LESS_EQUAL 1.2.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
           "to be less than or equal to:\n  1.2.3")
 
-      assert_call(
-        CALL assert NOT 1.3.4 VERSION_GREATER_EQUAL 1.2.3
+      assert_call(assert NOT 1.3.4 VERSION_GREATER_EQUAL 1.2.3
         EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
           "not to be greater than or equal to:\n  1.2.3")
     endsection()
@@ -868,13 +786,11 @@ section("path equality condition assertions")
   endsection()
 
   section("it should fail to assert path equality conditions")
-    assert_call(
-      CALL assert "/some/path" PATH_EQUAL "/some/other/path"
+    assert_call(assert "/some/path" PATH_EQUAL "/some/other/path"
       EXPECT_FATAL_ERROR STREQUAL "expected path:\n  /some/path\n"
         "to be equal to:\n  /some/other/path")
 
-    assert_call(
-      CALL assert NOT "/some/path" PATH_EQUAL "/some//path"
+    assert_call(assert NOT "/some/path" PATH_EQUAL "/some//path"
       EXPECT_FATAL_ERROR STREQUAL "expected path:\n  /some/path\n"
         "not to be equal to:\n  /some//path")
   endsection()

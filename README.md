@@ -69,8 +69,7 @@ assert(IS_DIRECTORY "${CMAKE_STARTER_DIR}")
 assert_execute_process(
   git -C "${CMAKE_STARTER_DIR}" rev-parse --is-inside-work-tree)
 
-assert_call(
-  CALL git_clone https://github.com GITHUB_DIR
+assert_call(git_clone https://github.com GITHUB_DIR
   EXPECT_FATAL_ERROR "failed to clone 'https://github.com'")
 ```
 
@@ -175,7 +174,7 @@ Performs an assertion on the given command call.
 
 ```cmake
 assert_call(
-  CALL <command> [<arguments>...]
+  [CALL] <command> [<arguments>...]
   EXPECT_FATAL_ERROR [MATCHES|STREQUAL] <message>...)
 ```
 

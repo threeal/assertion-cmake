@@ -4,16 +4,13 @@ include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
 
 section("given strings")
   section("it should fail with a formatted fatal error message")
-    assert_call(
-      CALL fail "single line string"
+    assert_call(fail "single line string"
       EXPECT_FATAL_ERROR STREQUAL "single line string")
 
-    assert_call(
-      CALL fail "multiple\nlines\nstring"
+    assert_call(fail "multiple\nlines\nstring"
       EXPECT_FATAL_ERROR STREQUAL "multiple\nlines\nstring")
 
-    assert_call(
-      CALL fail "single line string" "multiple\nlines\nstring"
+    assert_call(fail "single line string" "multiple\nlines\nstring"
       EXPECT_FATAL_ERROR STREQUAL "single line string\nmultiple\nlines\nstring")
   endsection()
 endsection()
@@ -24,26 +21,21 @@ set(CONTAINS_SINGLE SINGLE)
 
 section("given variables")
   section("it should fail with a formatted fatal error message")
-    assert_call(
-      CALL fail SINGLE
+    assert_call(fail SINGLE
       EXPECT_FATAL_ERROR STREQUAL "single line variable")
 
-    assert_call(
-      CALL fail MULTIPLE
+    assert_call(fail MULTIPLE
       EXPECT_FATAL_ERROR STREQUAL "multiple\nlines\nvariable")
 
-    assert_call(
-      CALL fail CONTAINS_SINGLE
+    assert_call(fail CONTAINS_SINGLE
       EXPECT_FATAL_ERROR STREQUAL
         "single line variable\nof variable:\n  SINGLE")
 
-    assert_call(
-      CALL fail SINGLE MULTIPLE
+    assert_call(fail SINGLE MULTIPLE
       EXPECT_FATAL_ERROR STREQUAL
         "single line variable\nmultiple\nlines\nvariable")
 
-    assert_call(
-      CALL fail SINGLE MULTIPLE CONTAINS_SINGLE
+    assert_call(fail SINGLE MULTIPLE CONTAINS_SINGLE
       EXPECT_FATAL_ERROR STREQUAL
         "single line variable\nmultiple\nlines\nvariable\n"
         "single line variable\nof variable:\n  SINGLE")
@@ -52,31 +44,25 @@ endsection()
 
 section("given strings and variables")
   section("it should fail with a formatted fatal error message")
-    assert_call(
-      CALL fail "single line string" SINGLE
+    assert_call(fail "single line string" SINGLE
       EXPECT_FATAL_ERROR STREQUAL "single line string:\n  single line variable")
 
-    assert_call(
-      CALL fail SINGLE "single line string"
+    assert_call(fail SINGLE "single line string"
       EXPECT_FATAL_ERROR STREQUAL "single line variable\nsingle line string")
 
-    assert_call(
-      CALL fail "multiple\nlines\nstring" MULTIPLE
+    assert_call(fail "multiple\nlines\nstring" MULTIPLE
       EXPECT_FATAL_ERROR STREQUAL "multiple\nlines\nstring:\n"
         "  multiple\n  lines\n  variable")
 
-    assert_call(
-      CALL fail MULTIPLE "multiple\nlines\nstring"
+    assert_call(fail MULTIPLE "multiple\nlines\nstring"
       EXPECT_FATAL_ERROR STREQUAL
         "multiple\nlines\nvariable\nmultiple\nlines\nstring")
 
-    assert_call(
-      CALL fail "single line string" CONTAINS_SINGLE
+    assert_call(fail "single line string" CONTAINS_SINGLE
       EXPECT_FATAL_ERROR STREQUAL
         "single line string:\n  single line variable\nof variable:\n  SINGLE")
 
-    assert_call(
-      CALL fail CONTAINS_SINGLE "single line string"
+    assert_call(fail CONTAINS_SINGLE "single line string"
       EXPECT_FATAL_ERROR STREQUAL
         "single line variable\nof variable:\n  SINGLE\nsingle line string")
 
@@ -98,7 +84,8 @@ section("given strings and variables")
 
     assert_call(
       CALL fail "single line string" SINGLE "multiple\nlines\nstring" MULTIPLE
-      EXPECT_FATAL_ERROR STREQUAL "single line string:\n  single line variable\n"
+      EXPECT_FATAL_ERROR STREQUAL
+        "single line string:\n  single line variable\n"
         "multiple\nlines\nstring:\n  multiple\n  lines\n  variable")
 
     assert_call(
