@@ -357,7 +357,7 @@ endfunction()
 # Performs an assertion on the given command call.
 #
 # assert_call(
-#   CALL <command> [<arguments>...]
+#   [CALL] <command> [<arguments>...]
 #   EXPECT_FATAL_ERROR [MATCHES|STREQUAL] <message>...)
 #
 # This function performs an assertion on the function or macro named
@@ -374,6 +374,10 @@ endfunction()
 # single message with no separators.
 function(assert_call)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_FATAL_ERROR")
+
+  if(NOT DEFINED ARG_CALL)
+    set(ARG_CALL ${ARG_UNPARSED_ARGUMENTS})
+  endif()
 
   list(GET ARG_EXPECT_FATAL_ERROR 0 OPERATOR)
   if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
