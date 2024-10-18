@@ -74,50 +74,51 @@ endfunction()
 # variable is another variable, it will format both the name and the value of
 # the other variable.
 macro(fail FIRST_LINE)
-  set(LINES)
-  foreach(LINE IN ITEMS "${FIRST_LINE}" ${ARGN})
-    # Expand variable if it is defined and contains another variable.
-    if(DEFINED "${LINE}" AND DEFINED "${${LINE}}")
-      list(APPEND LINES "${${LINE}}" "of variable" "${LINE}")
-    else()
-      list(APPEND LINES "${LINE}")
-    endif()
-  endforeach()
-
-  # Format the first line.
-  list(POP_FRONT LINES LINE)
-  if(DEFINED "${LINE}")
-    set(MESSAGE "${${LINE}}")
-    set(PREV_IS_STRING FALSE)
-    set(INDENT_VAR FALSE)
-  else()
-    set(MESSAGE "${LINE}")
-    set(PREV_IS_STRING TRUE)
-    set(INDENT_VAR TRUE)
-  endif()
-
-  # Format the consecutive lines.
-  foreach(LINE IN ITEMS ${LINES})
-    if(DEFINED "${LINE}")
-      if(PREV_IS_STRING)
-        string(APPEND MESSAGE ":")
-      endif()
-      if(INDENT_VAR)
-        string(REPLACE "\n" "\n  " LINE "${${LINE}}")
-        string(APPEND MESSAGE "\n  ${LINE}")
+  block()
+    foreach(LINE IN ITEMS "${FIRST_LINE}" ${ARGN})
+      # Expand variable if it is defined and contains another variable.
+      if(DEFINED "${LINE}" AND DEFINED "${${LINE}}")
+        list(APPEND LINES "${${LINE}}" "of variable" "${LINE}")
       else()
-        string(APPEND MESSAGE "\n${${LINE}}")
+        list(APPEND LINES "${LINE}")
       endif()
+    endforeach()
+
+    # Format the first line.
+    list(POP_FRONT LINES LINE)
+    if(DEFINED "${LINE}")
+      set(MESSAGE "${${LINE}}")
       set(PREV_IS_STRING FALSE)
+      set(INDENT_VAR FALSE)
     else()
-      string(APPEND MESSAGE "\n${LINE}")
+      set(MESSAGE "${LINE}")
       set(PREV_IS_STRING TRUE)
       set(INDENT_VAR TRUE)
     endif()
-  endforeach()
 
-  # Throw a fatal error with the formatted message.
-  message(FATAL_ERROR "${MESSAGE}")
+    # Format the consecutive lines.
+    foreach(LINE IN ITEMS ${LINES})
+      if(DEFINED "${LINE}")
+        if(PREV_IS_STRING)
+          string(APPEND MESSAGE ":")
+        endif()
+        if(INDENT_VAR)
+          string(REPLACE "\n" "\n  " LINE "${${LINE}}")
+          string(APPEND MESSAGE "\n  ${LINE}")
+        else()
+          string(APPEND MESSAGE "\n${${LINE}}")
+        endif()
+        set(PREV_IS_STRING FALSE)
+      else()
+        string(APPEND MESSAGE "\n${LINE}")
+        set(PREV_IS_STRING TRUE)
+        set(INDENT_VAR TRUE)
+      endif()
+    endforeach()
+
+    # Throw a fatal error with the formatted message.
+    message(FATAL_ERROR "${MESSAGE}")
+  endblock()
 endmacro()
 
 # Asserts the given condition.
