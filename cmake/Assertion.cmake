@@ -354,33 +354,34 @@ function(assert)
   fail("expected" ARGS "to resolve to true")
 endfunction()
 
-# Asserts whether a command call throws a fatal error message.
+# Performs an assertion on the given command call.
 #
-# assert_fatal_error(
+# assert_call(
 #   CALL <command> [<arguments>...]
-#   EXPECT_MESSAGE [MATCHES|STREQUAL] <message>...)
+#   EXPECT_FATAL_ERROR [MATCHES|STREQUAL] <message>...)
 #
-# This function asserts whether a function or macro named `<command>`, called
-# with the specified `<arguments>`, throws a fatal error message that satisfies
-# the expected message.
-#
-# If `MATCHES` is specified, it asserts whether the received message matches the
+# This function performs an assertion on the function or macro named
+# `<command>`, called with the specified `<arguments>`. It currently only allows
+# asserting whether the given command throws a fatal error message that
+# satisfies the expected message.
+
+# If `MATCHES` is specified, it asserts whether the received message matches
 # `<message>`. If `STREQUAL` is specified, it asserts whether the received
 # message is equal to `<message>`. If nothing is specified, it defaults to the
 # `MATCHES` parameter.
-#
+
 # If more than one `<message>` string is given, they are concatenated into a
 # single message with no separators.
-function(assert_fatal_error)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_MESSAGE")
+function(assert_call)
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_FATAL_ERROR")
 
-  list(GET ARG_EXPECT_MESSAGE 0 OPERATOR)
+  list(GET ARG_EXPECT_FATAL_ERROR 0 OPERATOR)
   if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
-    list(REMOVE_AT ARG_EXPECT_MESSAGE 0)
+    list(REMOVE_AT ARG_EXPECT_FATAL_ERROR 0)
   else()
     set(OPERATOR "MATCHES")
   endif()
-  string(JOIN "" EXPECTED_MESSAGE ${ARG_EXPECT_MESSAGE})
+  string(JOIN "" EXPECTED_FATAL_ERROR ${ARG_EXPECT_FATAL_ERROR})
 
   # Override the `message` function if it has not been overridden.
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
@@ -439,13 +440,13 @@ function(assert_fatal_error)
   # Assert the captured fatal error message with the expected message.
   get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_fatal_error)
   string(STRIP "${ACTUAL_MESSAGE}" ACTUAL_MESSAGE)
-  if(NOT "${ACTUAL_MESSAGE}" ${OPERATOR} "${EXPECTED_MESSAGE}")
+  if(NOT "${ACTUAL_MESSAGE}" ${OPERATOR} "${EXPECTED_FATAL_ERROR}")
     if(OPERATOR STREQUAL "MATCHES")
       fail("expected fatal error message" ACTUAL_MESSAGE
-        "to match" EXPECTED_MESSAGE)
+        "to match" EXPECTED_FATAL_ERROR)
     else()
       fail("expected fatal error message" ACTUAL_MESSAGE
-        "to be equal to" EXPECTED_MESSAGE)
+        "to be equal to" EXPECTED_FATAL_ERROR)
     endif()
   endif()
 endfunction()
