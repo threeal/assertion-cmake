@@ -19,7 +19,7 @@ if(ASSERTION_ENABLE_TESTS)
   add_cmake_script_test(test/assert_call.cmake)
   add_cmake_script_test(test/assert_execute_process.cmake)
   add_cmake_script_test(test/assert.cmake)
-  add_cmake_script_test(test/fail.cmake)
+  add_cmake_script_test(test/test_fail.cmake)
 endif()
 
 if(ASSERTION_ENABLE_INSTALL)
