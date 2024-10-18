@@ -35,6 +35,7 @@ function(assert_configure_sample_project FIRST_CODE)
 endfunction()
 
 section("boolean condition assertions")
+
   section("it should assert boolean conditions")
     assert(TRUE)
     assert(NOT FALSE)
