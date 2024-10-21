@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 3.24)
 
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
 
-section("process execution assertions")
-  section("it should assert a process execution")
+section("assert process executions")
+  section("it should assert process executions")
     assert_execute_process("${CMAKE_COMMAND}" -E true)
   endsection()
 
-  section("it should fail to assert a process execution")
+  section("it should fail to assert process executions")
     assert_call(
       CALL assert_execute_process "${CMAKE_COMMAND}" -E true EXPECT_FAIL
       EXPECT_FATAL_ERROR STREQUAL "expected command:\n"
@@ -15,15 +15,15 @@ section("process execution assertions")
   endsection()
 endsection()
 
-section("failed process execution assertions")
+section("assert failed process executions")
   file(TOUCH some-file)
 
-  section("it should assert a failed process execution")
+  section("it should assert failed process executions")
     assert_execute_process(
       "${CMAKE_COMMAND}" -E make_directory some-file EXPECT_FAIL)
   endsection()
 
-  section("it should fail to assert a failed process execution")
+  section("it should fail to assert failed process executions")
     assert_call(
       CALL assert_execute_process "${CMAKE_COMMAND}" -E make_directory some-file
       EXPECT_FATAL_ERROR STREQUAL "expected command:\n"
@@ -33,8 +33,8 @@ section("failed process execution assertions")
   endsection()
 endsection()
 
-section("process execution output assertions")
-  section("it should assert a process execution output")
+section("assert process execution outputs")
+  section("it should assert process execution outputs")
     assert_execute_process(
       COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
       EXPECT_OUTPUT "Hello" ".*!")
@@ -48,7 +48,7 @@ section("process execution output assertions")
       EXPECT_OUTPUT STREQUAL "Hello world!")
   endsection()
 
-  section("it should fail to assert a process execution output")
+  section("it should fail to assert process execution outputs")
     assert_call(
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
@@ -84,10 +84,10 @@ section("process execution output assertions")
   endsection()
 endsection()
 
-section("process execution error assertions")
+section("assert process execution errors")
   file(TOUCH some-file)
 
-  section("it should assert a process execution error")
+  section("it should assert process execution errors")
     assert_execute_process(
       COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
       EXPECT_ERROR "Error creating directory" ".*some-file")
@@ -101,7 +101,7 @@ section("process execution error assertions")
       EXPECT_ERROR STREQUAL "Error creating directory \"some-file\".")
   endsection()
 
-  section("it should fail to assert a process execution error")
+  section("it should fail to assert process execution errors")
     assert_call(
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
