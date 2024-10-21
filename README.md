@@ -70,7 +70,7 @@ assert_execute_process(
   git -C "${CMAKE_STARTER_DIR}" rev-parse --is-inside-work-tree)
 
 assert_call(git_clone https://github.com GITHUB_DIR
-  EXPECT_FATAL_ERROR "failed to clone 'https://github.com'")
+  EXPECT_ERROR "failed to clone 'https://github.com'")
 ```
 
 ### Test Creation
@@ -175,10 +175,10 @@ Performs an assertion on the given command call.
 ```cmake
 assert_call(
   [CALL] <command> [<arguments>...]
-  EXPECT_FATAL_ERROR [MATCHES|STREQUAL] <message>...)
+  EXPECT_ERROR [MATCHES|STREQUAL] <message>...)
 ```
 
-This function performs an assertion on the function or macro named `<command>`, called with the specified `<arguments>`. It currently only allows asserting whether the given command throws a fatal error message that satisfies the expected message.
+This function performs an assertion on the function or macro named `<command>`, called with the specified `<arguments>`. It currently only allows asserting whether the given command receives an error message that satisfies the expected message.
 
 If `MATCHES` is specified, it asserts whether the received message matches `<message>`. If `STREQUAL` is specified, it asserts whether the received message is equal to `<message>`. If nothing is specified, it defaults to the `MATCHES` parameter.
 
@@ -193,7 +193,7 @@ endfunction()
 
 assert_call(
   CALL throw_fatal_error "some message"
-  EXPECT_FATAL_ERROR STREQUAL "some message")
+  EXPECT_ERROR STREQUAL "some message")
 ```
 
 The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message equal to `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:

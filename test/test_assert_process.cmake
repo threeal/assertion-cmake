@@ -10,7 +10,7 @@ section("assert process executions")
   section("it should fail to assert process executions")
     assert_call(
       CALL assert_execute_process "${CMAKE_COMMAND}" -E true EXPECT_FAIL
-      EXPECT_FATAL_ERROR STREQUAL "expected command:\n"
+      EXPECT_ERROR STREQUAL "expected command:\n"
         "  ${CMAKE_COMMAND} -E true\nto fail")
   endsection()
 endsection()
@@ -26,7 +26,7 @@ section("assert failed process executions")
   section("it should fail to assert failed process executions")
     assert_call(
       CALL assert_execute_process "${CMAKE_COMMAND}" -E make_directory some-file
-      EXPECT_FATAL_ERROR STREQUAL "expected command:\n"
+      EXPECT_ERROR STREQUAL "expected command:\n"
         "  ${CMAKE_COMMAND} -E make_directory some-file\n"
         "not to fail with error:\n"
         "  Error creating directory \"some-file\".")
@@ -53,7 +53,7 @@ section("assert process execution outputs")
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
         EXPECT_OUTPUT "Hello" ".*earth!"
-      EXPECT_FATAL_ERROR STREQUAL "expected the output:\n"
+      EXPECT_ERROR STREQUAL "expected the output:\n"
         "  Hello world!\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E echo Hello world!\n"
@@ -64,7 +64,7 @@ section("assert process execution outputs")
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
         EXPECT_OUTPUT MATCHES "Hello" ".*earth!"
-      EXPECT_FATAL_ERROR STREQUAL "expected the output:\n"
+      EXPECT_ERROR STREQUAL "expected the output:\n"
         "  Hello world!\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E echo Hello world!\n"
@@ -75,7 +75,7 @@ section("assert process execution outputs")
       CALL assert_execute_process
         COMMAND "${CMAKE_COMMAND}" -E echo "Hello world!"
         EXPECT_OUTPUT STREQUAL "Hello earth!\n"
-      EXPECT_FATAL_ERROR STREQUAL "expected the output:\n"
+      EXPECT_ERROR STREQUAL "expected the output:\n"
         "  Hello world!\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E echo Hello world!\n"
@@ -102,33 +102,39 @@ section("assert process execution errors")
   endsection()
 
   section("it should fail to assert process execution errors")
-    assert_call(
-      CALL assert_execute_process
-        COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-        EXPECT_ERROR "Error creating directory" ".*some-other-file"
-      EXPECT_FATAL_ERROR STREQUAL "expected the error:\n"
+    macro(failed_assert)
+      assert_execute_process("${CMAKE_COMMAND}" -E make_directory some-file
+        EXPECT_ERROR "Error creating directory" ".*some-other-file")
+    endmacro()
+
+    assert_call(failed_assert
+      EXPECT_ERROR STREQUAL "expected the error:\n"
         "  Error creating directory \"some-file\".\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E make_directory some-file\n"
         "to match:\n"
         "  Error creating directory.*some-other-file")
 
-    assert_call(
-      CALL assert_execute_process
-        COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-        EXPECT_ERROR MATCHES "Error creating directory" ".*some-other-file"
-      EXPECT_FATAL_ERROR STREQUAL "expected the error:\n"
+    macro(failed_assert)
+      assert_execute_process("${CMAKE_COMMAND}" -E make_directory some-file
+        EXPECT_ERROR MATCHES "Error creating directory" ".*some-other-file")
+    endmacro()
+
+    assert_call(failed_assert
+      EXPECT_ERROR STREQUAL "expected the error:\n"
         "  Error creating directory \"some-file\".\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E make_directory some-file\n"
         "to match:\n"
         "  Error creating directory.*some-other-file")
 
-    assert_call(
-      CALL assert_execute_process
-        COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-        EXPECT_ERROR STREQUAL "Error creating directory \"some-other-file\"."
-      EXPECT_FATAL_ERROR STREQUAL "expected the error:\n"
+    macro(failed_assert)
+      assert_execute_process("${CMAKE_COMMAND}" -E make_directory some-file
+        EXPECT_ERROR STREQUAL "Error creating directory \"some-other-file\".")
+    endmacro()
+
+    assert_call(failed_assert
+      EXPECT_ERROR STREQUAL "expected the error:\n"
         "  Error creating directory \"some-file\".\n"
         "of command:\n"
         "  ${CMAKE_COMMAND} -E make_directory some-file\n"

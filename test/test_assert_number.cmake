@@ -22,23 +22,20 @@ section("assert number equality conditions given equal numbers")
 
   section("it should fail to assert conditions")
     assert_call(assert 7 LESS 7
-      EXPECT_FATAL_ERROR STREQUAL
-        "expected number:\n  7\nto be less than:\n  7")
+      EXPECT_ERROR STREQUAL "expected number:\n  7\nto be less than:\n  7")
 
     assert_call(assert 7 GREATER 7
-      EXPECT_FATAL_ERROR STREQUAL
-        "expected number:\n  7\nto be greater than:\n  7")
+      EXPECT_ERROR STREQUAL "expected number:\n  7\nto be greater than:\n  7")
 
     assert_call(assert NOT 7 EQUAL 7
-      EXPECT_FATAL_ERROR STREQUAL
-        "expected number:\n  7\nnot to be equal to:\n  7")
+      EXPECT_ERROR STREQUAL "expected number:\n  7\nnot to be equal to:\n  7")
 
     assert_call(assert NOT 7 LESS_EQUAL 7
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "not to be less than or equal to:\n  7")
 
     assert_call(assert NOT 7 GREATER_EQUAL 7
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "not to be greater than or equal to:\n  7")
   endsection()
 endsection()
@@ -60,23 +57,20 @@ section("assert number equality conditions given a lesser number")
 
   section("it should fail to assert conditions")
     assert_call(assert NOT 7 LESS 13
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
-        "not to be less than:\n  13")
+      EXPECT_ERROR STREQUAL "expected number:\n  7\nnot to be less than:\n  13")
 
     assert_call(assert 7 GREATER 13
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
-        "to be greater than:\n  13")
+      EXPECT_ERROR STREQUAL "expected number:\n  7\nto be greater than:\n  13")
 
     assert_call(assert 7 EQUAL 13
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
-        "to be equal to:\n  13")
+      EXPECT_ERROR STREQUAL "expected number:\n  7\nto be equal to:\n  13")
 
     assert_call(assert NOT 7 LESS_EQUAL 13
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "not to be less than or equal to:\n  13")
 
     assert_call(assert 7 GREATER_EQUAL 13
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "to be greater than or equal to:\n  13")
   endsection()
 endsection()
@@ -98,23 +92,21 @@ section("assert number equality conditions given a greater number")
 
   section("it should fail to assert conditions")
     assert_call(assert 13 LESS 7
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
-        "to be less than:\n  7")
+      EXPECT_ERROR STREQUAL "expected number:\n  13\nto be less than:\n  7")
 
     assert_call(assert NOT 13 GREATER 7
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  13\n"
         "not to be greater than:\n  7")
 
     assert_call(assert 13 EQUAL 7
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
-        "to be equal to:\n  7")
+      EXPECT_ERROR STREQUAL "expected number:\n  13\nto be equal to:\n  7")
 
     assert_call(assert 13 LESS_EQUAL 7
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  13\n"
         "to be less than or equal to:\n  7")
 
     assert_call(assert NOT 13 GREATER_EQUAL 7
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  13\n"
         "not to be greater than or equal to:\n  7")
   endsection()
 endsection()
@@ -138,23 +130,23 @@ section("assert number equality conditions given a non-number")
 
   section("it should fail to assert conditions")
     assert_call(assert 7 LESS  "some string"
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "to be less than:\n  some string")
 
     assert_call(assert 7 GREATER "some string"
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "to be greater than:\n  some string")
 
     assert_call(assert 7 EQUAL "some string"
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "to be equal to:\n  some string")
 
     assert_call(assert 7 LESS_EQUAL "some string"
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "to be less than or equal to:\n  some string")
 
     assert_call(assert 7 GREATER_EQUAL "some string"
-      EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
+      EXPECT_ERROR STREQUAL "expected number:\n  7\n"
         "to be greater than or equal to:\n  some string")
   endsection()
 endsection()
