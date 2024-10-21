@@ -57,13 +57,8 @@ section("it should create a new test with predefined variables")
 endsection()
 
 section("it should fail to create a new test due to script mode")
-  file(WRITE project/script.cmake
-    "include(${ASSERTION_LIST_FILE})\n"
-    "add_cmake_script_test(test.cmake)\n")
-
-  assert_execute_process(
-    COMMAND "${CMAKE_COMMAND}" -P project/script.cmake
-    EXPECT_ERROR "Unable to add a new test in script mode")
+  assert_call(add_cmake_script_test test.cmake
+    EXPECT_ERROR STREQUAL "Unable to add a new test in script mode")
 endsection()
 
 section("it should fail to create a new test due to a non-existent file")
