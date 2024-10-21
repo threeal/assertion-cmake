@@ -178,28 +178,30 @@ assert_call(
   EXPECT_ERROR [MATCHES|STREQUAL] <message>...)
 ```
 
-This function performs an assertion on the function or macro named `<command>`, called with the specified `<arguments>`. It currently only allows asserting whether the given command receives an error message that satisfies the expected message.
+This function asserts the behavior of the function or macro named `<command>`, called with the specified `<arguments>`. It currently only supports asserting whether the given command receives error messages that satisfy the expected message. It captures all errors from the `message` function and compares them with the expected message. Each captured error is concatenated with new lines as separators.
 
-If `MATCHES` is specified, it asserts whether the received message matches `<message>`. If `STREQUAL` is specified, it asserts whether the received message is equal to `<message>`. If nothing is specified, it defaults to the `MATCHES` parameter.
+If `MATCHES` is specified, it asserts whether the captured messages match `<message>`. If `STREQUAL` is specified, it asserts whether the captured messages are equal to `<message>`. If neither is specified, it defaults to the `MATCHES` parameter.
 
 If more than one `<message>` string is given, they are concatenated into a single message with no separators.
 
 #### Example
 
 ```cmake
-function(throw_fatal_error MESSAGE)
-  message(FATAL_ERROR "${MESSAGE}")
+function(send_errors)
+  foreach(MESSAGE IN LISTS ARGV)
+    message(SEND_ERROR "${MESSAGE} error")
+  endforeach()
 endfunction()
 
 assert_call(
-  CALL throw_fatal_error "some message"
-  EXPECT_ERROR STREQUAL "some message")
+  CALL send_errors first second
+  EXPECT_ERROR STREQUAL "first error\nsecond error")
 ```
 
-The above example asserts whether the call to `throw_fatal_error("some message")` throws a fatal error message equal to `some message`. If it somehow does not capture any fatal error message, it will throw the following fatal error message:
+The above example asserts whether the call to `send_errors(first second)` receives errors equal to `first error\nsecond error`. If it does not receive any errors, it will throw the following error:
 
 ```
-expected to receive a fatal error message
+expected to receive an error message
 ```
 
 ### `assert_execute_process`
