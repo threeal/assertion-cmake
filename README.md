@@ -175,12 +175,17 @@ Performs an assertion on the given command call.
 ```cmake
 assert_call(
   [CALL] <command> [<arguments>...]
-  [EXPECT_ERROR [MATCHES|STREQUAL] <message>...])
+  [EXPECT_ERROR [MATCHES|STREQUAL] <message>...]
+  [EXPECT_WARNING [MATCHES|STREQUAL] <message>...])
 ```
 
-This function asserts whether the function or macro named `<command>`, called with the specified `<arguments>`, does not receive any errors. Internally, the function captures all errors from the `message` function. Each captured error is concatenated with new lines as separators.
+This function asserts whether the function or macro named `<command>`, called with the specified `<arguments>`, does not receive any errors or warnings. Internally, the function captures all errors and warnings from the `message` function. Each captured error and warning is concatenated with new lines as separators.
 
-If `EXPECT_ERROR` is specified, it instead asserts whether the call to the function or macro received errors that satisfy the expected message. If `MATCHES` is specified, it asserts whether the received errors match `<message>`. If `STREQUAL` is specified, it asserts whether the received errors are equal to `<message>`. If neither is specified, it defaults to the `MATCHES` parameter. If more than one `<message>` string is given, they are concatenated into a single message with no separators.
+If `EXPECT_ERROR` or `EXPECT_WARNING` is specified, it instead asserts whether the call to the function or macro received errors or warnings that satisfy the expected message.
+
+In both `EXPECT_ERROR` and `EXPECT_WARNING` options, `MATCHES` and `STREQUAL` are used to determine the operator for comparing the received errors and warnings with the expected message. If `MATCHES` is specified, they are compared using regular expression matching. If `STREQUAL` is specified, they are compared lexicographically. If neither is specified, it defaults to `MATCHES`.
+
+If more than one `<message>` string is given, they are concatenated into a single message with no separators.
 
 #### Example
 
