@@ -358,70 +358,88 @@ endfunction()
 #
 # assert_call(
 #   [CALL] <command> [<arguments>...]
-#   [EXPECT_ERROR [MATCHES|STREQUAL] <message>...])
+#   [EXPECT_ERROR [MATCHES|STREQUAL] <message>...]
+#   [EXPECT_WARNING [MATCHES|STREQUAL] <message>...])
 #
 # This function asserts whether the function or macro named `<command>`, called
-# with the specified `<arguments>`, does not receive any errors. Internally, the
-# function captures all errors from the `message` function. Each captured error
-# is concatenated with new lines as separators.
+# with the specified `<arguments>`, does not receive any errors or warnings.
+# Internally, the function captures all errors and warnings from the `message`
+# function. Each captured error and warning is concatenated with new lines as
+# separators.
 #
-# If `EXPECT_ERROR` is specified, it instead asserts whether the call to the
-# function or macro received errors that satisfy the expected message. If
-# `MATCHES` is specified, it asserts whether the received errors match
-# `<message>`. If `STREQUAL` is specified, it asserts whether the received
-# errors are equal to `<message>`. If neither is specified, it defaults to the
-# `MATCHES` parameter. If more than one `<message>` string is given, they are
-# concatenated into a single message with no separators.
+# If `EXPECT_ERROR` or `EXPECT_WARNING` is specified, it instead asserts whether
+# the call to the function or macro received errors or warnings that satisfy the
+# expected message.
+#
+# In both `EXPECT_ERROR` and `EXPECT_WARNING` options, `MATCHES` and `STREQUAL`
+# are used to determine the operator for comparing the received errors and
+# warnings with the expected message. If `MATCHES` is specified, they are
+# compared using regular expression matching. If `STREQUAL` is specified, they
+# are compared lexicographically. If neither is specified, it defaults to
+# `MATCHES`.
+#
+# If more than one `<message>` string is given, they are concatenated into a
+# single message with no separators.
 function(assert_call)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_ERROR")
+  cmake_parse_arguments(
+    PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_ERROR;EXPECT_WARNING")
 
   if(NOT DEFINED ARG_CALL)
     set(ARG_CALL ${ARG_UNPARSED_ARGUMENTS})
   endif()
 
-  if(DEFINED ARG_EXPECT_ERROR)
-    list(GET ARG_EXPECT_ERROR 0 EXPECTED_ERROR_OPERATOR)
-    if(EXPECTED_ERROR_OPERATOR MATCHES ^MATCHES|STREQUAL$)
-      list(REMOVE_AT ARG_EXPECT_ERROR 0)
+  foreach(MODE IN ITEMS ERROR WARNING)
+    if(DEFINED ARG_EXPECT_${MODE})
+      list(GET ARG_EXPECT_${MODE} 0 EXPECTED_${MODE}_OPERATOR)
+      if(EXPECTED_${MODE}_OPERATOR MATCHES ^MATCHES|STREQUAL$)
+        list(REMOVE_AT ARG_EXPECT_${MODE} 0)
+      else()
+        set(EXPECTED_${MODE}_OPERATOR "MATCHES")
+      endif()
+      string(JOIN "" EXPECTED_${MODE} ${ARG_EXPECT_${MODE}})
     else()
-      set(EXPECTED_ERROR_OPERATOR "MATCHES")
+      unset(EXPECTED_${MODE}_OPERATOR)
+      unset(EXPECTED_${MODE})
     endif()
-    string(JOIN "" EXPECTED_ERROR ${ARG_EXPECT_ERROR})
-  else()
-    unset(EXPECTED_ERROR_OPERATOR)
-    unset(EXPECTED_ERROR)
-  endif()
+  endforeach()
 
   # Override the `message` function if it has not been overridden.
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _message_mocked)
   if(NOT MESSAGE_MOCKED)
     # Override the `message` function to allow the behavior to be mocked by
-    # capturing an error.
+    # capturing a message.
     function(message MODE)
       cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
 
-      if(_CAPTURE_LEVEL GREATER_EQUAL 1 AND
-        MODE MATCHES ^FATAL_ERROR|SEND_ERROR$)
-
-        string(JOIN "" MESSAGE ${ARG_UNPARSED_ARGUMENTS} "\n")
-        set_property(GLOBAL APPEND_STRING
-          PROPERTY assert_captured_error_${_CAPTURE_LEVEL} "${MESSAGE}")
-      else()
-        _message("${MODE}" ${ARG_UNPARSED_ARGUMENTS})
+      if(_CAPTURE_LEVEL GREATER_EQUAL 1)
+        if(MODE MATCHES ^FATAL_ERROR|SEND_ERROR$)
+          string(JOIN "" MESSAGE ${ARG_UNPARSED_ARGUMENTS} "\n")
+          set_property(GLOBAL APPEND_STRING
+            PROPERTY assert_captured_error_${_CAPTURE_LEVEL} "${MESSAGE}")
+          return()
+        elseif(MODE MATCHES ^WARNING|AUTHOR_WARNING$)
+          string(JOIN "" MESSAGE ${ARG_UNPARSED_ARGUMENTS} "\n")
+          set_property(GLOBAL APPEND_STRING
+            PROPERTY assert_captured_warning_${_CAPTURE_LEVEL} "${MESSAGE}")
+          return()
+        endif()
       endif()
+
+      _message("${MODE}" ${ARG_UNPARSED_ARGUMENTS})
     endfunction()
     set_property(GLOBAL PROPERTY _message_mocked ON)
   endif()
 
-  # Increase the level for capturing errors.
+  # Increase the level for capturing messages.
   if(_CAPTURE_LEVEL GREATER_EQUAL 0)
     math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} + 1")
   else()
     set(_CAPTURE_LEVEL 1)
   endif()
 
-  # Clear global property that hold the captured errors.
+  # Clear global property that hold the captured messages.
   set_property(GLOBAL PROPERTY assert_captured_error_${_CAPTURE_LEVEL})
+  set_property(GLOBAL PROPERTY assert_captured_warning_${_CAPTURE_LEVEL})
 
   # Call the command with the specified arguments.
   list(POP_FRONT ARG_CALL COMMAND)
@@ -429,7 +447,6 @@ function(assert_call)
 
   get_property(CAPTURED_ERROR_SET GLOBAL
     PROPERTY assert_captured_error_${_CAPTURE_LEVEL} SET)
-
   if(CAPTURED_ERROR_SET)
     get_property(CAPTURED_ERROR GLOBAL
       PROPERTY assert_captured_error_${_CAPTURE_LEVEL})
@@ -456,6 +473,36 @@ function(assert_call)
   elseif(DEFINED EXPECTED_ERROR)
     math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
     fail("expected to receive errors")
+  endif()
+
+  get_property(CAPTURED_WARNING_SET GLOBAL
+    PROPERTY assert_captured_warning_${_CAPTURE_LEVEL} SET)
+  if(CAPTURED_WARNING_SET)
+    get_property(CAPTURED_WARNING GLOBAL
+      PROPERTY assert_captured_warning_${_CAPTURE_LEVEL})
+
+    if(DEFINED EXPECTED_WARNING)
+      string(STRIP "${CAPTURED_WARNING}" CAPTURED_WARNING)
+      if(EXPECTED_WARNING_OPERATOR STREQUAL "MATCHES")
+        if(NOT "${CAPTURED_WARNING}" MATCHES "${EXPECTED_WARNING}")
+          math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
+          fail("expected warnings" CAPTURED_WARNING
+            "to match" EXPECTED_WARNING)
+        endif()
+      else()
+        if(NOT "${CAPTURED_WARNING}" STREQUAL "${EXPECTED_WARNING}")
+          math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
+          fail("expected warnings" CAPTURED_WARNING
+            "to be equal to" EXPECTED_WARNING)
+        endif()
+      endif()
+    else()
+      math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
+      fail("expected not to receive warnings" CAPTURED_WARNING)
+    endif()
+  elseif(DEFINED EXPECTED_WARNING)
+    math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
+    fail("expected to receive warnings")
   endif()
 endfunction()
 
