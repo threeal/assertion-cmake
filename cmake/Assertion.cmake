@@ -36,13 +36,13 @@ set(ASSERTION_VERSION 2.0.0)
 # should be in the format `<name>=<value>`, where `<name>` is the variable name
 # and `<value>` is its value. If `DEFINITIONS` is specified, additional
 # variables will also be defined.
-function(add_cmake_script_test FILE)
+function(add_cmake_script_test)
   if(DEFINED CMAKE_SCRIPT_MODE_FILE)
     message(SEND_ERROR "Unable to add a new test in script mode")
     return()
   endif()
 
-  cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME DEFINITIONS)
+  cmake_parse_arguments(PARSE_ARGV 1 ARG "" "FILE;NAME" DEFINITIONS)
   if(NOT DEFINED ARG_NAME)
     set(ARG_NAME "${FILE}")
   endif()
