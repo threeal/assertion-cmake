@@ -175,14 +175,12 @@ Performs an assertion on the given command call.
 ```cmake
 assert_call(
   [CALL] <command> [<arguments>...]
-  EXPECT_ERROR [MATCHES|STREQUAL] <message>...)
+  [EXPECT_ERROR [MATCHES|STREQUAL] <message>...])
 ```
 
-This function asserts the behavior of the function or macro named `<command>`, called with the specified `<arguments>`. It currently only supports asserting whether the given command receives error messages that satisfy the expected message. It captures all errors from the `message` function and compares them with the expected message. Each captured error is concatenated with new lines as separators.
+This function asserts whether the function or macro named `<command>`, called with the specified `<arguments>`, does not receive any errors. Internally, the function captures all errors from the `message` function. Each captured error is concatenated with new lines as separators.
 
-If `MATCHES` is specified, it asserts whether the captured messages match `<message>`. If `STREQUAL` is specified, it asserts whether the captured messages are equal to `<message>`. If neither is specified, it defaults to the `MATCHES` parameter.
-
-If more than one `<message>` string is given, they are concatenated into a single message with no separators.
+If `EXPECT_ERROR` is specified, it instead asserts whether the call to the function or macro received errors that satisfy the expected message. If `MATCHES` is specified, it asserts whether the received errors match `<message>`. If `STREQUAL` is specified, it asserts whether the received errors are equal to `<message>`. If neither is specified, it defaults to the `MATCHES` parameter. If more than one `<message>` string is given, they are concatenated into a single message with no separators.
 
 #### Example
 
@@ -201,7 +199,7 @@ assert_call(
 The above example asserts whether the call to `send_errors(first second)` receives errors equal to `first error\nsecond error`. If it does not receive any errors, it will throw the following error:
 
 ```
-expected to receive an error message
+expected to receive errors
 ```
 
 ### `assert_execute_process`
