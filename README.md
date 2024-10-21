@@ -178,7 +178,7 @@ assert_call(
   EXPECT_ERROR [MATCHES|STREQUAL] <message>...)
 ```
 
-This function performs an assertion on the function or macro named `<command>`, called with the specified `<arguments>`. It currently only allows asserting whether the given command throws a fatal error message that satisfies the expected message.
+This function performs an assertion on the function or macro named `<command>`, called with the specified `<arguments>`. It currently only allows asserting whether the given command receives an error message that satisfies the expected message.
 
 If `MATCHES` is specified, it asserts whether the received message matches `<message>`. If `STREQUAL` is specified, it asserts whether the received message is equal to `<message>`. If nothing is specified, it defaults to the `MATCHES` parameter.
 

@@ -362,8 +362,8 @@ endfunction()
 #
 # This function performs an assertion on the function or macro named
 # `<command>`, called with the specified `<arguments>`. It currently only allows
-# asserting whether the given command throws a fatal error message that
-# satisfies the expected message.
+# asserting whether the given command receives an error message that satisfies
+# the expected message.
 
 # If `MATCHES` is specified, it asserts whether the received message matches
 # `<message>`. If `STREQUAL` is specified, it asserts whether the received
@@ -391,21 +391,22 @@ function(assert_call)
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
   if(NOT MESSAGE_MOCKED)
     # Override the `message` function to allow the behavior to be mocked by
-    # capturing a fatal error message.
+    # capturing an error message.
     function(message MODE)
       cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
 
-      # The fatal error message will only be captured if the capture level is
-      # one or above.
-      get_property(CAPTURE_LEVEL GLOBAL PROPERTY fatal_error_capture_level)
-      if(CAPTURE_LEVEL GREATER_EQUAL 1 AND MODE STREQUAL "FATAL_ERROR")
+      # The error message will only be captured if the capture level is one or
+      # above.
+      get_property(CAPTURE_LEVEL GLOBAL PROPERTY error_capture_level)
+      if(CAPTURE_LEVEL GREATER_EQUAL 1 AND
+        MODE MATCHES ^FATAL_ERROR|SEND_ERROR$)
         string(JOIN "" MESSAGE ${ARG_UNPARSED_ARGUMENTS})
-        set_property(GLOBAL PROPERTY captured_fatal_error "${MESSAGE}")
+        set_property(GLOBAL PROPERTY captured_error "${MESSAGE}")
 
-        # Decrease the level for capturing a fatal error message, indicating
-        # the requirement to capture a fatal error message is fulfilled.
+        # Decrease the level for capturing an error message, indicating the
+        # requirement to capture an error message is fulfilled.
         math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} - 1")
-        set_property(GLOBAL PROPERTY fatal_error_capture_level
+        set_property(GLOBAL PROPERTY error_capture_level
           "${CAPTURE_LEVEL}")
       else()
         _message("${MODE}" ${ARG_UNPARSED_ARGUMENTS})
@@ -414,42 +415,42 @@ function(assert_call)
     set_property(GLOBAL PROPERTY _assert_internal_message_mocked ON)
   endif()
 
-  # Increase the level for capturing a fatal error message, indicating the
-  # requirement to capture a fatal error message.
-  get_property(CAPTURE_LEVEL GLOBAL PROPERTY fatal_error_capture_level)
+  # Increase the level for capturing an error message, indicating the
+  # requirement to capture an error message.
+  get_property(CAPTURE_LEVEL GLOBAL PROPERTY error_capture_level)
   if(CAPTURE_LEVEL GREATER_EQUAL 0)
     math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} + 1")
   else()
     set(CAPTURE_LEVEL 1)
   endif()
-  set_property(GLOBAL PROPERTY fatal_error_capture_level "${CAPTURE_LEVEL}")
+  set_property(GLOBAL PROPERTY error_capture_level "${CAPTURE_LEVEL}")
 
   # Call the command with the specified arguments.
   list(POP_FRONT ARG_CALL COMMAND)
   cmake_language(CALL "${COMMAND}" ${ARG_CALL})
 
-  # Assert if a fatal error message is captured. This can be done by checking
-  # whether the capture level is decreased.
-  get_property(NEW_CAPTURE_LEVEL GLOBAL PROPERTY fatal_error_capture_level)
+  # Assert if an error message is captured. This can be done by checking whether
+  # the capture level is decreased.
+  get_property(NEW_CAPTURE_LEVEL GLOBAL PROPERTY error_capture_level)
   if(NEW_CAPTURE_LEVEL GREATER_EQUAL CAPTURE_LEVEL)
-    # Decrease the level for capturing a fatal error message, reverting to the
-    # level before this assertion.
+    # Decrease the level for capturing an error message, reverting to the level
+    # before this assertion.
     math(EXPR CAPTURE_LEVEL "${CAPTURE_LEVEL} - 1")
-    set_property(GLOBAL PROPERTY fatal_error_capture_level "${CAPTURE_LEVEL}")
+    set_property(GLOBAL PROPERTY error_capture_level "${CAPTURE_LEVEL}")
 
-    fail("expected to receive a fatal error message")
+    fail("expected to receive an error message")
     return()
   endif()
 
-  # Assert the captured fatal error message with the expected message.
-  get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_fatal_error)
+  # Assert the captured error message with the expected message.
+  get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_error)
   string(STRIP "${ACTUAL_MESSAGE}" ACTUAL_MESSAGE)
   if(NOT "${ACTUAL_MESSAGE}" ${OPERATOR} "${EXPECTED_ERROR}")
     if(OPERATOR STREQUAL "MATCHES")
-      fail("expected fatal error message" ACTUAL_MESSAGE
+      fail("expected error message" ACTUAL_MESSAGE
         "to match" EXPECTED_ERROR)
     else()
-      fail("expected fatal error message" ACTUAL_MESSAGE
+      fail("expected error message" ACTUAL_MESSAGE
         "to be equal to" EXPECTED_ERROR)
     endif()
   endif()
