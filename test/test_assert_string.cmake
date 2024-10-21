@@ -5,8 +5,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
 set(STRING_VAR "some string")
 set(OTHER_STRING_VAR "some other string")
 
-section("given equal strings")
-  section("it should assert string equality conditions")
+section("assert string equality conditions given equal strings")
+  section("it should assert conditions")
     assert(NOT "some string" STRLESS "some string")
     assert(NOT "some string" STRGREATER "some string")
     assert("some string" STREQUAL "some string")
@@ -20,7 +20,7 @@ section("given equal strings")
     assert(STRING_VAR STRGREATER_EQUAL STRING_VAR)
   endsection()
 
-  section("it should fail to assert string equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert "some string" STRLESS "some string"
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
         "to be less than:\n  some string")
@@ -43,8 +43,8 @@ section("given equal strings")
   endsection()
 endsection()
 
-section("given a lesser string")
-  section("it should assert string equality conditions")
+section("assert string equality conditions given a lesser string")
+  section("it should assert conditions")
     assert("some other string" STRLESS "some string")
     assert(NOT "some other string" STRGREATER "some string")
     assert(NOT "some other string" STREQUAL "some string")
@@ -58,7 +58,7 @@ section("given a lesser string")
     assert(NOT OTHER_STRING_VAR STRGREATER_EQUAL STRING_VAR)
   endsection()
 
-  section("it should fail to assert string equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert NOT "some other string" STRLESS "some string"
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some other string\n"
         "not to be less than:\n  some string")
@@ -81,8 +81,8 @@ section("given a lesser string")
   endsection()
 endsection()
 
-section("given a greater string")
-  section("it should assert string equality conditions")
+section("assert string equality conditions given a greater string")
+  section("it should assert conditions")
     assert(NOT "some string" STRLESS "some other string")
     assert("some string" STRGREATER "some other string")
     assert(NOT "some string" STREQUAL "some other string")
@@ -96,7 +96,7 @@ section("given a greater string")
     assert(STRING_VAR STRGREATER_EQUAL OTHER_STRING_VAR)
   endsection()
 
-  section("it should fail to assert string equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert "some string" STRLESS "some other string"
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
         "to be less than:\n  some other string")

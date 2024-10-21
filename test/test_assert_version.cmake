@@ -6,8 +6,8 @@ set(VERSION_VAR 1.2.3)
 set(VERSIONN_VAR 1.02.3)
 set(OTHER_VERSION_VAR 1.3.4)
 
-section("given equal versions")
-  section("it should assert version equality conditions")
+section("assert version equality conditions given equal versions")
+  section("it should assert conditions")
     assert(NOT 1.2.3 VERSION_LESS 1.02.3)
     assert(NOT 1.2.3 VERSION_GREATER 1.02.3)
     assert(1.2.3 VERSION_EQUAL 1.02.3)
@@ -21,7 +21,7 @@ section("given equal versions")
     assert(VERSION_VAR VERSION_GREATER_EQUAL VERSIONN_VAR)
   endsection()
 
-  section("it should fail to assert version equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert 1.2.3 VERSION_LESS 1.02.3
       EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "to be less than:\n  1.02.3")
@@ -44,8 +44,8 @@ section("given equal versions")
   endsection()
 endsection()
 
-section("given a lesser version")
-  section("it should assert version equality conditions")
+section("assert version equality conditions given a lesser version")
+  section("it should assert conditions")
     assert(1.2.3 VERSION_LESS 1.3.4)
     assert(NOT 1.2.3 VERSION_GREATER 1.3.4)
     assert(NOT 1.2.3 VERSION_EQUAL 1.3.4)
@@ -59,7 +59,7 @@ section("given a lesser version")
     assert(NOT VERSION_VAR VERSION_GREATER_EQUAL OTHER_VERSION_VAR)
   endsection()
 
-  section("it should fail to assert version equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert NOT 1.2.3 VERSION_LESS 1.3.4
       EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "not to be less than:\n  1.3.4")
@@ -82,8 +82,8 @@ section("given a lesser version")
   endsection()
 endsection()
 
-section("given a greater version")
-  section("it should assert version equality conditions")
+section("assert version equality conditions given a greater version")
+  section("it should assert conditions")
     assert(NOT 1.3.4 VERSION_LESS 1.2.3)
     assert(1.3.4 VERSION_GREATER 1.2.3)
     assert(NOT 1.3.4 VERSION_EQUAL 1.2.3)
@@ -97,7 +97,7 @@ section("given a greater version")
     assert(OTHER_VERSION_VAR VERSION_GREATER_EQUAL VERSION_VAR)
   endsection()
 
-  section("it should fail to assert version equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert 1.3.4 VERSION_LESS 1.2.3
       EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
         "to be less than:\n  1.2.3")

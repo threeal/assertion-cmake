@@ -34,13 +34,13 @@ function(assert_configure_sample_project FIRST_CODE)
     "${CMAKE_COMMAND}" sample-project -B sample-project/build)
 endfunction()
 
-section("boolean condition assertions")
-  section("it should assert boolean conditions")
+section("assert boolean conditions")
+  section("it should assert conditions")
     assert(TRUE)
     assert(NOT FALSE)
   endsection()
 
-  section("it should fail to assert boolean conditions")
+  section("it should fail to assert conditions")
     assert_call(assert FALSE
       EXPECT_FATAL_ERROR STREQUAL "expected:\n  FALSE\nto resolve to true")
 
@@ -49,16 +49,16 @@ section("boolean condition assertions")
   endsection()
 endsection()
 
-section("command existence condition assertions")
+section("assert command existence conditions")
   function(existing_command)
   endfunction()
 
-  section("it should assert command existence conditions")
+  section("it should assert conditions")
     assert(COMMAND existing_command)
     assert(NOT COMMAND non_existing_command)
   endsection()
 
-  section("it should fail to assert command existence conditions")
+  section("it should fail to assert conditions")
     assert_call(assert COMMAND non_existing_command
       EXPECT_FATAL_ERROR STREQUAL
         "expected command:\n  non_existing_command\nto be defined")
@@ -69,13 +69,13 @@ section("command existence condition assertions")
   endsection()
 endsection()
 
-section("policy existence condition assertions")
-  section("it should assert policy existence conditions")
+section("assert policy existence conditions")
+  section("it should assert conditions")
     assert(POLICY CMP0000)
     assert(NOT POLICY CPMXXXX)
   endsection()
 
-  section("it should fail to assert policy existence conditions")
+  section("it should fail to assert conditions")
     assert_call(assert POLICY CMPXXXX
       EXPECT_FATAL_ERROR STREQUAL "expected policy:\n  CMPXXXX\nto exist")
 
@@ -84,10 +84,10 @@ section("policy existence condition assertions")
   endsection()
 endsection()
 
-section("target existence condition assertions")
+section("assert target existence conditions")
   file(MAKE_DIRECTORY project)
 
-  section("it should assert target existence conditions")
+  section("it should assert conditions")
     assert_configure_sample_project(
       "add_custom_target(some_target)\n"
       "\n"
@@ -95,7 +95,7 @@ section("target existence condition assertions")
       "assert(NOT TARGET non_existing_target)\n")
   endsection()
 
-  section("it should fail to assert target existence conditions")
+  section("it should fail to assert conditions")
     assert_configure_sample_project(
       "add_custom_target(some_target)\n"
       "\n"
@@ -109,10 +109,10 @@ section("target existence condition assertions")
   endsection()
 endsection()
 
-section("test existence condition assertions")
+section("assert test existence conditions")
   file(MAKE_DIRECTORY project)
 
-  section("it should assert test existence conditions")
+  section("it should assert conditions")
     assert_configure_sample_project(
       "add_test(NAME some_test COMMAND some_command)\n"
       "\n"
@@ -120,7 +120,7 @@ section("test existence condition assertions")
       "assert(NOT TEST non_existing_test)\n")
   endsection()
 
-  section("it should fail to assert test existence conditions")
+  section("it should fail to assert conditions")
     assert_configure_sample_project(
       "add_test(NAME some_test COMMAND some_command)\n"
       "\n"
@@ -134,16 +134,16 @@ section("test existence condition assertions")
   endsection()
 endsection()
 
-section("variable existence condition assertions")
+section("assert variable existence conditions")
   set(EXISTING_VARIABLE TRUE)
   unset(NON_EXISTING_VARIABLE)
 
-  section("it should assert variable existence conditions")
+  section("it should assert conditions")
     assert(DEFINED EXISTING_VARIABLE)
     assert(NOT DEFINED NON_EXISTING_VARIABLE)
   endsection()
 
-  section("it should fail to assert variable existence conditions")
+  section("it should fail to assert conditions")
     assert_call(assert DEFINED NON_EXISTING_VARIABLE
       EXPECT_FATAL_ERROR STREQUAL
         "expected variable:\n  NON_EXISTING_VARIABLE\nto be defined")
@@ -154,10 +154,10 @@ section("variable existence condition assertions")
   endsection()
 endsection()
 
-section("list element existence condition assertions")
+section("assert list element existence conditions")
   set(SOME_LIST "some element" "some other element")
 
-  section("it should assert list element existence conditions")
+  section("it should assert conditions")
     set(ELEMENT_VAR "some element")
     set(OTHER_ELEMENT_VAR "other element")
 
@@ -168,7 +168,7 @@ section("list element existence condition assertions")
     assert(NOT OTHER_ELEMENT_VAR IN_LIST SOME_LIST)
   endsection()
 
-  section("it should fail to assert list element existence conditions")
+  section("it should fail to assert conditions")
     assert_call(assert "other element" IN_LIST SOME_LIST
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  other element\n"
         "to exist in:\n  some element\;some other element\n"
@@ -181,16 +181,16 @@ section("list element existence condition assertions")
   endsection()
 endsection()
 
-section("path existence condition assertions")
+section("assert path existence conditions")
   file(TOUCH some_file)
   file(REMOVE_RECURSE non_existing_file)
 
-  section("it should assert path existence conditions")
+  section("it should assert conditions")
     assert(EXISTS some_file)
     assert(NOT EXISTS non_existing_file)
   endsection()
 
-  section("it should fail to assert path existence conditions")
+  section("it should fail to assert conditions")
     assert_call(assert EXISTS non_existing_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  non_existing_file\nto exist")
@@ -200,19 +200,19 @@ section("path existence condition assertions")
   endsection()
 endsection()
 
-section("path readability condition assertions")
+section("assert path readability conditions")
   file(TOUCH some_file)
 
   file(REMOVE non_readable_file)
   file(TOUCH non_readable_file)
   file(CHMOD non_readable_file PERMISSIONS OWNER_WRITE)
 
-  section("it should assert path readability conditions")
+  section("it should assert conditions")
     assert(IS_READABLE some_file)
     assert(NOT IS_READABLE non_readable_file)
   endsection()
 
-  section("it should fail to assert path readability conditions")
+  section("it should fail to assert conditions")
     assert_call(assert IS_READABLE non_readable_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  non_readable_file\nto be readable")
@@ -223,18 +223,18 @@ section("path readability condition assertions")
   endsection()
 endsection()
 
-section("path writability condition assertions")
+section("assert path writability conditions")
   file(TOUCH some_file)
 
   file(TOUCH non_writable_file)
   file(CHMOD non_writable_file PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
-  section("it should assert path writability conditions")
+  section("it should assert conditions")
     assert(IS_WRITABLE some_file)
     assert(NOT IS_WRITABLE non_writable_file)
   endsection()
 
-  section("it should fail to assert path writability conditions")
+  section("it should fail to assert conditions")
     assert_call(assert IS_WRITABLE non_writable_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  non_writable_file\nto be writable")
@@ -245,7 +245,7 @@ section("path writability condition assertions")
   endsection()
 endsection()
 
-section("executable path condition assertions")
+section("assert executable path conditions")
   file(TOUCH some_executable)
   file(
     CHMOD some_executable
@@ -255,12 +255,12 @@ section("executable path condition assertions")
 
   file(TOUCH some_file)
 
-  section("it should assert executable path conditions")
+  section("it should assert conditions")
     assert(IS_EXECUTABLE some_executable)
     assert(NOT IS_EXECUTABLE some_file)
   endsection()
 
-  section("it should fail to assert executable path conditions")
+  section("it should fail to assert conditions")
     assert_call(assert IS_EXECUTABLE some_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_file\nto be an executable")
@@ -271,7 +271,7 @@ section("executable path condition assertions")
   endsection()
 endsection()
 
-section("file recency condition assertions")
+section("assert file recency conditions")
   if(NOT EXISTS old_file)
     file(WRITE old_file "something")
     execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep 1)
@@ -279,12 +279,12 @@ section("file recency condition assertions")
 
   file(WRITE new_file "something")
 
-  section("it should assert file recency conditions")
+  section("it should assert conditions")
     assert(new_file IS_NEWER_THAN old_file)
     assert(NOT old_file IS_NEWER_THAN new_file)
   endsection()
 
-  section("it should fail to assert file recency conditions")
+  section("it should fail to assert conditions")
     assert_call(assert old_file IS_NEWER_THAN new_file
       EXPECT_FATAL_ERROR STREQUAL "expected file:\n  old_file\n"
         "to be newer than:\n  new_file")
@@ -295,16 +295,16 @@ section("file recency condition assertions")
   endsection()
 endsection()
 
-section("directory path condition assertions")
+section("assert directory path conditions")
   file(MAKE_DIRECTORY some_directory)
   file(TOUCH some_file)
 
-  section("it should assert directory path conditions")
+  section("it should assert conditions")
     assert(IS_DIRECTORY some_directory)
     assert(NOT IS_DIRECTORY some_file)
   endsection()
 
-  section("it should fail to assert directory path conditions")
+  section("it should fail to assert conditions")
     assert_call(assert IS_DIRECTORY some_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_file\nto be a directory")
@@ -315,16 +315,16 @@ section("directory path condition assertions")
   endsection()
 endsection()
 
-section("symbolic link path condition assertions")
+section("assert symbolic link path conditions")
   file(TOUCH some_file)
   file(CREATE_LINK some_file some_symlink SYMBOLIC)
 
-  section("it should assert symbolic link path conditions")
+  section("it should assert conditions")
     assert(IS_SYMLINK some_symlink)
     assert(NOT IS_SYMLINK some_file)
   endsection()
 
-  section("it should fail to assert symbolic link path conditions")
+  section("it should fail to assert conditions")
     assert_call(assert IS_SYMLINK some_file
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some_file\nto be a symbolic link")
@@ -335,13 +335,13 @@ section("symbolic link path condition assertions")
   endsection()
 endsection()
 
-section("absolute path condition assertions")
-  section("it should assert absolute path conditions")
+section("assert absolute path conditions")
+  section("it should assert conditions")
     assert(IS_ABSOLUTE /some/absolute/path)
     assert(NOT IS_ABSOLUTE some/relative/path)
   endsection()
 
-  section("it should fail to assert absolute path conditions")
+  section("it should fail to assert conditions")
     assert_call(assert IS_ABSOLUTE some/relative/path
       EXPECT_FATAL_ERROR STREQUAL
         "expected path:\n  some/relative/path\nto be absolute")
@@ -352,8 +352,8 @@ section("absolute path condition assertions")
   endsection()
 endsection()
 
-section("regular expression match condition assertions")
-  section("it should assert regular expression match conditions")
+section("assert regular expression match conditions")
+  section("it should assert conditions")
     set(STRING_VAR "some string")
 
     assert("some string" MATCHES "so.*ing")
@@ -363,7 +363,7 @@ section("regular expression match condition assertions")
     assert(NOT STRING_VAR MATCHES "so.*other.*ing")
   endsection()
 
-  section("it should fail to assert regular expression match conditions")
+  section("it should fail to assert conditions")
     assert_call(assert "some string" MATCHES "so.*other.*ing"
       EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
         "to match:\n  so.*other.*ing")
@@ -374,8 +374,8 @@ section("regular expression match condition assertions")
   endsection()
 endsection()
 
-section("path equality condition assertions")
-  section("it should assert path equality conditions")
+section("assert path equality conditions")
+  section("it should assert conditions")
     set(PATH_VAR "/some/path")
     set(PATHH_VAR "/some//path")
     set(OTHER_PATH_VAR "/some/other/path")
@@ -387,7 +387,7 @@ section("path equality condition assertions")
     assert(NOT PATH_VAR PATH_EQUAL OTHER_PATH_VAR)
   endsection()
 
-  section("it should fail to assert path equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert "/some/path" PATH_EQUAL "/some/other/path"
       EXPECT_FATAL_ERROR STREQUAL "expected path:\n  /some/path\n"
         "to be equal to:\n  /some/other/path")

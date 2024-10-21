@@ -5,8 +5,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
 set(SEVEN_VAR 7)
 set(THIRTEEN_VAR 13)
 
-section("given equal numbers")
-  section("it should assert number equality conditions")
+section("assert number equality conditions given equal numbers")
+  section("it should assert conditions")
     assert(NOT 7 LESS 7)
     assert(NOT 7 GREATER 7)
     assert(7 EQUAL 7)
@@ -20,7 +20,7 @@ section("given equal numbers")
     assert(SEVEN_VAR GREATER_EQUAL SEVEN_VAR)
   endsection()
 
-  section("it should fail to assert number equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert 7 LESS 7
       EXPECT_FATAL_ERROR STREQUAL
         "expected number:\n  7\nto be less than:\n  7")
@@ -43,8 +43,8 @@ section("given equal numbers")
   endsection()
 endsection()
 
-section("given a lesser number")
-  section("it should assert number equality conditions")
+section("assert number equality conditions given a lesser number")
+  section("it should assert conditions")
     assert(7 LESS 13)
     assert(NOT 7 GREATER 13)
     assert(NOT 7 EQUAL 13)
@@ -58,7 +58,7 @@ section("given a lesser number")
     assert(NOT SEVEN_VAR GREATER_EQUAL THIRTEEN_VAR)
   endsection()
 
-  section("it should fail to assert number equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert NOT 7 LESS 13
       EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
         "not to be less than:\n  13")
@@ -81,8 +81,8 @@ section("given a lesser number")
   endsection()
 endsection()
 
-section("given a greater number")
-  section("it should assert number equality conditions")
+section("assert number equality conditions given a greater number")
+  section("it should assert conditions")
     assert(NOT 13 LESS 7)
     assert(13 GREATER 7)
     assert(NOT 13 EQUAL 7)
@@ -96,7 +96,7 @@ section("given a greater number")
     assert(THIRTEEN_VAR GREATER_EQUAL SEVEN_VAR)
   endsection()
 
-  section("it should fail to assert number equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert 13 LESS 7
       EXPECT_FATAL_ERROR STREQUAL "expected number:\n  13\n"
         "to be less than:\n  7")
@@ -119,8 +119,8 @@ section("given a greater number")
   endsection()
 endsection()
 
-section("given a non-number")
-  section("it should assert number equality conditions")
+section("assert number equality conditions given a non-number")
+  section("it should assert conditions")
     set(STRING_VAR "some string")
 
     assert(NOT 7 LESS "some string")
@@ -136,7 +136,7 @@ section("given a non-number")
     assert(NOT SEVEN_VAR GREATER_EQUAL STRING_VAR)
   endsection()
 
-  section("it should fail to assert number equality conditions")
+  section("it should fail to assert conditions")
     assert_call(assert 7 LESS  "some string"
       EXPECT_FATAL_ERROR STREQUAL "expected number:\n  7\n"
         "to be less than:\n  some string")
