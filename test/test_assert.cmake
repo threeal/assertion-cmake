@@ -42,10 +42,10 @@ section("assert boolean conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert FALSE
-      EXPECT_FATAL_ERROR STREQUAL "expected:\n  FALSE\nto resolve to true")
+      EXPECT_ERROR STREQUAL "expected:\n  FALSE\nto resolve to true")
 
     assert_call(assert NOT TRUE
-      EXPECT_FATAL_ERROR STREQUAL "expected:\n  NOT TRUE\nto resolve to true")
+      EXPECT_ERROR STREQUAL "expected:\n  NOT TRUE\nto resolve to true")
   endsection()
 endsection()
 
@@ -60,11 +60,11 @@ section("assert command existence conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert COMMAND non_existing_command
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected command:\n  non_existing_command\nto be defined")
 
     assert_call(assert NOT COMMAND existing_command
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected command:\n  existing_command\nnot to be defined")
   endsection()
 endsection()
@@ -77,10 +77,10 @@ section("assert policy existence conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert POLICY CMPXXXX
-      EXPECT_FATAL_ERROR STREQUAL "expected policy:\n  CMPXXXX\nto exist")
+      EXPECT_ERROR STREQUAL "expected policy:\n  CMPXXXX\nto exist")
 
     assert_call(assert NOT POLICY CMP0000
-      EXPECT_FATAL_ERROR STREQUAL "expected policy:\n  CMP0000\nnot to exist")
+      EXPECT_ERROR STREQUAL "expected policy:\n  CMP0000\nnot to exist")
   endsection()
 endsection()
 
@@ -100,11 +100,11 @@ section("assert target existence conditions")
       "add_custom_target(some_target)\n"
       "\n"
       "assert_call(assert TARGET non_existing_target\n"
-      "  EXPECT_FATAL_ERROR STREQUAL\n"
+      "  EXPECT_ERROR STREQUAL\n"
       "    \"expected target:\\n  non_existing_target\\nto exist\")\n"
       "\n"
       "assert_call(assert NOT TARGET some_target\n"
-      "  EXPECT_FATAL_ERROR STREQUAL\n"
+      "  EXPECT_ERROR STREQUAL\n"
       "    \"expected target:\\n  some_target\\nnot to exist\")\n")
   endsection()
 endsection()
@@ -125,11 +125,11 @@ section("assert test existence conditions")
       "add_test(NAME some_test COMMAND some_command)\n"
       "\n"
       "assert_call(assert TEST non_existing_test\n"
-      "  EXPECT_FATAL_ERROR STREQUAL\n"
+      "  EXPECT_ERROR STREQUAL\n"
       "    \"expected test:\\n  non_existing_test\\nto exist\")\n"
       "\n"
       "assert_call(assert NOT TEST some_test\n"
-      "  EXPECT_FATAL_ERROR STREQUAL\n"
+      "  EXPECT_ERROR STREQUAL\n"
       "    \"expected test:\\n  some_test\\nnot to exist\")\n")
   endsection()
 endsection()
@@ -145,11 +145,11 @@ section("assert variable existence conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert DEFINED NON_EXISTING_VARIABLE
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected variable:\n  NON_EXISTING_VARIABLE\nto be defined")
 
     assert_call(assert NOT DEFINED EXISTING_VARIABLE
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected variable:\n  EXISTING_VARIABLE\nnot to be defined")
   endsection()
 endsection()
@@ -170,12 +170,12 @@ section("assert list element existence conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert "other element" IN_LIST SOME_LIST
-      EXPECT_FATAL_ERROR STREQUAL "expected string:\n  other element\n"
+      EXPECT_ERROR STREQUAL "expected string:\n  other element\n"
         "to exist in:\n  some element\;some other element\n"
         "of variable:\n  SOME_LIST")
 
     assert_call(assert NOT "some element" IN_LIST SOME_LIST
-      EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some element\n"
+      EXPECT_ERROR STREQUAL "expected string:\n  some element\n"
         "not to exist in:\n  some element\;some other element\n"
         "of variable:\n  SOME_LIST")
   endsection()
@@ -192,11 +192,10 @@ section("assert path existence conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert EXISTS non_existing_file
-      EXPECT_FATAL_ERROR STREQUAL
-        "expected path:\n  non_existing_file\nto exist")
+      EXPECT_ERROR STREQUAL "expected path:\n  non_existing_file\nto exist")
 
     assert_call(assert NOT EXISTS some_file
-      EXPECT_FATAL_ERROR STREQUAL "expected path:\n  some_file\nnot to exist")
+      EXPECT_ERROR STREQUAL "expected path:\n  some_file\nnot to exist")
   endsection()
 endsection()
 
@@ -214,12 +213,11 @@ section("assert path readability conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert IS_READABLE non_readable_file
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected path:\n  non_readable_file\nto be readable")
 
     assert_call(assert NOT IS_READABLE some_file
-      EXPECT_FATAL_ERROR STREQUAL
-        "expected path:\n  some_file\nnot to be readable")
+      EXPECT_ERROR STREQUAL "expected path:\n  some_file\nnot to be readable")
   endsection()
 endsection()
 
@@ -236,12 +234,11 @@ section("assert path writability conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert IS_WRITABLE non_writable_file
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected path:\n  non_writable_file\nto be writable")
 
     assert_call(assert NOT IS_WRITABLE some_file
-      EXPECT_FATAL_ERROR STREQUAL
-        "expected path:\n  some_file\nnot to be writable")
+      EXPECT_ERROR STREQUAL "expected path:\n  some_file\nnot to be writable")
   endsection()
 endsection()
 
@@ -262,11 +259,10 @@ section("assert executable path conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert IS_EXECUTABLE some_file
-      EXPECT_FATAL_ERROR STREQUAL
-        "expected path:\n  some_file\nto be an executable")
+      EXPECT_ERROR STREQUAL "expected path:\n  some_file\nto be an executable")
 
     assert_call(assert NOT IS_EXECUTABLE some_executable
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected path:\n  some_executable\nnot to be an executable")
   endsection()
 endsection()
@@ -286,11 +282,11 @@ section("assert file recency conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert old_file IS_NEWER_THAN new_file
-      EXPECT_FATAL_ERROR STREQUAL "expected file:\n  old_file\n"
+      EXPECT_ERROR STREQUAL "expected file:\n  old_file\n"
         "to be newer than:\n  new_file")
 
     assert_call(assert NOT new_file IS_NEWER_THAN old_file
-      EXPECT_FATAL_ERROR STREQUAL "expected file:\n  new_file\n"
+      EXPECT_ERROR STREQUAL "expected file:\n  new_file\n"
         "not to be newer than:\n  old_file")
   endsection()
 endsection()
@@ -306,11 +302,10 @@ section("assert directory path conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert IS_DIRECTORY some_file
-      EXPECT_FATAL_ERROR STREQUAL
-        "expected path:\n  some_file\nto be a directory")
+      EXPECT_ERROR STREQUAL "expected path:\n  some_file\nto be a directory")
 
     assert_call(assert NOT IS_DIRECTORY some_directory
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected path:\n  some_directory\nnot to be a directory")
   endsection()
 endsection()
@@ -326,11 +321,11 @@ section("assert symbolic link path conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert IS_SYMLINK some_file
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected path:\n  some_file\nto be a symbolic link")
 
     assert_call(assert NOT IS_SYMLINK some_symlink
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected path:\n  some_symlink\nnot to be a symbolic link")
   endsection()
 endsection()
@@ -343,11 +338,11 @@ section("assert absolute path conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert IS_ABSOLUTE some/relative/path
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected path:\n  some/relative/path\nto be absolute")
 
     assert_call(assert NOT IS_ABSOLUTE /some/absolute/path
-      EXPECT_FATAL_ERROR STREQUAL
+      EXPECT_ERROR STREQUAL
         "expected path:\n  /some/absolute/path\nnot to be absolute")
   endsection()
 endsection()
@@ -365,11 +360,11 @@ section("assert regular expression match conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert "some string" MATCHES "so.*other.*ing"
-      EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
+      EXPECT_ERROR STREQUAL "expected string:\n  some string\n"
         "to match:\n  so.*other.*ing")
 
     assert_call(assert NOT "some string" MATCHES "so.*ing"
-      EXPECT_FATAL_ERROR STREQUAL "expected string:\n  some string\n"
+      EXPECT_ERROR STREQUAL "expected string:\n  some string\n"
         "not to match:\n  so.*ing")
   endsection()
 endsection()
@@ -389,11 +384,11 @@ section("assert path equality conditions")
 
   section("it should fail to assert conditions")
     assert_call(assert "/some/path" PATH_EQUAL "/some/other/path"
-      EXPECT_FATAL_ERROR STREQUAL "expected path:\n  /some/path\n"
+      EXPECT_ERROR STREQUAL "expected path:\n  /some/path\n"
         "to be equal to:\n  /some/other/path")
 
     assert_call(assert NOT "/some/path" PATH_EQUAL "/some//path"
-      EXPECT_FATAL_ERROR STREQUAL "expected path:\n  /some/path\n"
+      EXPECT_ERROR STREQUAL "expected path:\n  /some/path\n"
         "not to be equal to:\n  /some//path")
   endsection()
 endsection()

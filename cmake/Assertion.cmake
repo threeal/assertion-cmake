@@ -358,7 +358,7 @@ endfunction()
 #
 # assert_call(
 #   [CALL] <command> [<arguments>...]
-#   EXPECT_FATAL_ERROR [MATCHES|STREQUAL] <message>...)
+#   EXPECT_ERROR [MATCHES|STREQUAL] <message>...)
 #
 # This function performs an assertion on the function or macro named
 # `<command>`, called with the specified `<arguments>`. It currently only allows
@@ -373,19 +373,19 @@ endfunction()
 # If more than one `<message>` string is given, they are concatenated into a
 # single message with no separators.
 function(assert_call)
-  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_FATAL_ERROR")
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_ERROR")
 
   if(NOT DEFINED ARG_CALL)
     set(ARG_CALL ${ARG_UNPARSED_ARGUMENTS})
   endif()
 
-  list(GET ARG_EXPECT_FATAL_ERROR 0 OPERATOR)
+  list(GET ARG_EXPECT_ERROR 0 OPERATOR)
   if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
-    list(REMOVE_AT ARG_EXPECT_FATAL_ERROR 0)
+    list(REMOVE_AT ARG_EXPECT_ERROR 0)
   else()
     set(OPERATOR "MATCHES")
   endif()
-  string(JOIN "" EXPECTED_FATAL_ERROR ${ARG_EXPECT_FATAL_ERROR})
+  string(JOIN "" EXPECTED_ERROR ${ARG_EXPECT_ERROR})
 
   # Override the `message` function if it has not been overridden.
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _assert_internal_message_mocked)
@@ -444,13 +444,13 @@ function(assert_call)
   # Assert the captured fatal error message with the expected message.
   get_property(ACTUAL_MESSAGE GLOBAL PROPERTY captured_fatal_error)
   string(STRIP "${ACTUAL_MESSAGE}" ACTUAL_MESSAGE)
-  if(NOT "${ACTUAL_MESSAGE}" ${OPERATOR} "${EXPECTED_FATAL_ERROR}")
+  if(NOT "${ACTUAL_MESSAGE}" ${OPERATOR} "${EXPECTED_ERROR}")
     if(OPERATOR STREQUAL "MATCHES")
       fail("expected fatal error message" ACTUAL_MESSAGE
-        "to match" EXPECTED_FATAL_ERROR)
+        "to match" EXPECTED_ERROR)
     else()
       fail("expected fatal error message" ACTUAL_MESSAGE
-        "to be equal to" EXPECTED_FATAL_ERROR)
+        "to be equal to" EXPECTED_ERROR)
     endif()
   endif()
 endfunction()

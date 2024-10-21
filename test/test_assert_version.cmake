@@ -23,23 +23,23 @@ section("assert version equality conditions given equal versions")
 
   section("it should fail to assert conditions")
     assert_call(assert 1.2.3 VERSION_LESS 1.02.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "to be less than:\n  1.02.3")
 
     assert_call(assert 1.2.3 VERSION_GREATER 1.02.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "to be greater than:\n  1.02.3")
 
     assert_call(assert NOT 1.2.3 VERSION_EQUAL 1.02.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "not to be equal to:\n  1.02.3")
 
     assert_call(assert NOT 1.2.3 VERSION_LESS_EQUAL 1.02.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "not to be less than or equal to:\n  1.02.3")
 
     assert_call(assert NOT 1.2.3 VERSION_GREATER_EQUAL 1.02.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "not to be greater than or equal to:\n  1.02.3")
   endsection()
 endsection()
@@ -61,23 +61,23 @@ section("assert version equality conditions given a lesser version")
 
   section("it should fail to assert conditions")
     assert_call(assert NOT 1.2.3 VERSION_LESS 1.3.4
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "not to be less than:\n  1.3.4")
 
     assert_call(assert 1.2.3 VERSION_GREATER 1.3.4
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "to be greater than:\n  1.3.4")
 
     assert_call(assert 1.2.3 VERSION_EQUAL 1.3.4
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "to be equal to:\n  1.3.4")
 
     assert_call(assert NOT 1.2.3 VERSION_LESS_EQUAL 1.3.4
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "not to be less than or equal to:\n  1.3.4")
 
     assert_call(assert 1.2.3 VERSION_GREATER_EQUAL 1.3.4
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.2.3\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.2.3\n"
         "to be greater than or equal to:\n  1.3.4")
   endsection()
 endsection()
@@ -99,23 +99,23 @@ section("assert version equality conditions given a greater version")
 
   section("it should fail to assert conditions")
     assert_call(assert 1.3.4 VERSION_LESS 1.2.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.3.4\n"
         "to be less than:\n  1.2.3")
 
     assert_call(assert NOT 1.3.4 VERSION_GREATER 1.2.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.3.4\n"
         "not to be greater than:\n  1.2.3")
 
     assert_call(assert 1.3.4 VERSION_EQUAL 1.2.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.3.4\n"
         "to be equal to:\n  1.2.3")
 
     assert_call(assert 1.3.4 VERSION_LESS_EQUAL 1.2.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.3.4\n"
         "to be less than or equal to:\n  1.2.3")
 
     assert_call(assert NOT 1.3.4 VERSION_GREATER_EQUAL 1.2.3
-      EXPECT_FATAL_ERROR STREQUAL "expected version:\n  1.3.4\n"
+      EXPECT_ERROR STREQUAL "expected version:\n  1.3.4\n"
         "not to be greater than or equal to:\n  1.2.3")
   endsection()
 endsection()
