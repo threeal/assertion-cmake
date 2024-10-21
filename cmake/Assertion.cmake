@@ -358,22 +358,20 @@ endfunction()
 #
 # assert_call(
 #   [CALL] <command> [<arguments>...]
-#   EXPECT_ERROR [MATCHES|STREQUAL] <message>...)
+#   [EXPECT_ERROR [MATCHES|STREQUAL] <message>...])
 #
-# This function asserts the behavior of the function or macro named `<command>`,
-# called with the specified `<arguments>`. It currently only supports asserting
-# whether the given command receives error messages that satisfy the expected
-# message. It captures all errors from the `message` function and compares them
-# with the expected message. Each captured error is concatenated with new lines
-# as separators.
+# This function asserts whether the function or macro named `<command>`, called
+# with the specified `<arguments>`, does not receive any errors. Internally, the
+# function captures all errors from the `message` function. Each captured error
+# is concatenated with new lines as separators.
 #
-# If `MATCHES` is specified, it asserts whether the captured messages match
-# `<message>`. If `STREQUAL` is specified, it asserts whether the captured
-# messages are equal to `<message>`. If neither is specified, it defaults to the
-# `MATCHES` parameter.
-#
-# If more than one `<message>` string is given, they are concatenated into a
-# single message with no separators.
+# If `EXPECT_ERROR` is specified, it instead asserts whether the call to the
+# function or macro received errors that satisfy the expected message. If
+# `MATCHES` is specified, it asserts whether the received errors match
+# `<message>`. If `STREQUAL` is specified, it asserts whether the received
+# errors are equal to `<message>`. If neither is specified, it defaults to the
+# `MATCHES` parameter. If more than one `<message>` string is given, they are
+# concatenated into a single message with no separators.
 function(assert_call)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "CALL;EXPECT_ERROR")
 
@@ -381,19 +379,24 @@ function(assert_call)
     set(ARG_CALL ${ARG_UNPARSED_ARGUMENTS})
   endif()
 
-  list(GET ARG_EXPECT_ERROR 0 OPERATOR)
-  if(OPERATOR MATCHES ^MATCHES|STREQUAL$)
-    list(REMOVE_AT ARG_EXPECT_ERROR 0)
+  if(DEFINED ARG_EXPECT_ERROR)
+    list(GET ARG_EXPECT_ERROR 0 EXPECTED_ERROR_OPERATOR)
+    if(EXPECTED_ERROR_OPERATOR MATCHES ^MATCHES|STREQUAL$)
+      list(REMOVE_AT ARG_EXPECT_ERROR 0)
+    else()
+      set(EXPECTED_ERROR_OPERATOR "MATCHES")
+    endif()
+    string(JOIN "" EXPECTED_ERROR ${ARG_EXPECT_ERROR})
   else()
-    set(OPERATOR "MATCHES")
+    unset(EXPECTED_ERROR_OPERATOR)
+    unset(EXPECTED_ERROR)
   endif()
-  string(JOIN "" EXPECTED_ERROR ${ARG_EXPECT_ERROR})
 
   # Override the `message` function if it has not been overridden.
   get_property(MESSAGE_MOCKED GLOBAL PROPERTY _message_mocked)
   if(NOT MESSAGE_MOCKED)
     # Override the `message` function to allow the behavior to be mocked by
-    # capturing an error message.
+    # capturing an error.
     function(message MODE)
       cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
 
@@ -410,14 +413,14 @@ function(assert_call)
     set_property(GLOBAL PROPERTY _message_mocked ON)
   endif()
 
-  # Increase the level for capturing error messages.
+  # Increase the level for capturing errors.
   if(_CAPTURE_LEVEL GREATER_EQUAL 0)
     math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} + 1")
   else()
     set(_CAPTURE_LEVEL 1)
   endif()
 
-  # Clear global property that hold the captured messages.
+  # Clear global property that hold the captured errors.
   set_property(GLOBAL PROPERTY assert_captured_error_${_CAPTURE_LEVEL})
 
   # Call the command with the specified arguments.
@@ -430,21 +433,29 @@ function(assert_call)
   if(CAPTURED_ERROR_SET)
     get_property(CAPTURED_ERROR GLOBAL
       PROPERTY assert_captured_error_${_CAPTURE_LEVEL})
-    string(STRIP "${CAPTURED_ERROR}" CAPTURED_ERROR)
 
-    if(NOT "${CAPTURED_ERROR}" ${OPERATOR} "${EXPECTED_ERROR}")
-      math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
-      if(OPERATOR STREQUAL "MATCHES")
-        fail("expected error message" CAPTURED_ERROR
-          "to match" EXPECTED_ERROR)
+    if(DEFINED EXPECTED_ERROR)
+      string(STRIP "${CAPTURED_ERROR}" CAPTURED_ERROR)
+      if(EXPECTED_ERROR_OPERATOR STREQUAL "MATCHES")
+        if(NOT "${CAPTURED_ERROR}" MATCHES "${EXPECTED_ERROR}")
+          math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
+          fail("expected errors" CAPTURED_ERROR
+            "to match" EXPECTED_ERROR)
+        endif()
       else()
-        fail("expected error message" CAPTURED_ERROR
-          "to be equal to" EXPECTED_ERROR)
+        if(NOT "${CAPTURED_ERROR}" STREQUAL "${EXPECTED_ERROR}")
+          math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
+          fail("expected errors" CAPTURED_ERROR
+            "to be equal to" EXPECTED_ERROR)
+        endif()
       endif()
+    else()
+      math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
+      fail("expected not to receive errors" CAPTURED_ERROR)
     endif()
-  else()
+  elseif(DEFINED EXPECTED_ERROR)
     math(EXPR _CAPTURE_LEVEL "${_CAPTURE_LEVEL} - 1")
-    fail("expected to receive an error message")
+    fail("expected to receive errors")
   endif()
 endfunction()
 
