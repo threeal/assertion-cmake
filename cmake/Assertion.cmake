@@ -35,8 +35,9 @@ set(ASSERTION_VERSION 2.0.0)
 # If the `CMAKE_SCRIPT_TEST_DEFINITIONS` variable is defined, the script will be
 # processed with the predefined variables listed in that variable. Each entry
 # should be in the format `<name>=<value>`, where `<name>` is the variable name
-# and `<value>` is its value. If `DEFINITIONS` is specified, additional
-# variables will also be defined.
+# and `<value>` is its value. If `<value>` is not provided, it uses the value of
+# a variable named `<name>` in the current CMake scope. If `DEFINITIONS` is
+# specified, additional variables will also be defined.
 function(add_cmake_script_test)
   if(DEFINED CMAKE_SCRIPT_MODE_FILE)
     message(SEND_ERROR "Unable to add a new test in script mode")
@@ -61,6 +62,9 @@ function(add_cmake_script_test)
 
   set(TEST_COMMAND "${CMAKE_COMMAND}")
   foreach(DEFINITION IN LISTS CMAKE_SCRIPT_TEST_DEFINITIONS ARG_DEFINITIONS)
+    if(NOT DEFINITION MATCHES =)
+      set(DEFINITION "${DEFINITION}=${${DEFINITION}}")
+    endif()
     list(APPEND TEST_COMMAND -D "${DEFINITION}")
   endforeach()
   list(APPEND TEST_COMMAND -P "${ARG_FILE}")
