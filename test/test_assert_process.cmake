@@ -31,6 +31,8 @@ section("assert failed process executions")
         "not to fail with error:\n"
         "  Error creating directory \"some-file\".")
   endsection()
+
+  file(REMOVE some-file)
 endsection()
 
 section("assert process execution outputs")
@@ -141,4 +143,6 @@ section("assert process execution errors")
         "to be equal to:\n"
         "  Error creating directory \"some-other-file\".")
   endsection()
+
+  file(REMOVE some-file)
 endsection()
