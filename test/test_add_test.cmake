@@ -33,7 +33,7 @@ endsection()
 
 section("it should create a new test with the specified name")
   file(WRITE project/CMakeLists.txt ${CMAKELISTS_HEADER}
-    "add_cmake_script_test(test.cmake NAME \"a test\")\n")
+    "add_cmake_script_test(FILE test.cmake NAME \"a test\")\n")
 
   assert_execute_process("${CMAKE_COMMAND}" --fresh -S project -B project/build)
   assert_execute_process(

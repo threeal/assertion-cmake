@@ -96,7 +96,8 @@ This variable contains the version of the included `Assertion.cmake` module.
 Adds a new test that processes the given CMake file in script mode.
 
 ```cmake
-add_cmake_script_test(<file> [NAME <name>] [DEFINITIONS <variables>...])
+add_cmake_script_test(
+  [FILE] <file> [NAME <name>] [DEFINITIONS <variables>...])
 ```
 
 This function adds a new test that processes the specified `<file>` in script mode. If `NAME` is provided, `<name>` will be used as the test name; otherwise, the test name will default to `<file>`.
