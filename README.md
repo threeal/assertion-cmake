@@ -2,13 +2,13 @@
 
 A [CMake](https://cmake.org/) module containing a collection of assertion functions and other utilities for testing CMake code.
 
-The main feature of this module is the `assert` function, which asserts the given condition in the style of CMake's [`if`](https://cmake.org/cmake/help/latest/command/if.html) function. If the assertion fails, it throws a fatal error message with information about the context of the asserted condition.
+The main feature of this module is the [`assert`](#assert) function, which asserts the given condition in the style of CMake's [`if`](https://cmake.org/cmake/help/latest/command/if.html) function. If the assertion fails, it throws a fatal error message with information about the context of the asserted condition.
 
-This module also supports [CMake test](https://cmake.org/cmake/help/book/mastering-cmake/chapter/Testing%20With%20CMake%20and%20CTest.html) creation using the `add_cmake_script_test` function. This function creates a new test that processes the given file in script mode.
+This module also supports [CMake test](https://cmake.org/cmake/help/book/mastering-cmake/chapter/Testing%20With%20CMake%20and%20CTest.html) creation using the [`add_cmake_script_test`](#add_cmake_script_test) function. This function creates a new test that processes a CMake file containing tests in script mode.
 
 ## Key Features
 
-- Supports condition, fatal error, and process execution assertions.
+- Supports condition, command call, and process execution assertions.
 - Supports test creation that processes a CMake file.
 - Simple syntax and easy integration.
 
@@ -19,32 +19,29 @@ This module also supports [CMake test](https://cmake.org/cmake/help/book/masteri
 The recommended way to integrate this module into a project is by downloading it during the project configuration using the [`file(DOWNLOAD)`](https://cmake.org/cmake/help/latest/command/file.html#download) function:
 
 ```cmake
-file(
-  DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v1.0.0/Assertion.cmake
-    ${CMAKE_BINARY_DIR}/Assertion.cmake
-  EXPECTED_MD5 1d8ec589d6cc15772581bf77eb3873ff)
+file(DOWNLOAD https://github.com/threeal/assertion-cmake/releases/download/v2.0.0/Assertion.cmake
+    ${CMAKE_BINARY_DIR}/cmake/Assertion.cmake
+  EXPECTED_MD5 5ebe475aee6fc5660633152f815ce9f6)
 
-include(${CMAKE_BINARY_DIR}/Assertion.cmake)
+include(${CMAKE_BINARY_DIR}/cmake/Assertion.cmake)
 ```
 
-Alternatively, to support offline mode, this module can also be vendored directly into a project and included normally using the `include` function.
+Alternatively, to support offline mode, this module can also be vendored directly into a project and included normally using the [`include`](https://cmake.org/cmake/help/latest/command/include.html) function.
 
 ### Assertion Example
 
 There are three functions provided by this module that can be used to perform assertions in CMake code:
 
-- `assert`: Performs an assertion on the given condition.
-- `assert_call`: Performs an assertion on the given command call.
-- `assert_execute_process`: Performs an assertion on whether the given command correctly executes a process.
+- [`assert`](#assert): Performs an assertion on the given condition.
+- [`assert_call`](#assert_call): Performs an assertion on the given command call.
+- [`assert_execute_process`](#assert_execute_process): Performs an assertion on a process executed with the given command.
 
 For example, given the following `git_clone` function for cloning a Git repository from the given `URL` and setting the `OUTPUT_VAR` with the path of the cloned Git repository directory:
 
 ```cmake
 function(git_clone URL OUTPUT_VAR)
   string(REGEX REPLACE ".*/" "" DIRECTORY "${URL}")
-  execute_process(
-    COMMAND git clone "${URL}" "${DIRECTORY}"
-    RESULT_VARIABLE RES)
+  execute_process(COMMAND git clone "${URL}" "${DIRECTORY}" RESULT_VARIABLE RES)
   if(NOT RES EQUAL 0)
     message(FATAL_ERROR "failed to clone '${URL}' (${RES})")
   endif()
@@ -62,28 +59,28 @@ assert(DEFINED CMAKE_STARTER_DIR)
 assert(EXISTS "${CMAKE_STARTER_DIR}")
 ```
 
-You can further verify if the output variable contains a correct Git directory and if it correctly throws a fatal error message on failure:
+You can further verify if the output variable contains a correct Git directory and if it correctly throws an error on failure:
 
 ```cmake
 assert(IS_DIRECTORY "${CMAKE_STARTER_DIR}")
 assert_execute_process(
   git -C "${CMAKE_STARTER_DIR}" rev-parse --is-inside-work-tree)
 
-assert_call(git_clone https://github.com GITHUB_DIR
-  EXPECT_ERROR "failed to clone 'https://github.com'")
+assert_call(git_clone https://invalid.com INVALID_DIR
+  EXPECT_ERROR "failed to clone 'https://invalid.com'")
 ```
 
 ### Test Creation
 
-In CMake, tests are normally created using the `add_test` function and run separately from the project configuration and build processes. To simplify test creation, this module provides an `add_cmake_script_test` function.
+In CMake, tests are normally created using the [`add_test`](https://cmake.org/cmake/help/latest/command/add_test.html) function and run separately from the project configuration and build processes. To simplify test creation, this module provides an [`add_cmake_script_test`](#add_cmake_script_test) function.
 
-Given a file named `git_checkout_test.cmake` that contains assertions for a `git_clone` function, you can create a new test target that will process that file as follows:
+Given a file named `test_git_checkout.cmake` that contains assertions for a `git_clone` function, you can create a new test target that will process that file as follows:
 
 ```cmake
-add_cmake_script_test(git_checkout_test.cmake NAME "Git check out test")
+add_cmake_script_test(test_git_checkout.cmake NAME "Test Git checkout")
 ```
 
-The above line creates a new test target named "Git check out test" that will process the `git_checkout_test.cmake` file in script mode.
+The above line creates a new test target named "Test Git checkout" that will process the `git_checkout_test.cmake` file in script mode.
 
 ## API Reference
 
@@ -145,7 +142,7 @@ because of:
 
 ### `assert`
 
-Asserts the given condition.
+Performs an assertion on the given condition.
 
 ```cmake
 assert(<condition>...)
@@ -153,7 +150,7 @@ assert(<condition>...)
 
 This function performs an assertion on the given `<condition>`. If the assertion fails, it will output a formatted fatal error message with information about the context of the asserted condition.
 
-Internally, this function uses CMake's `if` function to check the given condition and throws a fatal error message if the condition resolves to false. Refer to the [CMake's `if` function documentation](https://cmake.org/cmake/help/latest/command/if.html) for more information about supported conditions for the assertion.
+Internally, this function uses CMake's [`if`](https://cmake.org/cmake/help/latest/command/if.html) function to check the given condition and throws a fatal error message if the condition resolves to false. Refer to CMake's `if` function documentation for more information about supported conditions for the assertion.
 
 #### Example
 
@@ -181,7 +178,7 @@ assert_call(
   [EXPECT_WARNING [MATCHES|STREQUAL] <message>...])
 ```
 
-This function asserts whether the function or macro named `<command>`, called with the specified `<arguments>`, does not receive any errors or warnings. Internally, the function captures all errors and warnings from the `message` function. Each captured error and warning is concatenated with new lines as separators.
+This function asserts whether the function or macro named `<command>`, called with the specified `<arguments>`, does not receive any errors or warnings. Internally, the function captures all errors and warnings from CMake's [`message`](https://cmake.org/cmake/help/latest/command/message.html) function. Each captured error and warning is concatenated with new lines as separators.
 
 If `EXPECT_ERROR` or `EXPECT_WARNING` is specified, it instead asserts whether the call to the function or macro received errors or warnings that satisfy the expected message.
 
@@ -193,7 +190,7 @@ If more than one `<message>` string is given, they are concatenated into a singl
 
 ```cmake
 function(send_errors)
-  foreach(MESSAGE IN LISTS ARGV)
+  foreach(MESSAGE IN LISTS ARGN)
     message(SEND_ERROR "${MESSAGE} error")
   endforeach()
 endfunction()
@@ -211,23 +208,23 @@ expected to receive errors
 
 ### `assert_execute_process`
 
-Asserts whether the given command correctly executes a process.
+Performs an assertion on a process executed with the given command.
 
 ```cmake
 assert_execute_process(
   [COMMAND] <command> [<arguments>...]
   [EXPECT_FAIL]
-  [EXPECT_OUTPUT [MATCHES|STREQUAL] <output>...]
-  [EXPECT_ERROR [MATCHES|STREQUAL] <error>...])
+  [EXPECT_OUTPUT [MATCHES|STREQUAL] <message>...]
+  [EXPECT_ERROR [MATCHES|STREQUAL] <message>...])
 ```
 
 This function asserts whether the given `<command>` and `<arguments>` successfully execute a process. If `EXPECT_FAIL` or `EXPECT_ERROR` is specified, it asserts that the process fails to execute.
 
-If `EXPECT_OUTPUT` or `EXPECT_ERROR` is specified, it also asserts whether the output or error of the executed process matches the expected output or error.
+If `EXPECT_OUTPUT` or `EXPECT_ERROR` is specified, it also asserts whether the output or error of the executed process matches the expected message.
 
-If `MATCHES` is specified, it asserts whether the output or error matches the `<output>` or `<error>`. If `STREQUAL` is specified, it asserts whether the output or error is equal to `<output>` or `<error>`. If neither is specified, it defaults to `MATCHES`.
+In both `EXPECT_OUTPUT` and `EXPECT_ERROR` options, `MATCHES` and `STREQUAL` are used to determine the operator for comparing the received output and error with the expected message. If `MATCHES` is specified, they are compared using regular expression matching. If `STREQUAL` is specified, they are compared lexicographically. If neither is specified, it defaults to `MATCHES`.
 
-If more than one `<output>` or `<error>` string is given, they are concatenated into a single output or error with no separator between the strings.
+If more than one `<message>` string is given, they are concatenated into a single message with no separators.
 
 #### Example
 
@@ -241,7 +238,7 @@ The above example asserts that the call to `${CMAKE_COMMAND} -E echo hello` succ
 
 ```
 expected command:
-  ${CMAKE_COMMAND} -E echo hello
+  /path/to/cmake -E echo hello
 not to fail with error:
   unknown error
 ```
@@ -258,7 +255,7 @@ This function begins a new test section named `<name>`. It prints the test secti
 
 If more than one `<name>` string is given, they are concatenated into a single name with no separator between the strings.
 
-Use the `endsection` function to end the test section.
+Use the [`endsection`](#endsection) function to end the test section.
 
 #### Example
 
@@ -268,7 +265,7 @@ section("test something")
     message(STATUS "nothing happened")
   endsection()
 
-  section("it should fail" " because something might happen")
+  section("it should fail because something might happen")
     fail("something happened")
   endsection()
 endsection()

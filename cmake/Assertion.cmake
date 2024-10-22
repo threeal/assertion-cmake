@@ -132,7 +132,7 @@ macro(fail FIRST_LINE)
   endblock()
 endmacro()
 
-# Asserts the given condition.
+# Performs an assertion on the given condition.
 #
 # assert(<condition>...)
 #
@@ -142,7 +142,7 @@ endmacro()
 #
 # Internally, this function uses CMake's `if` function to check the given
 # condition and throws a fatal error message if the condition resolves to false.
-# Refer to the CMake's `if` function documentation for more information about
+# Refer to CMake's `if` function documentation for more information about
 # supported conditions for the assertion.
 function(assert)
   cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "")
@@ -374,9 +374,9 @@ endfunction()
 #
 # This function asserts whether the function or macro named `<command>`, called
 # with the specified `<arguments>`, does not receive any errors or warnings.
-# Internally, the function captures all errors and warnings from the `message`
-# function. Each captured error and warning is concatenated with new lines as
-# separators.
+# Internally, the function captures all errors and warnings from CMake's
+# `message` function. Each captured error and warning is concatenated with new
+# lines as separators.
 #
 # If `EXPECT_ERROR` or `EXPECT_WARNING` is specified, it instead asserts whether
 # the call to the function or macro received errors or warnings that satisfy the
@@ -517,29 +517,29 @@ function(assert_call)
   endif()
 endfunction()
 
-# Asserts whether the given command correctly executes a process.
+# Performs an assertion on a process executed with the given command.
 #
 # assert_execute_process(
 #   [COMMAND] <command> [<arguments>...]
 #   [EXPECT_FAIL]
-#   [EXPECT_OUTPUT [MATCHES|STREQUAL] <output>...]
-#   [EXPECT_ERROR [MATCHES|STREQUAL] <error>...])
+#   [EXPECT_OUTPUT [MATCHES|STREQUAL] <message>...]
+#   [EXPECT_ERROR [MATCHES|STREQUAL] <message>...])
 #
 # This function asserts whether the given `<command>` and `<arguments>`
 # successfully execute a process. If `EXPECT_FAIL` or `EXPECT_ERROR` is
 # specified, it asserts that the process fails to execute.
 #
 # If `EXPECT_OUTPUT` or `EXPECT_ERROR` is specified, it also asserts whether the
-# output or error of the executed process matches the expected output or error.
+# output or error of the executed process matches the expected message.
 #
-# If `MATCHES` is specified, it asserts whether the output or error matches the
-# `<output>` or `<error>`. If `STREQUAL` is specified, it asserts whether the
-# output or error is equal to `<output>` or `<error>`. If neither is specified,
-# it defaults to `MATCHES`.
+# In both `EXPECT_OUTPUT` and `EXPECT_ERROR` options, `MATCHES` and `STREQUAL`
+# are used to determine the operator for comparing the received output and error
+# with the expected message. If `MATCHES` is specified, they are compared using
+# regular expression matching. If `STREQUAL` is specified, they are compared
+# lexicographically. If neither is specified, it defaults to `MATCHES`.
 #
-# If more than one `<output>` or `<error>` string is given, they are
-# concatenated into a single output or error with no separator between the
-# strings.
+# If more than one `<message>` string is given, they are concatenated into a
+# single message with no separators.
 function(assert_execute_process)
   cmake_parse_arguments(
     PARSE_ARGV 0 ARG EXPECT_FAIL "" "COMMAND;EXPECT_OUTPUT;EXPECT_ERROR")
