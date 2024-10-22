@@ -49,7 +49,8 @@ section("it should create a new test with predefined variables")
 
   file(WRITE project/CMakeLists.txt ${CMAKELISTS_HEADER}
     "set(CMAKE_SCRIPT_TEST_DEFINITIONS FOO=foo BAR=bar)\n"
-    "add_cmake_script_test(test.cmake DEFINITIONS BAR=barbar BAZ=baz)\n")
+    "set(BAR barbar)\n"
+    "add_cmake_script_test(test.cmake DEFINITIONS BAR BAZ=baz)\n")
 
   assert_execute_process("${CMAKE_COMMAND}" --fresh -S project -B project/build)
   assert_execute_process(
