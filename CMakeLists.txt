@@ -10,7 +10,8 @@ project(
 option(ASSERTION_ENABLE_TESTS "Enable test targets.")
 option(ASSERTION_ENABLE_INSTALL "Enable install targets." "${PROJECT_IS_TOP_LEVEL}")
 
-include(cmake/Assertion.cmake)
+list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include(Assertion)
 
 if(ASSERTION_ENABLE_TESTS)
   enable_testing()
@@ -27,7 +28,8 @@ endif()
 
 if(ASSERTION_ENABLE_INSTALL)
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/cmake/AssertionConfig.cmake
-    "include(\${CMAKE_CURRENT_LIST_DIR}/Assertion.cmake)\n")
+    "list(PREPEND CMAKE_MODULE_PATH \${CMAKE_CURRENT_LIST_DIR})\n"
+    "include(Assertion)\n")
 
   include(CMakePackageConfigHelpers)
   write_basic_package_version_file(cmake/AssertionConfigVersion.cmake
