@@ -25,7 +25,8 @@ set(ASSERTION_VERSION 2.0.0)
 
 # Adds a new test that processes the given CMake file in script mode.
 #
-# add_cmake_script_test(<file> [NAME <name>] [DEFINITIONS <variables>...])
+# add_cmake_script_test(
+#   [FILE] <file> [NAME <name>] [DEFINITIONS <variables>...])
 #
 # This function adds a new test that processes the specified `<file>` in script
 # mode. If `NAME` is provided, `<name>` will be used as the test name;
@@ -36,20 +37,25 @@ set(ASSERTION_VERSION 2.0.0)
 # should be in the format `<name>=<value>`, where `<name>` is the variable name
 # and `<value>` is its value. If `DEFINITIONS` is specified, additional
 # variables will also be defined.
-function(add_cmake_script_test FILE)
+function(add_cmake_script_test)
   if(DEFINED CMAKE_SCRIPT_MODE_FILE)
     message(SEND_ERROR "Unable to add a new test in script mode")
     return()
   endif()
 
-  cmake_parse_arguments(PARSE_ARGV 1 ARG "" NAME DEFINITIONS)
-  if(NOT DEFINED ARG_NAME)
-    set(ARG_NAME "${FILE}")
+  cmake_parse_arguments(PARSE_ARGV 0 ARG "" "FILE;NAME" DEFINITIONS)
+
+  if(NOT DEFINED ARG_FILE)
+    list(POP_FRONT ARG_UNPARSED_ARGUMENTS ARG_FILE)
   endif()
 
-  cmake_path(ABSOLUTE_PATH FILE)
-  if(NOT EXISTS ${FILE})
-    message(SEND_ERROR "Cannot find test file:\n  ${FILE}")
+  if(NOT DEFINED ARG_NAME)
+    set(ARG_NAME "${ARG_FILE}")
+  endif()
+
+  cmake_path(ABSOLUTE_PATH ARG_FILE)
+  if(NOT EXISTS ${ARG_FILE})
+    message(SEND_ERROR "Cannot find test file:\n  ${ARG_FILE}")
     return()
   endif()
 
@@ -57,7 +63,7 @@ function(add_cmake_script_test FILE)
   foreach(DEFINITION IN LISTS CMAKE_SCRIPT_TEST_DEFINITIONS ARG_DEFINITIONS)
     list(APPEND TEST_COMMAND -D "${DEFINITION}")
   endforeach()
-  list(APPEND TEST_COMMAND -P "${FILE}")
+  list(APPEND TEST_COMMAND -P "${ARG_FILE}")
 
   add_test(NAME "${ARG_NAME}" COMMAND ${TEST_COMMAND})
 endfunction()
