@@ -43,13 +43,13 @@ endsection()
 section("it should create a new test with predefined variables")
   file(WRITE project/test.cmake
     "include(\"${ASSERTION_LIST_FILE}\")\n"
-    "assert(FOO STREQUAL foo)\n"
-    "assert(BAR STREQUAL barbar)\n"
+    "assert(FOO STREQUAL \"foo;foo\")\n"
+    "assert(BAR STREQUAL \"bar;bar\")\n"
     "assert(BAZ STREQUAL baz)\n")
 
   file(WRITE project/CMakeLists.txt ${CMAKELISTS_HEADER}
-    "set(CMAKE_SCRIPT_TEST_DEFINITIONS FOO=foo BAR=bar)\n"
-    "set(BAR barbar)\n"
+    "set(CMAKE_SCRIPT_TEST_DEFINITIONS \"FOO=foo\;foo\" BAR=bar)\n"
+    "set(BAR bar bar)\n"
     "add_cmake_script_test(test.cmake DEFINITIONS BAR BAZ=baz)\n")
 
   assert_execute_process("${CMAKE_COMMAND}" --fresh -S project -B project/build)
