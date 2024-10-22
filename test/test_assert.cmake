@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.24)
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake
   RESULT_VARIABLE ASSERTION_LIST_FILE)
 
+file(MAKE_DIRECTORY sample-project)
+
 # Asserts whether the given code of a sample project can be configured
 # successfully.
 #
@@ -22,7 +24,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake
 function(assert_configure_sample_project FIRST_CODE)
   cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "")
 
-  file(MAKE_DIRECTORY sample-project)
   file(WRITE sample-project/CMakeLists.txt
     "cmake_minimum_required(VERSION 3.5)\n"
     "project(SomeProject)\n"
@@ -85,8 +86,6 @@ section("assert policy existence conditions")
 endsection()
 
 section("assert target existence conditions")
-  file(MAKE_DIRECTORY project)
-
   section("it should assert conditions")
     assert_configure_sample_project(
       "add_custom_target(some_target)\n"
@@ -110,8 +109,6 @@ section("assert target existence conditions")
 endsection()
 
 section("assert test existence conditions")
-  file(MAKE_DIRECTORY project)
-
   section("it should assert conditions")
     assert_configure_sample_project(
       "add_test(NAME some_test COMMAND some_command)\n"
@@ -197,13 +194,13 @@ section("assert path existence conditions")
     assert_call(assert NOT EXISTS some_file
       EXPECT_ERROR STREQUAL "expected path:\n  some_file\nnot to exist")
   endsection()
+
+  file(REMOVE some_file)
 endsection()
 
 section("assert path readability conditions")
-  file(TOUCH some_file)
-
   file(REMOVE non_readable_file)
-  file(TOUCH non_readable_file)
+  file(TOUCH some_file non_readable_file)
   file(CHMOD non_readable_file PERMISSIONS OWNER_WRITE)
 
   section("it should assert conditions")
@@ -219,12 +216,12 @@ section("assert path readability conditions")
     assert_call(assert NOT IS_READABLE some_file
       EXPECT_ERROR STREQUAL "expected path:\n  some_file\nnot to be readable")
   endsection()
+
+  file(REMOVE some_file non_readable_file)
 endsection()
 
 section("assert path writability conditions")
-  file(TOUCH some_file)
-
-  file(TOUCH non_writable_file)
+  file(TOUCH some_file non_writable_file)
   file(CHMOD non_writable_file PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
   section("it should assert conditions")
@@ -240,17 +237,14 @@ section("assert path writability conditions")
     assert_call(assert NOT IS_WRITABLE some_file
       EXPECT_ERROR STREQUAL "expected path:\n  some_file\nnot to be writable")
   endsection()
+
+  file(REMOVE some_file non_writable_file)
 endsection()
 
 section("assert executable path conditions")
-  file(TOUCH some_executable)
-  file(
-    CHMOD some_executable
-    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE)
-
-  file(TOUCH some_file)
+  file(TOUCH some_file some_executable)
+  file(CHMOD some_executable PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+    GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
   section("it should assert conditions")
     assert(IS_EXECUTABLE some_executable)
@@ -265,14 +259,13 @@ section("assert executable path conditions")
       EXPECT_ERROR STREQUAL
         "expected path:\n  some_executable\nnot to be an executable")
   endsection()
+
+  file(REMOVE some_file some_executable)
 endsection()
 
 section("assert file recency conditions")
-  if(NOT EXISTS old_file)
-    file(WRITE old_file "something")
-    execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep 1)
-  endif()
-
+  file(WRITE old_file "something")
+  execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep 1)
   file(WRITE new_file "something")
 
   section("it should assert conditions")
@@ -289,6 +282,8 @@ section("assert file recency conditions")
       EXPECT_ERROR STREQUAL "expected file:\n  new_file\n"
         "not to be newer than:\n  old_file")
   endsection()
+
+  file(REMOVE old_file new_file)
 endsection()
 
 section("assert directory path conditions")
@@ -308,6 +303,8 @@ section("assert directory path conditions")
       EXPECT_ERROR STREQUAL
         "expected path:\n  some_directory\nnot to be a directory")
   endsection()
+
+  file(REMOVE_RECURSE some_directory some_file)
 endsection()
 
 section("assert symbolic link path conditions")
@@ -328,6 +325,8 @@ section("assert symbolic link path conditions")
       EXPECT_ERROR STREQUAL
         "expected path:\n  some_symlink\nnot to be a symbolic link")
   endsection()
+
+  file(REMOVE some_file some_symlink)
 endsection()
 
 section("assert absolute path conditions")
@@ -392,3 +391,5 @@ section("assert path equality conditions")
         "not to be equal to:\n  /some//path")
   endsection()
 endsection()
+
+file(REMOVE_RECURSE sample-project)
