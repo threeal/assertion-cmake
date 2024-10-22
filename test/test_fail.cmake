@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+include(Assertion)
 
 section("it should fail with formatted fatal error messages given strings")
   assert_call(fail "single line string"
