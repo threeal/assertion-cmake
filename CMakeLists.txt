@@ -16,6 +16,8 @@ include(Assertion)
 if(ASSERTION_ENABLE_TESTS)
   enable_testing()
 
+  list(APPEND CMAKE_SCRIPT_TEST_DEFINITIONS CMAKE_MODULE_PATH)
+
   add_cmake_script_test(test/test_add_test.cmake)
   add_cmake_script_test(test/test_assert_call.cmake)
   add_cmake_script_test(test/test_assert_number.cmake)

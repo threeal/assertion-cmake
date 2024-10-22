@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+include(Assertion)
 
 function(throw_errors)
   message(SEND_ERROR "a send error message")

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+include(Assertion)
 
 set(VERSION_VAR 1.2.3)
 set(VERSIONN_VAR 1.02.3)

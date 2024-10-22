@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake
-  RESULT_VARIABLE ASSERTION_LIST_FILE)
+include(Assertion RESULT_VARIABLE ASSERTION_LIST_FILE)
 
 file(MAKE_DIRECTORY sample-project)
 

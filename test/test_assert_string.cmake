@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+include(Assertion)
 
 set(STRING_VAR "a string")
 set(OTHER_STRING_VAR "another string")

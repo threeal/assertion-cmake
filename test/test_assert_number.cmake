@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/Assertion.cmake)
+include(Assertion)
 
 set(SEVEN_VAR 7)
 set(THIRTEEN_VAR 13)
