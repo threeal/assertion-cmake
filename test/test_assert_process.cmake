@@ -16,23 +16,23 @@ section("assert process executions")
 endsection()
 
 section("assert failed process executions")
-  file(TOUCH some-file)
+  file(TOUCH a_file)
 
   section("it should assert failed process executions")
     assert_execute_process(
-      "${CMAKE_COMMAND}" -E make_directory some-file EXPECT_FAIL)
+      "${CMAKE_COMMAND}" -E make_directory a_file EXPECT_FAIL)
   endsection()
 
   section("it should fail to assert failed process executions")
     assert_call(
-      CALL assert_execute_process "${CMAKE_COMMAND}" -E make_directory some-file
+      CALL assert_execute_process "${CMAKE_COMMAND}" -E make_directory a_file
       EXPECT_ERROR STREQUAL "expected command:\n"
-        "  ${CMAKE_COMMAND} -E make_directory some-file\n"
+        "  ${CMAKE_COMMAND} -E make_directory a_file\n"
         "not to fail with error:\n"
-        "  Error creating directory \"some-file\".")
+        "  Error creating directory \"a_file\".")
   endsection()
 
-  file(REMOVE some-file)
+  file(REMOVE a_file)
 endsection()
 
 section("assert process execution outputs")
@@ -87,62 +87,62 @@ section("assert process execution outputs")
 endsection()
 
 section("assert process execution errors")
-  file(TOUCH some-file)
+  file(TOUCH a_file)
 
   section("it should assert process execution errors")
     assert_execute_process(
-      COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-      EXPECT_ERROR "Error creating directory" ".*some-file")
+      COMMAND "${CMAKE_COMMAND}" -E make_directory a_file
+      EXPECT_ERROR "Error creating directory" ".*a_file")
 
     assert_execute_process(
-      COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-      EXPECT_ERROR MATCHES "Error creating directory" ".*some-file")
+      COMMAND "${CMAKE_COMMAND}" -E make_directory a_file
+      EXPECT_ERROR MATCHES "Error creating directory" ".*a_file")
 
     assert_execute_process(
-      COMMAND "${CMAKE_COMMAND}" -E make_directory some-file
-      EXPECT_ERROR STREQUAL "Error creating directory \"some-file\".")
+      COMMAND "${CMAKE_COMMAND}" -E make_directory a_file
+      EXPECT_ERROR STREQUAL "Error creating directory \"a_file\".")
   endsection()
 
   section("it should fail to assert process execution errors")
     macro(failed_assert)
-      assert_execute_process("${CMAKE_COMMAND}" -E make_directory some-file
-        EXPECT_ERROR "Error creating directory" ".*some-other-file")
+      assert_execute_process("${CMAKE_COMMAND}" -E make_directory a_file
+        EXPECT_ERROR "Error creating directory" ".*another_file")
     endmacro()
 
     assert_call(failed_assert
       EXPECT_ERROR STREQUAL "expected the error:\n"
-        "  Error creating directory \"some-file\".\n"
+        "  Error creating directory \"a_file\".\n"
         "of command:\n"
-        "  ${CMAKE_COMMAND} -E make_directory some-file\n"
+        "  ${CMAKE_COMMAND} -E make_directory a_file\n"
         "to match:\n"
-        "  Error creating directory.*some-other-file")
+        "  Error creating directory.*another_file")
 
     macro(failed_assert)
-      assert_execute_process("${CMAKE_COMMAND}" -E make_directory some-file
-        EXPECT_ERROR MATCHES "Error creating directory" ".*some-other-file")
+      assert_execute_process("${CMAKE_COMMAND}" -E make_directory a_file
+        EXPECT_ERROR MATCHES "Error creating directory" ".*another_file")
     endmacro()
 
     assert_call(failed_assert
       EXPECT_ERROR STREQUAL "expected the error:\n"
-        "  Error creating directory \"some-file\".\n"
+        "  Error creating directory \"a_file\".\n"
         "of command:\n"
-        "  ${CMAKE_COMMAND} -E make_directory some-file\n"
+        "  ${CMAKE_COMMAND} -E make_directory a_file\n"
         "to match:\n"
-        "  Error creating directory.*some-other-file")
+        "  Error creating directory.*another_file")
 
     macro(failed_assert)
-      assert_execute_process("${CMAKE_COMMAND}" -E make_directory some-file
-        EXPECT_ERROR STREQUAL "Error creating directory \"some-other-file\".")
+      assert_execute_process("${CMAKE_COMMAND}" -E make_directory a_file
+        EXPECT_ERROR STREQUAL "Error creating directory \"another_file\".")
     endmacro()
 
     assert_call(failed_assert
       EXPECT_ERROR STREQUAL "expected the error:\n"
-        "  Error creating directory \"some-file\".\n"
+        "  Error creating directory \"a_file\".\n"
         "of command:\n"
-        "  ${CMAKE_COMMAND} -E make_directory some-file\n"
+        "  ${CMAKE_COMMAND} -E make_directory a_file\n"
         "to be equal to:\n"
-        "  Error creating directory \"some-other-file\".")
+        "  Error creating directory \"another_file\".")
   endsection()
 
-  file(REMOVE some-file)
+  file(REMOVE a_file)
 endsection()

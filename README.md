@@ -128,8 +128,8 @@ It formats the message by concatenating all the lines into a single message. If 
 #### Example
 
 ```cmake
-set(COMMAND "some_command arg0 arg1 arg2")
-set(REASON "some reason")
+set(COMMAND "cmd arg0 arg1 arg2")
+set(REASON "unknown reason")
 
 fail("something happened when executing" COMMAND "because of" REASON)
 ```
@@ -138,9 +138,9 @@ The above example throws a fatal error message formatted as follows:
 
 ```
 something happened when executing:
-  some_command arg0 arg1 arg2
+  cmd arg0 arg1 arg2
 because of:
-  some reason
+  unknown reason
 ```
 
 ### `assert`

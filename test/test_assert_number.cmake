@@ -113,13 +113,13 @@ endsection()
 
 section("assert number equality conditions given a non-number")
   section("it should assert conditions")
-    set(STRING_VAR "some string")
+    set(STRING_VAR "a string")
 
-    assert(NOT 7 LESS "some string")
-    assert(NOT 7 GREATER "some string")
-    assert(NOT 7 EQUAL "some string")
-    assert(NOT 7 LESS_EQUAL "some string")
-    assert(NOT 7 GREATER_EQUAL "some string")
+    assert(NOT 7 LESS "a string")
+    assert(NOT 7 GREATER "a string")
+    assert(NOT 7 EQUAL "a string")
+    assert(NOT 7 LESS_EQUAL "a string")
+    assert(NOT 7 GREATER_EQUAL "a string")
 
     assert(NOT SEVEN_VAR LESS STRING_VAR)
     assert(NOT SEVEN_VAR GREATER STRING_VAR)
@@ -129,24 +129,24 @@ section("assert number equality conditions given a non-number")
   endsection()
 
   section("it should fail to assert conditions")
-    assert_call(assert 7 LESS  "some string"
+    assert_call(assert 7 LESS  "a string"
       EXPECT_ERROR STREQUAL "expected number:\n  7\n"
-        "to be less than:\n  some string")
+        "to be less than:\n  a string")
 
-    assert_call(assert 7 GREATER "some string"
+    assert_call(assert 7 GREATER "a string"
       EXPECT_ERROR STREQUAL "expected number:\n  7\n"
-        "to be greater than:\n  some string")
+        "to be greater than:\n  a string")
 
-    assert_call(assert 7 EQUAL "some string"
+    assert_call(assert 7 EQUAL "a string"
       EXPECT_ERROR STREQUAL "expected number:\n  7\n"
-        "to be equal to:\n  some string")
+        "to be equal to:\n  a string")
 
-    assert_call(assert 7 LESS_EQUAL "some string"
+    assert_call(assert 7 LESS_EQUAL "a string"
       EXPECT_ERROR STREQUAL "expected number:\n  7\n"
-        "to be less than or equal to:\n  some string")
+        "to be less than or equal to:\n  a string")
 
-    assert_call(assert 7 GREATER_EQUAL "some string"
+    assert_call(assert 7 GREATER_EQUAL "a string"
       EXPECT_ERROR STREQUAL "expected number:\n  7\n"
-        "to be greater than or equal to:\n  some string")
+        "to be greater than or equal to:\n  a string")
   endsection()
 endsection()
