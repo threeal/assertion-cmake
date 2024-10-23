@@ -43,6 +43,6 @@ if(ASSERTION_ENABLE_INSTALL)
       ${CMAKE_CURRENT_BINARY_DIR}/cmake/AssertionConfigVersion.cmake
     DESTINATION lib/cmake/Assertion)
 
-  set(CPACK_SYSTEM_NAME any)
+  set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}")
   include(CPack)
 endif()
