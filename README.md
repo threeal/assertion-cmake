@@ -296,4 +296,4 @@ This function ends the current test section.
 
 This project is licensed under the terms of the [MIT License](./LICENSE).
 
-Copyright © 2024 [Alfi Maulana](https://github.com/threeal)
+Copyright © 2024-2025 [Alfi Maulana](https://github.com/threeal)
