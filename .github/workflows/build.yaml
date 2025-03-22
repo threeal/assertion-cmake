@@ -19,7 +19,7 @@ jobs:
         run: cpack --preset default
 
       - name: Upload Project
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4.6.2
         with:
           path: build/*.tar.gz
           if-no-files-found: error
